@@ -23,7 +23,7 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Регистрация" />
 
             <form onSubmit={submit}>
                 <div>
@@ -111,7 +111,7 @@ export default function Register() {
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        Регистрация
                     </PrimaryButton>
                 </div>
             </form>
