@@ -17,7 +17,7 @@ export default function ForgotPassword({ status }) {
 
     return (
         <GuestLayout>
-            <Head title="Forgot Password" />
+            <Head title="Вспомнить пароль" />
 
             <div className="mb-4 text-sm text-gray-600">
                 Забыли свой пароль? Без проблем. Просто сообщите нам свой адрес
