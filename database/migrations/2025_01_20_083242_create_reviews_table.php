@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('text_review')->nullable();
-            $table->date('date_review')->nullable();
             $table->integer('rating')->nullable();
             $table->unsignedBigInteger('id_user')->index('fk_review_user');
+            $table->timestamps();
+            $table->tinyInteger('approved')->default(0);
         });
     }
 

@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('course_review', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('id_course')->index('fk_review_course');
+            $table->unsignedBigInteger('id_course');
             $table->unsignedBigInteger('id_review')->index('fk_course_review');
+
+            $table->primary(['id_course', 'id_review']);
         });
     }
 
