@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->foreign(['id_user'], 'fk_review_user')->references(['id'])->on('users')->onUpdate('cascade')->onDelete('cascade');
+        Schema::create('review_course', function (Blueprint $table) {
+            $table->unsignedBigInteger('review_id');
+            $table->unsignedBigInteger('course_id')->index('review_course_course_id_foreign');
+
+            $table->unique(['review_id', 'course_id']);
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign('fk_review_user');
-        });
+        Schema::dropIfExists('review_course');
     }
 };

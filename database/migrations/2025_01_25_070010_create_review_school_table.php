@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('course_review', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_course');
-            $table->unsignedBigInteger('id_review')->index('fk_course_review');
+        Schema::create('review_school', function (Blueprint $table) {
+            $table->unsignedBigInteger('review_id');
+            $table->unsignedBigInteger('school_id')->index('review_school_school_id_foreign');
 
-            $table->primary(['id_course', 'id_review']);
+            $table->unique(['review_id', 'school_id']);
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_review');
+        Schema::dropIfExists('review_school');
     }
 };
