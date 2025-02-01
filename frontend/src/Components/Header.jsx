@@ -3,26 +3,31 @@ import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
 const Header = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const [hidden, setHidden] = useState(false);
-  const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isFixed, setIsFixed] = useState(false);
+  const lastScrollTopRef = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop = window.scrollY;
 
-      if (currentScrollTop > lastScrollTop) {
-        setHidden(true); // Скроллим вниз – скрываем header
+      console.log("Текущий скролл:", currentScrollTop);
+      console.log("Предыдущий скролл:", lastScrollTopRef.current);
+
+      if (currentScrollTop === 0) {
+        setIsFixed(false);
+        setIsVisible(true);
       } else {
-        setHidden(false); // Скроллим вверх – показываем header
+        setIsFixed(true);
+
+        if (currentScrollTop < lastScrollTopRef.current) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
       }
 
-      setLastScrollTop(currentScrollTop);
+      lastScrollTopRef.current = currentScrollTop;
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -30,10 +35,14 @@ const Header = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollTop]);
+  }, []);
 
   return (
-    <header className="header">
+    <header
+      className={`header ${isFixed ? "header--fixed" : ""} ${
+        isVisible ? "header--visible" : ""
+      }`}
+    >
       <div className="container header__inner">
         <div className="header__logo">
           <Link to="/">
@@ -44,7 +53,7 @@ const Header = () => {
           <ul className="menu">
             <li className="menu__item">
               <Link className="menu__link" to="/courses">
-                Курсы{" "}
+                Курсы
               </Link>
             </li>
             <li className="menu__item">
@@ -70,8 +79,6 @@ const Header = () => {
             <input
               type="text"
               placeholder="Искать курсы..."
-              value={searchTerm}
-              onChange={handleSearchChange}
               className="search__input"
               name="search"
             />
