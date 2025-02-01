@@ -1,0 +1,53 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const Users = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/users")
+      .then((response) => {
+        console.log("Ответ от API:", response.data); // Проверьте структуру данных
+
+        // Предполагаем, что ответ содержит массив пользователей напрямую
+        if (Array.isArray(response.data)) {
+          setUsers(response.data);
+        } else {
+          console.error("Ожидался массив, но получено:", response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке пользователей:", error);
+      });
+  }, []);
+
+  return (
+    <div>
+      <h1>Список пользователей</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Роль</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.isArray(users) &&
+            users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role ? user.role.name : "Нет роли"}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Users;

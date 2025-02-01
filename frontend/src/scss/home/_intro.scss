@@ -1,0 +1,7 @@
+@use '../index' as *;
+
+.intro{
+    padding: 50px 0;
+    background-color: $color-bg2;
+    color: $color-text2;
+}

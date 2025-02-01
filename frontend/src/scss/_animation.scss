@@ -1,0 +1,33 @@
+@keyframes pulse {
+    0%{
+        scale: 1;
+    }
+    100%{
+        scale: 1.1;
+    }
+}
+
+@keyframes pulse-small {
+    0%{
+        scale: 1;
+    }
+    100%{
+        scale: 1.02;
+    }
+}
+
+@keyframes rotate {
+     100%{
+        transform: rotate(360deg);
+    }
+}
+
+
+@keyframes show-out {
+    100% {
+        transform: translateX(0);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
