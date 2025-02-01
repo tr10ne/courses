@@ -1,74 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import CollapsibleList from "./CollapsibleList";
 
-const CoursesList = () => {
-  // Состояние для отслеживания, свернут ли список
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  // Состояние для отслеживания ширины экрана
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 375);
+const courses = [
+  { to: "#", label: "С дипломом" },
+  { to: "#", label: "С трудоустройством" },
+  { to: "#", label: "Платные" },
+  { to: "#", label: "Бесплатные" },
+  { to: "#", label: "Ближайшие по дате старта" },
+];
 
-  // Функция для переключения состояния свернуто/развернуто
-  const toggleCollapse = () => {
-    if (isMobile) {
-      setIsCollapsed(!isCollapsed);
-    }
-  };
-  // Эффект для отслеживания изменения ширины экрана
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 375);
-      // Если ширина экрана больше 375px, развернуть список
-      if (window.innerWidth > 375) {
-        setIsCollapsed(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+const CoursesList = ({ isOpen, onToggle }) => {
   return (
-    <div className="footer__nav">
-      {/* Добавляем обработчик клика на заголовок */}
-      <div
-        className="footer__nav__title"
-        onClick={toggleCollapse}
-        style={{ cursor: isMobile ? "pointer" : "default" }}
-      >
-        <p>Курсы</p>
-        <span>{isMobile && (isCollapsed ? "+" : "-")}</span>
-      </div>
-      {/* Условно рендерим список в зависимости от состояния */}
-      {!isCollapsed && (
-        <ul>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              С дипломом
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              С трудоустройством
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Платные
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Бесплатные
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Ближайшие по дате старта
-            </Link>
-          </li>
-        </ul>
-      )}
-    </div>
+    <CollapsibleList
+      title="Курсы"
+      items={courses}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    />
   );
 };
 

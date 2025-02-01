@@ -1,74 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import CollapsibleList from "./CollapsibleList";
 
-const SchoolsList = () => {
-  // Состояние для отслеживания, свернут ли список
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  // Состояние для отслеживания ширины экрана
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 375);
+const schools = [
+  { to: "#", label: "Skillbox" },
+  { to: "#", label: "Geekbrains" },
+  { to: "#", label: "Нетология" },
+  { to: "#", label: "Skillfactory" },
+  { to: "#", label: "Convertmonster" },
+];
 
-  // Функция для переключения состояния свернуто/развернуто
-  const toggleCollapse = () => {
-    if (isMobile) {
-      setIsCollapsed(!isCollapsed);
-    }
-  };
-  // Эффект для отслеживания изменения ширины экрана
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 375);
-      // Если ширина экрана больше 375px, развернуть список
-      if (window.innerWidth > 375) {
-        setIsCollapsed(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+const SchoolsList = ({ isOpen, onToggle }) => {
   return (
-    <div className="footer__nav">
-      {/* Добавляем обработчик клика на заголовок */}
-      <div
-        className="footer__nav__title"
-        onClick={toggleCollapse}
-        style={{ cursor: isMobile ? "pointer" : "default" }}
-      >
-        <p>Школы</p>
-        <span>{isMobile && (isCollapsed ? "+" : "-")}</span>
-      </div>
-      {/* Условно рендерим список в зависимости от состояния */}
-      {!isCollapsed && (
-        <ul>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Skillbox
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Geekbrains
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Нетология
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Skillfactory
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Convertmonster
-            </Link>
-          </li>
-        </ul>
-      )}
-    </div>
+    <CollapsibleList
+      title="Школы"
+      items={schools}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    />
   );
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import CategoriesList from "./CategoriesList";
 import SchoolsList from "./SchoolsList";
@@ -9,15 +9,38 @@ import SocialIconList from "./SocialIconList";
 import Logo from "../Logo";
 
 const Footer = () => {
+  // Состояние для хранения ID открытого списка
+  const [openListId, setOpenListId] = useState("categories"); // По умолчанию открыт "categories"
+
+  // Функция для обработки открытия/закрытия списка
+  const handleToggleList = (id) => {
+    setOpenListId((prevId) => (prevId === id ? null : id));
+  };
+
   return (
     <footer className="footer">
       <div className="footer__inner container">
         <div className="item item_1">
-          <CategoriesList />
-          <SchoolsList />
-          <ReviewsList />
-          <CoursesList />
-          <DifficultyLevelList />
+          <CategoriesList
+            isOpen={openListId === "categories"}
+            onToggle={() => handleToggleList("categories")}
+          />
+          <SchoolsList
+            isOpen={openListId === "schools"}
+            onToggle={() => handleToggleList("schools")}
+          />
+          <ReviewsList
+            isOpen={openListId === "reviews"}
+            onToggle={() => handleToggleList("reviews")}
+          />
+          <CoursesList
+            isOpen={openListId === "courses"}
+            onToggle={() => handleToggleList("courses")}
+          />
+          <DifficultyLevelList
+            isOpen={openListId === "difficulty"}
+            onToggle={() => handleToggleList("difficulty")}
+          />
         </div>
         <div className="item item_2">
           <Logo />

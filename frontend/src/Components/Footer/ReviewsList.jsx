@@ -1,74 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import CollapsibleList from "./CollapsibleList";
 
-const ReviewsList = () => {
-  // Состояние для отслеживания, свернут ли список
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  // Состояние для отслеживания ширины экрана
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 375);
+const reviews = [
+  { to: "#", label: "Отзывы о Skillbox" },
+  { to: "#", label: "Отзывы о Geekbrains" },
+  { to: "#", label: "Отзывы о Нетология" },
+  { to: "#", label: "Отзывы о Skillfactory" },
+  { to: "#", label: "Отзывы о Convertmonster" },
+];
 
-  // Функция для переключения состояния свернуто/развернуто
-  const toggleCollapse = () => {
-    if (isMobile) {
-      setIsCollapsed(!isCollapsed);
-    }
-  };
-  // Эффект для отслеживания изменения ширины экрана
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 375);
-      // Если ширина экрана больше 375px, развернуть список
-      if (window.innerWidth > 375) {
-        setIsCollapsed(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+const ReviewsList = ({ isOpen, onToggle }) => {
   return (
-    <div className="footer__nav">
-      {/* Добавляем обработчик клика на заголовок */}
-      <div
-        className="footer__nav__title"
-        onClick={toggleCollapse}
-        style={{ cursor: isMobile ? "pointer" : "default" }}
-      >
-        <p>Отзывы о школах</p>
-        <span>{isMobile && (isCollapsed ? "+" : "-")}</span>
-      </div>
-      {/* Условно рендерим список в зависимости от состояния */}
-      {!isCollapsed && (
-        <ul>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Отзывы о Skillbox
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Отзывы о Geekbrains
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Отзывы о Нетология
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Отзывы о Skillfactory
-            </Link>
-          </li>
-          <li>
-            <Link className="menu__link menu__link_footer" to="#">
-              Отзывы о Convertmonster
-            </Link>
-          </li>
-        </ul>
-      )}
-    </div>
+    <CollapsibleList
+      title="Отзывы о школах"
+      items={reviews}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    />
   );
 };
 
