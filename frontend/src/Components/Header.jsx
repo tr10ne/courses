@@ -11,9 +11,6 @@ const Header = () => {
     const handleScroll = () => {
       const currentScrollTop = window.scrollY;
 
-      console.log("Текущий скролл:", currentScrollTop);
-      console.log("Предыдущий скролл:", lastScrollTopRef.current);
-
       if (currentScrollTop === 0) {
         setIsFixed(false);
         setIsVisible(true);
