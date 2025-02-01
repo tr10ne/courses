@@ -3,6 +3,7 @@
 .footer {
   background-color: $color-bg3;
   color: $color-text3_2;
+  overflow: hidden;
   &__inner {
     display: grid;
     width: 100%;
@@ -72,6 +73,17 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 20px;
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 100vw;
+      height: 1px;
+      background-color: $color-text2;
+      transform: translateX(-50%);
+    }
   }
   &_2 {
     grid-column: 1;

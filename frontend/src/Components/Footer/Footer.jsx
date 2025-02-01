@@ -10,7 +10,7 @@ import Logo from "../Logo";
 
 const Footer = () => {
   return (
-    <div className="footer">
+    <footer className="footer">
       <div className="footer__inner container">
         <div className="item item_1">
           <CategoriesList />
@@ -19,7 +19,6 @@ const Footer = () => {
           <CoursesList />
           <DifficultyLevelList />
         </div>
-
         <div className="item item_2">
           <Logo />
         </div>
@@ -35,7 +34,7 @@ const Footer = () => {
           </Link>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 
