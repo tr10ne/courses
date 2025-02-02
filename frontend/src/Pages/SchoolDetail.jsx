@@ -14,8 +14,13 @@ const SchoolDetail = () => {
     axios
       .get(`http://127.0.0.1:8000/api/schools/url/${url}`)
       .then((response) => {
-        if (response.data) {
-          setSchool(response.data); // Устанавливаем данные курса
+        // Проверяем, если данные находятся в объекте с ключом 'data'
+        const result = response.data
+          ? response.data.data || response.data
+          : null;
+
+        if (result) {
+          setSchool(result); // Устанавливаем данные курса
         } else {
           setError("Курс не найден"); // Обработка случая, если курс не найден
         }

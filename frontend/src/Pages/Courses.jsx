@@ -16,7 +16,6 @@ const Courses = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    // const signal = controller.signal;
 
     const searchParams = new URLSearchParams(window.location.search);
     const filter = searchParams.get("search") || ""; // Используем значение из URL напрямую
@@ -31,14 +30,29 @@ const Courses = () => {
     axios
       .get("http://127.0.0.1:8000/api/courses", { params })
       .then((response) => {
-        setCourses(response.data.courses);
-        setTotalRecords(response.data.total); // Устанавливаем общее количество записей
-        setLoading(false); // Загрузка завершена
+        console.log("Ответ от API:", response.data); // Проверьте структуру данных
+
+        // Обрабатываем данные: если ответ — это объект с ключом 'courses' или просто массив
+        const courses = Array.isArray(response.data)
+          ? response.data
+          : response.data && Array.isArray(response.data.courses)
+          ? response.data.courses
+          : null;
+
+        // Если данные курса есть, сохраняем их в состояние
+        if (courses) {
+          setCourses(courses);
+          setTotalRecords(response.data.total || 0); // Устанавливаем общее количество записей
+        } else {
+          console.error("Ожидались курсы, но получено:", response.data);
+          setError("Не удалось загрузить курсы.");
+        }
+        setLoading(false); // Завершаем загрузку
       })
       .catch((error) => {
-        console.error("Error fetching courses:", error);
-        setError("Не удалось загрузить курсы. Пожалуйста, попробуйте позже."); // Устанавливаем сообщение об ошибке
-        setLoading(false); // Загрузка завершена
+        console.error("Ошибка при загрузке курсов:", error);
+        setError("Не удалось загрузить курсы. Пожалуйста, попробуйте позже.");
+        setLoading(false); // Завершаем загрузку
       });
 
     return () => controller.abort(); // Отмена запроса при размонтировании или изменении зависимостей
@@ -50,15 +64,22 @@ const Courses = () => {
       .then((response) => {
         console.log("Ответ от API:", response.data); // Проверьте структуру данных
 
-        // Предполагаем, что ответ содержит массив курсов напрямую
-        if (Array.isArray(response.data)) {
-          setCategories(response.data);
+        // Если данные — это массив напрямую или массив внутри объекта с ключом 'data'
+        const result = Array.isArray(response.data)
+          ? response.data
+          : response.data && Array.isArray(response.data.data)
+          ? response.data.data
+          : null;
+
+        // Если это массив, сохраняем в состояние
+        if (Array.isArray(result)) {
+          setCategories(result);
         } else {
           console.error("Ожидался массив, но получено:", response.data);
         }
       })
       .catch((error) => {
-        console.error("Ошибка при загрузке курсов:", error);
+        console.error("Ошибка при загрузке категорий:", error);
       });
   }, []);
 

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->decimal('price', 10);
-            $table->string('url')->nullable();
-            $table->string('link');
-            $table->string('link-more');
+            $table->string('url');
+            $table->string('link')->nullable();
+            $table->string('link_more')->nullable();
             $table->timestamps();
         });
     }

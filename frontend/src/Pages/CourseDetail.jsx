@@ -14,8 +14,13 @@ const CourseDetail = () => {
     axios
       .get(`http://127.0.0.1:8000/api/courses/url/${url}`)
       .then((response) => {
-        if (response.data) {
-          setCourse(response.data); // Устанавливаем данные курса
+        // Проверяем, если данные находятся в объекте с ключом 'data'
+        const result = response.data
+          ? response.data.data || response.data
+          : null;
+
+        if (result) {
+          setCourse(result); // Устанавливаем данные курса
         } else {
           setError("Курс не найден"); // Обработка случая, если курс не найден
         }

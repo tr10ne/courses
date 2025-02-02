@@ -8,69 +8,74 @@ use App\Http\Resources\SchoolResource;
 
 class SchoolController extends Controller
 {
-    // Получить все школы
+    // Метод для получения всех школ
     public function index()
     {
-        return School::all();
+        // Возвращаем коллекцию всех школ с использованием ресурса
+        return SchoolResource::collection(School::all());
     }
 
-    // Создать новую школу
+    // Метод для создания новой школы
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|unique:schools',
-            'description' => 'required|string',
-            'url' => 'nullable|string',
-            'link' => 'required|string',
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'name' => 'required|string|unique:schools, name', // Название школы обязательно и уникально
+            'description' => 'required|string', // Описание школы обязательно
+            'url' => 'required|string|unique:schools,url', // URL школы обязателен и уникален
+            'link' => 'nullable|string', // Ссылка на школу (не обязательна)
+            'link_to_school' => 'nullable|string' //Ссылка на оригинальную страницу школы (не обязательна, если есть должна быть уникальна)
         ]);
 
-        return School::create($request->all());
-    }
-
-    // Получить одну школу по ID
-    public function show($id)
-    {
-        $school = School::findOrFail($id);
+        // Создаем новую школу с валидированными данными
+        $school = School::create($validatedData);
+        // Возвращаем созданную школу в виде ресурса
         return new SchoolResource($school);
     }
 
-    // Обновить школу
-    public function update(Request $request, $id)
+    // Метод для получения школы по ID
+    public function show($id)
     {
-        $school = School::findOrFail($id);
-
-        $request->validate([
-            'name' => 'sometimes|required|string|unique:schools,name,' . $school->id,
-            'description' => 'sometimes|required|string',
-            'url' => 'nullable|string',
-            'link' => 'sometimes|required|string',
-        ]);
-
-        $school->update($request->all());
-
-        return $school;
+        // Находим школу по ID и возвращаем её в виде ресурса
+        return new SchoolResource(School::findOrFail($id));
     }
 
-    // Удалить школу
+    // Метод для обновления существующей школы
+    public function update(Request $request, $id)
+    {
+        // Находим школу по ID
+        $school = School::findOrFail($id);
+
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|unique:schools,name' . $school->id, // Название школы (можно обновить, но должно оставаться уникальным)
+            'description' => 'sometimes|required|string', // Описание школы (можно обновить)
+            'url' => 'sometimes|required|string|unique:schools,url' . $school->id, // URL (обязательно и должно быть уникальным)
+            'link' => 'sometimes|nullable|string', // Ссылка (можно обновить)
+            'link_to_school' => 'sometimes|nullable|string', //Ссылка на оригинальную страницу школы (можно обновить, не обязательна, но уникальна)
+        ]);
+
+        // Обновляем данные школы
+        $school->update($validatedData);
+        // Возвращаем обновленную школу в виде ресурса
+        return new SchoolResource($school);
+    }
+
+    // Метод для удаления школы
     public function destroy($id)
     {
+        // Находим школу по ID и удаляем её
         $school = School::findOrFail($id);
         $school->delete();
-
+        // Возвращаем успешный ответ без контента
         return response()->noContent();
     }
 
+    // Метод для получения школы по URL
     public function showByUrl($url)
     {
-        // Ищем курс по URL
-        $course = School::where('url', $url)->first();
-
-        // Если курс не найден, возвращаем ошибку 404
-        if (!$course) {
-            return response()->json(['error' => 'Курс не найден'], 404);
-        }
-
-        // Возвращаем данные курса
-        return response()->json($course);
+        // Находим школу по URL и возвращаем её в виде ресурса
+        $school = School::where('url', $url)->firstOrFail();
+        return new SchoolResource($school);
     }
 }

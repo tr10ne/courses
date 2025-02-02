@@ -7,28 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class School extends Model
 {
+    // Использование фабрики для создания объектов модели
     use HasFactory;
 
+    // Заполняемые поля для массового назначения
     protected $fillable = [
-        'name',
-        'description',
-        'url',
-        'link',
+        'name',        // Название школы
+        'description', // Описание школы
+        'url',         // URL школы
+        'link',        // Дополнительная ссылка для школы
+        'link_to_school', //Ссылка на оригинальную страницу школы
     ];
 
-    public function subcategory()
+    // Определение связи один ко многим с курсами
+    public function courses()
     {
-        return $this->belongsTo(Subcategory::class);
+        // Возвращаем все курсы, связанные с данной школой
+        return $this->hasMany(Course::class);
     }
 
-    // Связь с курсом
-    public function course()
-    {
-        return $this->belongsTo(Course::class);
-    }
-
+    // Определение связи многие ко многим с отзывами
     public function reviews()
     {
+        // Возвращаем все отзывы, связанные с данной школой через промежуточную таблицу 'review_school'
         return $this->belongsToMany(Review::class, 'review_school', 'school_id', 'review_id');
     }
 }

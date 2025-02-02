@@ -4,57 +4,69 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use Illuminate\Http\Request;
+use App\Http\Resources\ReviewResource;
 
 class ReviewController extends Controller
 {
-    // Получить все отзывы
+    // Метод для получения всех отзывов
     public function index()
     {
-        return Review::all();
+        // Возвращаем коллекцию всех отзывов с использованием ресурса
+        return ReviewResource::collection(Review::all());
     }
 
-    // Создать новый отзыв
+    // Метод для создания нового отзыва
     public function store(Request $request)
     {
-        $request->validate([
-            'text' => 'nullable|string',
-            'rating' => 'nullable|integer|min:1|max:5',
-            'is_approved' => 'sometimes|boolean',
-            'user_id' => 'required|exists:users,id',
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'text' => 'required|string', // Текст отзыва (обязательный)
+            'rating' => 'required|integer|min:1|max:5', // Рейтинг от 1 до 5
+            'is_approved' => 'sometimes|boolean', // Флаг одобрения отзыва (не обязательный)
+            'user_id' => 'required|exists:users,id', // Идентификатор пользователя (обязателен)
         ]);
 
-        return Review::create($request->all());
+        // Создаем новый отзыв с валидированными данными
+        $review = Review::create($validatedData);
+        // Возвращаем созданный отзыв в виде ресурса
+        return new ReviewResource($review);
     }
 
-    // Получить один отзыв по ID
+    // Метод для получения отзыва по ID
     public function show($id)
     {
-        return Review::findOrFail($id);
+        // Находим отзыв по ID и возвращаем его в виде ресурса
+        return new ReviewResource(Review::findOrFail($id));
     }
 
-    // Обновить отзыв
+    // Метод для обновления существующего отзыва
     public function update(Request $request, $id)
     {
+        // Находим отзыв по ID
         $review = Review::findOrFail($id);
 
-        $request->validate([
-            'text' => 'sometimes|nullable|string',
-            'rating' => 'sometimes|nullable|integer|min:1|max:5',
-            'is_approved' => 'sometimes|boolean',
-            'user_id' => 'sometimes|required|exists:users,id',
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'text' => 'sometimes|required|string', // Текст отзыва (может быть изменен)
+            'rating' => 'sometimes|required|integer|min:1|max:5', // Рейтинг (может быть изменен)
+            'is_approved' => 'sometimes|boolean', // Флаг одобрения отзыва (может быть изменен)
+            'user_id' => 'sometimes|required|exists:users,id', // Идентификатор пользователя (может быть изменен)
         ]);
 
-        $review->update($request->all());
-
-        return $review;
+        // Обновляем данные отзыва
+        $review->update($validatedData);
+        // Возвращаем обновленный отзыв в виде ресурса
+        return new ReviewResource($review);
     }
 
-    // Удалить отзыв
+    // Метод для удаления отзыва
     public function destroy($id)
     {
+        // Находим отзыв по ID и удаляем его
         $review = Review::findOrFail($id);
         $review->delete();
 
+        // Возвращаем успешный ответ без контента
         return response()->noContent();
     }
 }

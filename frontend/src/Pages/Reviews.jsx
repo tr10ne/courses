@@ -8,13 +8,20 @@ const Reviews = () => {
     axios
       .get("http://127.0.0.1:8000/api/reviews")
       .then((response) => {
-        console.log("Ответ от API:", response.data); // Проверьте структуру данных
+        console.log("Ответ от API:", response.data); // Проверка структуры данных
 
-        // Предполагаем, что ответ содержит массив отзывов напрямую
-        if (Array.isArray(response.data)) {
-          setReviews(response.data);
+        // Проверяем, если данные находятся в объекте с ключом 'data'
+        const result = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data.data)
+          ? response.data.data
+          : null;
+
+        // Если это массив, сохраняем в состояние
+        if (Array.isArray(result)) {
+          setReviews(result);
         } else {
-          console.error("Ожидался массив, но получено:", response.data);
+          console.error("Ожидался массив, но получено:", result);
         }
       })
       .catch((error) => {

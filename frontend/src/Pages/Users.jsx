@@ -10,11 +10,18 @@ const Users = () => {
       .then((response) => {
         console.log("Ответ от API:", response.data); // Проверьте структуру данных
 
-        // Предполагаем, что ответ содержит массив пользователей напрямую
-        if (Array.isArray(response.data)) {
-          setUsers(response.data);
+        // Проверяем, если данные находятся в объекте с ключом 'data'
+        const result = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data.data)
+          ? response.data.data
+          : null;
+
+        // Если это массив, сохраняем в состояние
+        if (Array.isArray(result)) {
+          setUsers(result);
         } else {
-          console.error("Ожидался массив, но получено:", response.data);
+          console.error("Ожидался массив, но получено:", result);
         }
       })
       .catch((error) => {

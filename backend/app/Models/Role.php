@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
+    // Использование фабрики для создания объектов модели
     use HasFactory;
 
-    // Поля, которые можно массово назначать
+    // Заполняемые поля для массового назначения
     protected $fillable = [
-        'name',
-        'description',
+        'name',        // Название роли (например, "Администратор", "Пользователь")
     ];
 }

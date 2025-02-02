@@ -8,54 +8,58 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    // Получить все роли
+    // Метод для получения всех ролей
     public function index()
     {
-        $roles = Role::all();
-        return RoleResource::collection($roles);
+        // Возвращаем коллекцию всех ролей с использованием ресурса
+        return RoleResource::collection(Role::all());
     }
 
-    // Создать новую роль
+    // Метод для создания новой роли
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|unique:roles',
-            'description' => 'nullable|string',
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'name' => 'required|string|unique:roles', // Название роли обязательно и уникально
         ]);
 
-        $role = Role::create($request->all());
-
+        // Создаем новую роль с валидированными данными
+        $role = Role::create($validatedData);
+        // Возвращаем созданную роль в виде ресурса
         return new RoleResource($role);
     }
 
-    // Получить одну роль по ID
+    // Метод для получения роли по ID
     public function show($id)
     {
-        $role = Role::findOrFail($id);
-        return new RoleResource($role);
+        // Находим роль по ID и возвращаем её в виде ресурса
+        return new RoleResource(Role::findOrFail($id));
     }
 
-    // Обновить роль
+    // Метод для обновления существующей роли
     public function update(Request $request, $id)
     {
+        // Находим роль по ID
         $role = Role::findOrFail($id);
 
-        $request->validate([
-            'name' => 'sometimes|required|string|unique:roles,name,' . $role->id,
-            'description' => 'nullable|string',
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|unique:roles,name,' . $role->id, // Название роли (можно обновить, но должно оставаться уникальным)
         ]);
 
-        $role->update($request->all());
-
+        // Обновляем данные роли
+        $role->update($validatedData);
+        // Возвращаем обновленную роль в виде ресурса
         return new RoleResource($role);
     }
 
-    // Удалить роль
+    // Метод для удаления роли
     public function destroy($id)
     {
+        // Находим роль по ID и удаляем её
         $role = Role::findOrFail($id);
         $role->delete();
-
+        // Возвращаем успешный ответ без контента
         return response()->noContent();
     }
 }

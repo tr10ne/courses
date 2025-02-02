@@ -3,67 +3,78 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
-    // Получить всех пользователей
+    // Метод для получения всех пользователей с их ролью
     public function index()
     {
-        return User::with('role')->get(); // Загружаем связанные роли
+        // Возвращаем коллекцию пользователей, загружая связанные роли
+        return UserResource::collection(User::with('role')->get());
     }
 
-    // Создать нового пользователя
+    // Метод для создания нового пользователя
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
-            'role_id' => 'required|exists:roles,id',
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'name' => 'required|string', // Имя пользователя обязательно
+            'email' => 'required|string|email|unique:users,email', // Почта пользователя уникальна
+            'password' => 'required|string|min:8', // Пароль должен быть не короче 8 символов
+            'role_id' => 'required|exists:roles,id', // Роль пользователя должна существовать в базе
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role_id' => $request->role_id,
-        ]);
+        // Хешируем пароль перед сохранением
+        $validatedData['password'] = Hash::make($validatedData['password']);
 
+        // Создаем нового пользователя с валидированными данными
+        $user = User::create($validatedData);
+        // Возвращаем созданного пользователя в виде ресурса
         return new UserResource($user);
     }
 
-    // Получить одного пользователя по ID
+    // Метод для получения информации о пользователе по ID
     public function show($id)
     {
-        $user = User::with('role')->findOrFail($id); // Загружаем связанную роль
-        return new UserResource($user);
+        // Находим пользователя по ID и возвращаем его с ролью в виде ресурса
+        return new UserResource(User::with('role')->findOrFail($id));
     }
 
-    // Обновить пользователя
+    // Метод для обновления информации о пользователе
     public function update(Request $request, $id)
     {
+        // Находим пользователя по ID
         $user = User::findOrFail($id);
 
-        $request->validate([
-            'name' => 'sometimes|required|string',
-            'email' => 'sometimes|required|string|email|unique:users,email,' . $user->id,
-            'password' => 'sometimes|required|string|min:8',
-            'role_id' => 'sometimes|required|exists:roles,id',
+        // Валидация данных запроса для обновления
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string', // Имя пользователя (можно обновить)
+            'email' => 'sometimes|required|string|email|unique:users,email' . $user->id, // Почта (можно обновить)
+            'password' => 'sometimes|required|string|min:8', // Пароль (можно обновить)
+            'role_id' => 'sometimes|required|exists:roles,id', // Роль пользователя (можно обновить)
         ]);
 
-        $user->update($request->all());
+        // Если пароль обновляется, хешируем новый пароль
+        if (isset($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        }
 
+        // Обновляем данные пользователя
+        $user->update($validatedData);
+        // Возвращаем обновленного пользователя в виде ресурса
         return new UserResource($user);
     }
 
-    // Удалить пользователя
+    // Метод для удаления пользователя
     public function destroy($id)
     {
+        // Находим пользователя по ID и удаляем его
         $user = User::findOrFail($id);
         $user->delete();
-
+        // Возвращаем успешный ответ без контента
         return response()->noContent();
     }
 }

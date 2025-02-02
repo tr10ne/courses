@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subcategories', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('category_id')->index('subcategories_category_id_foreign');
-            $table->string('name');
-            $table->string('url')->nullable();
-            $table->string('link');
+            $table->text('text');
+            $table->integer('rating');
             $table->timestamps();
+            $table->boolean('is_approved')->default(false);
+            $table->unsignedBigInteger('user_id')->index('reviews_user_id_foreign');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subcategories');
+        Schema::dropIfExists('reviews');
     }
 };

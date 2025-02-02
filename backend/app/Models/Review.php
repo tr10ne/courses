@@ -7,30 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
+    // Использование фабрики для создания объектов модели
     use HasFactory;
 
+    // Заполняемые поля для массового назначения
     protected $fillable = [
-        'text',
-        'rating',
-        'is_approved',
-        'user_id',
+        'text',        // Текст отзыва
+        'rating',      // Оценка отзыва (например, от 1 до 5)
+        'is_approved', // Статус одобрения отзыва (например, "одобрен" или "неодобрен")
+        'user_id',     // Идентификатор пользователя, оставившего отзыв
     ];
 
-    // Связь с пользователем
+    // Определение связи "принадлежит" с пользователем
     public function user()
     {
+        // Возвращаем пользователя, который написал данный отзыв
         return $this->belongsTo(User::class);
     }
 
-    // Связь с курсами (многие-ко-многим через промежуточную таблицу)
+    // Определение связи многие ко многим с курсами
     public function courses()
     {
+        // Возвращаем все курсы, к которым относится данный отзыв через промежуточную таблицу 'review_course'
         return $this->belongsToMany(Course::class, 'review_course', 'review_id', 'course_id');
     }
 
-    // Отношение "многие ко многим" с таблицей `schools`
+    // Определение связи многие ко многим с школами
     public function schools()
     {
-        return $this->belongsToMany(School::class, 'review_school');
+        // Возвращаем все школы, к которым относится данный отзыв через промежуточную таблицу 'review_school'
+        return $this->belongsToMany(School::class, 'review_school', 'review_id', 'school_id');
     }
 }

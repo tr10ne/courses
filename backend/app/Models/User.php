@@ -9,30 +9,32 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    // Использование фабрики для создания объектов модели и уведомлений
     use HasFactory, Notifiable;
 
-    // Поля, которые можно массово назначать
+    // Заполняемые поля для массового назначения
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role_id',
+        'name',       // Имя пользователя
+        'email',      // Электронная почта пользователя
+        'password',   // Пароль пользователя
+        'role_id',    // Идентификатор роли пользователя
     ];
 
-    // Поля, скрытые при сериализации
+    // Поля, которые должны быть скрыты при сериализации (например, для API)
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password',      // Пароль не должен отображаться
+        'remember_token', // Токен для запоминания входа (не показывать)
     ];
 
-    // Поля, которые должны быть приведены к определенным типам
+    // Преобразования для различных типов данных
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime', // Преобразуем 'email_verified_at' в объект даты
     ];
 
-    // Отношение к таблице `roles`
+    // Определение связи "принадлежит" с ролью
     public function role()
     {
+        // Возвращаем роль, которая принадлежит данному пользователю
         return $this->belongsTo(Role::class);
     }
 }
