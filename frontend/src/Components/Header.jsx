@@ -7,10 +7,9 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [isFixed, setIsFixed] = useState(false);
   const lastScrollTopRef = useRef(0);
-
   const headerRef = useRef(null);
+
   const menuRef = useRef(null);
   const searchRef = useRef(null);
 
@@ -61,24 +60,18 @@ const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop = window.scrollY;
-
       if (currentScrollTop === 0) {
-        setIsFixed(false);
         setIsVisible(true);
       } else {
         if (currentScrollTop < lastScrollTopRef.current) {
-          setIsFixed(true);
           setIsVisible(true);
         } else {
           setIsVisible(false);
         }
       }
-
       lastScrollTopRef.current = currentScrollTop;
     };
-
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -91,20 +84,27 @@ const Header = () => {
         setIsMenuOpen(false);
       }
     };
-
     window.addEventListener("resize", handleResize);
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [isMenuOpen]);
 
+  // Добавляем отступ к main, равный высоте header
+  useEffect(() => {
+    if (headerRef.current) {
+      const headerHeight = headerRef.current.offsetHeight;
+      const mainElement = document.querySelector("main");
+      if (mainElement) {
+        mainElement.style.paddingTop = `${headerHeight}px`;
+      }
+    }
+  }, []);
+
   return (
     <header
       ref={headerRef}
-      className={`header ${isFixed ? "header--fixed" : ""} ${
-        isVisible ? "header--visible" : ""
-      }`}
+      className={`header ${isVisible ? "header_visible" : ""}`}
     >
       <div className="container header__inner">
         <div className="header__logo">

@@ -1,9 +1,20 @@
 @use "index" as *;
 
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   width: 100%;
   background-color: #fff;
   transition: transform 0.3s ease-in-out;
+  &_visible {
+    transform: translateY(0);
+  }
+  &:not(.header_visible) {
+    transform: translateY(-100%);
+  }
 
   &.hidden {
     transform: translateY(-100%);
@@ -52,22 +63,6 @@
       font-size: 24px;
     }
   }
-}
-
-.header--fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-}
-
-.header--visible {
-  transform: translateY(0);
-}
-
-.header:not(.header--visible) {
-  transform: translateY(-100%);
 }
 
 .logo {
