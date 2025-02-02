@@ -28,6 +28,10 @@ const Header = () => {
     setIsSearchOpen((prev) => !prev); // Переключаем состояние поиска
   };
 
+  const handleMenuItemClick = () => {
+    setIsMenuOpen(false);
+  };
+
   // Применяем стили для меню и поиска при изменении их состояния
   useEffect(() => {
     if (menuRef.current && headerRef.current) {
@@ -62,9 +66,8 @@ const Header = () => {
         setIsFixed(false);
         setIsVisible(true);
       } else {
-        setIsFixed(true);
-
         if (currentScrollTop < lastScrollTopRef.current) {
+          setIsFixed(true);
           setIsVisible(true);
         } else {
           setIsVisible(false);
@@ -80,6 +83,21 @@ const Header = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // Скрытие мобильного меню при изменении ширины экрана
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768 && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMenuOpen]);
 
   return (
     <header
@@ -97,17 +115,29 @@ const Header = () => {
         <nav ref={menuRef} className={`nav ${isMenuOpen ? "open" : ""}`}>
           <ul className="menu">
             <li className="menu__item">
-              <Link className="menu__link" to="/courses">
+              <Link
+                className="menu__link"
+                to="/courses"
+                onClick={handleMenuItemClick}
+              >
                 Курсы
               </Link>
             </li>
             <li className="menu__item">
-              <Link className="menu__link" to="/schools">
+              <Link
+                className="menu__link"
+                to="/schools"
+                onClick={handleMenuItemClick}
+              >
                 Школы
               </Link>
             </li>
             <li className="menu__item">
-              <Link className="menu__link" to="/reviews">
+              <Link
+                className="menu__link"
+                to="/reviews"
+                onClick={handleMenuItemClick}
+              >
                 Отзывы
               </Link>
             </li>
