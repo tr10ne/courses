@@ -1,0 +1,52 @@
+@use "../index" as *;
+@use "../schoolDetail/courses-item";
+
+.school-detail {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  column-gap: 19px;
+  row-gap: 32px;
+  &__head {
+    grid-column: span 2;
+    & h1 {
+      font-size: 36px;
+      font-family: "Lisboa-Heavy-Regular", sans-serif;
+    }
+  }
+  &__box {
+    display: flex;
+    justify-content: space-between;
+    gap: 80px;
+    margin-top: 7px;
+  }
+  &__details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 33px;
+  }
+  &__about {
+    display: flex;
+    flex-direction: column;
+  }
+  &__link {
+    margin-top: 7px;
+    color: $color-accent;
+    cursor: pointer;
+  }
+  &__btn {
+    padding: 14px 44px;
+    border-radius: 100px;
+    border: 1px solid $color-text1;
+    background-color: $color-bg1;
+    min-width: 225px;
+    &:hover {
+      border: 1px solid transparent;
+      background-color: $color-accent;
+      & p {
+        color: $color-text3;
+      }
+    }
+  }
+}

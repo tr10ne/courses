@@ -42,4 +42,14 @@ class Course extends Model
         // Возвращаем все отзывы, связанные с курсом через промежуточную таблицу 'review_course'
         return $this->belongsToMany(Review::class, 'review_course', 'course_id', 'review_id');
     }
+
+    // Метод для получения среднего рейтинга курса
+    public function getAverageRating(): float
+    {
+        if ($this->reviews()->count() === 0) {
+            return 0; // Если нет отзывов, возвращаем 0
+        }
+
+        return $this->reviews()->avg('rating') ?? 0; // Рассчитываем среднее значение рейтинга
+    }
 }

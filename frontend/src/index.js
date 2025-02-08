@@ -37,7 +37,7 @@ if (container) {
             <Route path="reviews" element={<Reviews />} />
             <Route path="users" element={<Users />} />
             <Route path="courses/:url" element={<CourseDetail />} />
-            <Route path="school/:url" element={<SchoolDetail />} />
+            <Route path="schools/:url" element={<SchoolDetail />} />
           </Route>
         </Routes>
       </Router>

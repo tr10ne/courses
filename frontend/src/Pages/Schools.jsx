@@ -1,59 +1,85 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import Breadcrumbs from "../Components/Breadcrumbs";
+import SchoolItem from "../Components/Schools/SchoolItem";
+import Pagination from "../Components/Pagination";
+import CategoryFilter from "../Components/Schools/CategoryFilter";
 
 const Schools = () => {
   const [schools, setSchools] = useState([]);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+  });
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const perPage = 10;
 
   useEffect(() => {
+    const categoriesQuery =
+      selectedCategories.length > 0
+        ? `&categories=${selectedCategories.join(",")}`
+        : "";
+
     axios
-      .get("http://127.0.0.1:8000/api/schools")
+      .get(
+        `http://127.0.0.1:8000/api/schools?page=${pagination.current_page}&per_page=${perPage}${categoriesQuery}`
+      )
       .then((response) => {
-        console.log("Ответ от API:", response.data); // Проверьте структуру данных
-  
-        // Проверяем, если данные находятся в объекте с ключом 'data'
-        const result = Array.isArray(response.data.data) ? response.data.data : response.data;
-  
-        // Если это массив, сохраняем в состояние
-        if (Array.isArray(result)) {
-          setSchools(result);
-        } else {
-          console.error("Ожидался массив, но получено:", result);
-        }
+        setSchools(response.data.data || []);
+        setPagination(response.data.meta);
       })
       .catch((error) => {
         console.error("Ошибка при загрузке школ:", error);
       });
-  }, []);
+  }, [pagination.current_page, selectedCategories]);
+
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({ ...prev, current_page: newPage }));
+  };
+
+  const handleCategoryChange = (categories) => {
+    setSelectedCategories(categories);
+  };
+
+  const crumbs = [
+    { path: "/", name: "Главная" },
+    { path: "/schools", name: "Онлайн-школы" },
+  ];
 
   return (
-    <div>
-      <h1>Список школ</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Название</th>
-            <th>Описание</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(schools) &&
+    <div className="container">
+      <section className="schools">
+        <div className="schools__head">
+          <Breadcrumbs crumbs={crumbs} />
+          <h1>Онлайн-школы</h1>
+          <p>Список онлайн-школ с рейтингами, отзывами и категориями.</p>
+        </div>
+
+        <div className="schools__aside">
+          <CategoryFilter
+            selectedCategories={selectedCategories}
+            onCategoryChange={handleCategoryChange}
+          />
+        </div>
+
+        <div className="schools__body">
+          {schools.length > 0 ? (
             schools.map((school) => (
-              <tr key={school.id}>
-                <td>{school.id}</td>
-                <td>
-                  <Link to={`/school/${school.url}`}>{school.name}</Link>
-                </td>
-                <td>
-                  <div
-                    dangerouslySetInnerHTML={{ __html: school.description }}
-                  />
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+              <SchoolItem key={school.id} school={school} />
+            ))
+          ) : (
+            <p>Загрузка...</p>
+          )}
+        </div>
+
+        <div className="schools__footer">
+          <Pagination
+            currentPage={pagination.current_page}
+            lastPage={pagination.last_page}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      </section>
     </div>
   );
 };

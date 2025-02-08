@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // Импортируем useLocation
 import Logo from "./Logo";
 
 const Header = () => {
@@ -12,6 +12,8 @@ const Header = () => {
 
   const menuRef = useRef(null);
   const searchRef = useRef(null);
+
+  const location = useLocation(); // Получаем текущий путь
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -116,7 +118,9 @@ const Header = () => {
           <ul className="menu">
             <li className="menu__item">
               <Link
-                className="menu__link"
+                className={`menu__link ${
+                  location.pathname === "/courses" ? "active" : ""
+                }`}
                 to="/courses"
                 onClick={handleMenuItemClick}
               >
@@ -125,7 +129,9 @@ const Header = () => {
             </li>
             <li className="menu__item">
               <Link
-                className="menu__link"
+                className={`menu__link ${
+                  location.pathname === "/schools" ? "active" : ""
+                }`}
                 to="/schools"
                 onClick={handleMenuItemClick}
               >
@@ -134,7 +140,9 @@ const Header = () => {
             </li>
             <li className="menu__item">
               <Link
-                className="menu__link"
+                className={`menu__link ${
+                  location.pathname === "/reviews" ? "active" : ""
+                }`}
                 to="/reviews"
                 onClick={handleMenuItemClick}
               >

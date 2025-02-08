@@ -1,0 +1,7 @@
+@use "../index" as *;
+
+.courses-list__item {
+  min-height: 146px;
+  border: $border;
+  border-radius: 5px;
+}
