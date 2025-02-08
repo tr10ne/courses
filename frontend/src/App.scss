@@ -1,0 +1,16 @@
+// Variables
+@use "./scss/index" as *;
+@use "./scss/animation";
+
+@use "./scss/reset";
+@use "./scss/common";
+@use "./scss/header";
+
+@use "./scss/courses/categories-filter";
+@use "./scss/courses/courses";
+@use "./scss/courses/slider";
+
+
+@use "./scss/home/intro";
+
+@use "./scss/footer";
