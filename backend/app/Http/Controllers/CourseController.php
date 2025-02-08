@@ -17,9 +17,12 @@ class CourseController extends Controller
         $offset = $request->input('offset', 0);    // Смещение для пагинации
         $filter = $request->input('filter', '');   // Фильтр по названию курса
         $selectedCategoryId = $request->input('selectedCategory', null); // Фильтр по выбранной категории
+        $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
+        $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
+        $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
 
         // Создаем запрос для выборки курсов
-        $query = Course::query();
+        $query = Course::with('school', 'school.reviews'); // Предварительная загрузка школы и её отзывов
 
         // Применяем фильтр по названию курса
         if ($filter) {
@@ -37,16 +40,93 @@ class CourseController extends Controller
             $query->whereIn('subcategory_id', $subcategoryIds);
         }
 
-        // Получаем общее количество курсов
-        $total = $query->count();
+
+          // Находим максимальную цену среди курсов
+          $totalMinPrice = $query->min('price');
+          $totalMaxPrice = $query->max('price');
+
+
+        // Фильтр по минимальной цене
+        if ($minPrice != '') {
+            $query->where('price', '>=', $minPrice);
+        }
+        else{
+            $minPrice = $totalMinPrice;
+        }
+
+        // Фильтр по максимальной цене
+        if ($maxPrice != '') {
+            $query->where('price', '<=', $maxPrice);
+        }
+        else{
+            $maxPrice =  $totalMaxPrice;
+        }
+
+        // Создаем копию запроса для получения школ без фильтрации по цене
+    $queryWithoutPriceFilter = clone $query;
+
+// Фильтр по выбранным школам
+if ($selectedSchools) {
+    $schoolIds = explode(',', $selectedSchools); // Преобразуем строку в массив ID школ
+    $query->whereHas('school', function ($q) use ($schoolIds) {
+        $q->whereIn('id', $schoolIds); // Фильтруем курсы по ID школ
+    });
+}
+
+ // Получаем общее количество курсов
+ $total = $query->count();
+
+ if($total==0){
+$maxPrice = 0;
+$minPrice = 0;
+$totalMaxPrice = 0;
+$totalMinPrice = 0;
+ }
+
+
+
+
+ $schoolsWithoutPriceFilter = $queryWithoutPriceFilter
+        // ->whereIn('price', [$minPrice, $maxPrice])
+        ->with('school')
+        ->get()
+        ->pluck('school')
+        ->unique()
+        ->values();
 
         // Получаем курсы с пагинацией
         $courses = $query->limit($limit)->offset($offset)->get();
 
+        // Формируем ответ с дополнительной информацией о школе и количестве отзывов
+        $coursesWithSchoolAndReviewCount = $courses->map(function ($course) {
+            $school = $course->school;
+            $reviewCount = $school ? $school->reviews()->count() : 0;
+
+            // Получаем все отзывы для курса
+            $ratings = $course->reviews()->pluck('rating');
+
+            // Рассчитываем средний рейтинг курса
+            $averageRating = $ratings->isNotEmpty() ? round($ratings->avg(), 1) : null;
+
+            return [
+                'course' => $course,
+                'course_rating' => $averageRating,
+                'school' => $school,
+                'review_count' => $reviewCount,
+            ];
+        });
+
+
+
         // Возвращаем курсы и общее количество
         return response()->json([
-            'courses' => CourseResource::collection($courses),
+            'courses' => $coursesWithSchoolAndReviewCount,
             'total' => $total,
+            'max_price' => $maxPrice, // Максимальная цена среди курсов
+            'min_price' => $minPrice,
+            'max_total_price' => $totalMaxPrice, // Максимальная цена среди курсов
+            'min_total_price' => $totalMinPrice,
+            'schools' => $schoolsWithoutPriceFilter, // Школы без фильтрации по цене
         ]);
     }
 
@@ -162,7 +242,6 @@ class CourseController extends Controller
         $reviews = $course->reviews;
         return response()->json($reviews);
     }
-    
     // Метод для получения курса по URL
     public function showByUrl($url)
     {

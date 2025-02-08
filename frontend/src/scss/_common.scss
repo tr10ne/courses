@@ -31,13 +31,34 @@
   flex-direction: column;
 }
 
+.block-intro{
+  padding-top: 25px;
+padding-bottom: 25px;
+border-bottom: $border;
+}
+
 .title {
-  text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
+
+  font-family: 'Lisboa-Heavy-Regular', sans-serif;
+  font-weight: 400;
+  font-size: 36px;
+  text-transform: none;
+}
+.text{
+  font-family: 'FS-Elliot-Pro-Regular', sans-serif;
+  font-size: 14px;
+font-weight: 400;
+line-height: 24px;
 }
 
 .hide {
-  display: none;
+  display: none !important;
+}
+
+.disabled {
+  pointer-events: none; /* Отключает взаимодействие */
+  opacity: 0.6; /* Делает содержимое полупрозрачным, чтобы показать, что оно неактивно */
 }
 
 .mask {

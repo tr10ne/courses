@@ -1,34 +1,207 @@
 @use "../index" as *;
 
-.courses-main{
-display: grid;
-grid-template-columns: 250px 1fr;
-gap: 20px;
-padding-top: 43px;
+.courses-main {
+	display: grid;
+	grid-template-columns: 250px 1fr;
+	gap: 20px;
+	padding-top: 43px;
+
+	&__header {
+		// grid-column: 1 / 3; // занимает всю ширину сетки
+	}
 }
 
-.courses-list{
-    display: flex;
+
+.request-result-count {
+	color: $color-accent;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+
+/* ============================= */
+/* Filter block */
+
+.courses-filter {
+	border: $border;
+	border-radius: 5px;
+	align-self: start;
+    background-color: $color-bg1;
+    overflow: hidden;
+
+	&__header {
+		padding: 15px 20px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: $border;
+
+		font-size: 18px;
+		line-height: 22px;
+	}
+
+	&__content {
+		padding: 15px 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+
+		&__title {
+			margin-bottom: 15px;
+		}
+	}
+}
+
+.courses-filter__block {
+	display: flex;
+	flex-direction: column;
+
+	&_hide {
+		& .schools-filter {
+			max-height: 200px;
+			overflow: hidden;
+
+		}
+
+        & .show-schools-btn {
+            display: block;
+        }
+	}
+}
+
+
+.courses-filter__reset-btn {
+	display: flex;
+	padding: 2px 4px;
+
+	& svg {
+		width: 19px;
+		fill: $color-text1_2;
+		transition: 0.3s;
+	}
+
+	&:hover,
+	&:focus {
+		& svg {
+			fill: $color-accent;
+		}
+	}
+}
+
+/* ============================= */
+/* Schools filter */
+
+.schools-filter {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 15px;
+}
+
+.show-schools-btn {
+    display: none;
+    position: relative;
+    padding: 11px;
+
+    box-shadow: 0 -8px 21px 15px $color-bg1;
+    font-size: 14px;
+    line-height: 14px;
+    border-radius: 20px;
+    font-family: inherit;
+    transition: 0.2s;
+    cursor: pointer;
+
+   &:hover{
+color: $color-accent-inner;
+background-color: $color-accent;
+    }
+}
+
+.schools-filter__lbl {
+	display: grid;
+	grid-template-columns: 1fr 15px;
+}
+
+.schools-filter__checkbox {
+	display: none;
+}
+
+.schools-filter__lbl__span {
+	position: relative;
+	width: 15px;
+	height: 15px;
+	border: 2px solid $color-text1_3;
+	cursor: pointer;
+	transition: 0.3s;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 0px;
+		height: 0px;
+		background-color: $color-accent;
+		transition: 0.3s;
+	}
+
+	&.checked {
+		border-color: $color-accent;
+		&::after {
+			width: calc(100% + 2px);
+			height: calc(100% + 2px);
+		}
+	}
+}
+
+/* ============================= */
+/* Courses list */
+
+
+.courses-content {
+	display: flex;
     flex-direction: column;
-    gap: 10px;
-
-    list-style: none;
+    gap: 70px;
 }
 
-.courses-item{
-    padding: 23px;
-
-    box-shadow: 0px 9px 15px 0px rgba(226, 226, 226, 0.25);
-    border: $border;
-    border-radius: 5px;
-display: grid;
-grid-template-columns: 1fr 240px;
-    height: 250px;
+.courses-grid{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    align-items: end;
+    justify-items: center;
+    padding-left: 23px;
+    padding-right: 23px;
 }
 
-.request-result-count{
-    color: $color-accent;
-font-size: 18px;
+.column-title{
+    font-family: 'FS-Elliot-Pro-Regular', sans-serif;
+    font-size: 12px;
 font-weight: 700;
-line-height: 24px;
+line-height: 15px;
+color: $color-text1_2;
+}
+
+
+
+.courses-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	list-style: none;
+}
+
+.courses-item {
+	padding: 23px;
+
+	box-shadow: 0px 9px 15px 0px rgba(226, 226, 226, 0.25);
+	border: $border;
+	border-radius: 5px;
+		height: 250px;
 }

@@ -1,20 +1,15 @@
 @use "index" as *;
 
 .header {
+
+  width: 100%;
+  background-color: $color-bg1;
+  transition: transform 0.2s linear;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
   z-index: 1000;
-  width: 100%;
-  background-color: #fff;
-  transition: transform 0.3s ease-in-out;
-  &_visible {
-    transform: translateY(0);
-  }
-  &:not(.header_visible) {
-    transform: translateY(-100%);
-  }
+  border-bottom: $border;
 
   &.hidden {
     transform: translateY(-100%);
