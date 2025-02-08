@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../../js/config.js";
 
 const CategoryFilter = ({ selectedCategories, onCategoryChange }) => {
   const [categories, setCategories] = useState([]);
@@ -8,7 +9,7 @@ const CategoryFilter = ({ selectedCategories, onCategoryChange }) => {
   useEffect(() => {
     // Загружаем список категорий с API
     axios
-      .get("http://127.0.0.1:8000/api/categories")
+      .get(`${apiUrl}/api/categories`)
       .then((response) => {
         let categoriesData = [];
 

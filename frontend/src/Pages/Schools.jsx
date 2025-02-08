@@ -4,6 +4,7 @@ import Breadcrumbs from "../Components/Breadcrumbs";
 import SchoolItem from "../Components/Schools/SchoolItem";
 import Pagination from "../Components/Pagination";
 import CategoryFilter from "../Components/Schools/CategoryFilter";
+import { apiUrl } from "../js/config.js";
 
 const Schools = () => {
   const [schools, setSchools] = useState([]);
@@ -22,7 +23,7 @@ const Schools = () => {
 
     axios
       .get(
-        `http://127.0.0.1:8000/api/schools?page=${pagination.current_page}&per_page=${perPage}${categoriesQuery}`
+        `${apiUrl}/api/schools?page=${pagination.current_page}&per_page=${perPage}${categoriesQuery}`
       )
       .then((response) => {
         setSchools(response.data.data || []);

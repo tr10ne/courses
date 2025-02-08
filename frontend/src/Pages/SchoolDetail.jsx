@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 // import Pagination from "../Components/Pagination";
+import { apiUrl } from "../js/config.js";
 
 const SchoolDetail = () => {
   const { url } = useParams();
@@ -13,7 +14,7 @@ const SchoolDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/api/schools/url/${url}`)
+      .get(`${apiUrl}/api/schools/url/${url}`)
       .then((response) => {
         const result = response.data
           ? response.data.data || response.data
