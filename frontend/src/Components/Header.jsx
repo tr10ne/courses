@@ -1,21 +1,19 @@
-
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // Импортируем useLocation
 import Logo from "./Logo";
-import { debounce } from 'lodash';
 
-const Header = ({ pageRef }) => {
+const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
   const lastScrollTopRef = useRef(0);
-  const menuItemsRef = useRef([]); // Ссылка для хранения элементов меню
-
   const headerRef = useRef(null);
 
   const menuRef = useRef(null);
   const searchRef = useRef(null);
+
+  const location = useLocation(); // Получаем текущий путь
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -34,32 +32,6 @@ const Header = ({ pageRef }) => {
   const handleMenuItemClick = () => {
     setIsMenuOpen(false);
   };
-
-  useEffect(()=>{
-    const header = headerRef.current;
-    const page = pageRef.current;
-
-    if (header && page) {
-      const updateStyle=()=>{
-        const height = header.offsetHeight;
-        page.style.marginTop = `${height}px`;
-
-        document.documentElement.style.setProperty(
-          "--element-height",
-          `calc(100vh - ${height}px)`
-        );
-      };
-
-      updateStyle();
-
-      window.addEventListener('resize', updateStyle);
-
-      return () => {
-        window.removeEventListener('resize', updateStyle);
-      };
-    }
-
-  }, [pageRef]);
 
   // Применяем стили для меню и поиска при изменении их состояния
   useEffect(() => {
@@ -86,28 +58,21 @@ const Header = ({ pageRef }) => {
     }
   }, [isSearchOpen]);
 
+  // Обработка скролла
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop = window.scrollY;
-      const threshold = 100;
-
-      if (Math.abs(currentScrollTop - lastScrollTopRef.current) >= threshold) {
-        if (currentScrollTop > lastScrollTopRef.current) {
-            // Скролл вниз
-            setIsHeaderVisible(false);
-
+      if (currentScrollTop === 0) {
+        setIsVisible(true);
+      } else {
+        if (currentScrollTop < lastScrollTopRef.current) {
+          setIsVisible(true);
         } else {
-            // Скролл вверх
-            setIsHeaderVisible(true);
+          setIsVisible(false);
         }
-
-        setIsSearchOpen(false);
-        setIsMenuOpen(false);
-
-      lastScrollTopRef.current = currentScrollTop <= 0 ? 0 : currentScrollTop; // Для мобильных браузеров
+      }
+      lastScrollTopRef.current = currentScrollTop;
     };
-  }
-
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -117,37 +82,31 @@ const Header = ({ pageRef }) => {
   // Скрытие мобильного меню при изменении ширины экрана
   useEffect(() => {
     const handleResize = () => {
-     setIsMenuOpen(false);
-     setIsSearchOpen(false);
+      if (window.innerWidth > 768 && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
     };
-
-    const debouncedResize = debounce(handleResize, 200); // debounce на 200 мс
-    window.addEventListener("resize", debouncedResize);
-
+    window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [isMenuOpen]);
 
-
+  // Добавляем отступ к main, равный высоте header
   useEffect(() => {
-    menuItemsRef.current.forEach((item) => {
-      if (item) {
-        const setTitle = () => {
-          item.setAttribute("title", item.textContent);
-        };
-        item.addEventListener("mouseenter", setTitle);
-        return () => {
-          item.removeEventListener("mouseenter", setTitle);
-        };
+    if (headerRef.current) {
+      const headerHeight = headerRef.current.offsetHeight;
+      const mainElement = document.querySelector("main");
+      if (mainElement) {
+        mainElement.style.paddingTop = `${headerHeight}px`;
       }
-    });
-  }, [isMenuOpen]); // Зависимость от состояния меню, чтобы обновить обработчики при открытии/закрытии
+    }
+  }, []);
 
   return (
     <header
       ref={headerRef}
-      className={`header ${isHeaderVisible ? "" : "hidden"}`}
+      className={`header ${isVisible ? "header_visible" : ""}`}
     >
       <div className="container header__inner">
         <div className="header__logo">
@@ -159,8 +118,9 @@ const Header = ({ pageRef }) => {
           <ul className="menu">
             <li className="menu__item">
               <Link
-                className="menu__link"
-                ref={(el) => (menuItemsRef.current[0] = el)}
+                className={`menu__link ${
+                  location.pathname === "/courses" ? "active" : ""
+                }`}
                 to="/courses"
                 onClick={handleMenuItemClick}
               >
@@ -169,9 +129,9 @@ const Header = ({ pageRef }) => {
             </li>
             <li className="menu__item">
               <Link
-
-                className="menu__link"
-                ref={(el) => (menuItemsRef.current[1] = el)}
+                className={`menu__link ${
+                  location.pathname === "/schools" ? "active" : ""
+                }`}
                 to="/schools"
                 onClick={handleMenuItemClick}
               >
@@ -180,8 +140,9 @@ const Header = ({ pageRef }) => {
             </li>
             <li className="menu__item">
               <Link
-                className="menu__link"
-                ref={(el) => (menuItemsRef.current[2] = el)}
+                className={`menu__link ${
+                  location.pathname === "/reviews" ? "active" : ""
+                }`}
                 to="/reviews"
                 onClick={handleMenuItemClick}
               >
