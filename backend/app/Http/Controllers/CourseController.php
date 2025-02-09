@@ -13,7 +13,7 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         // Получаем параметры из запроса
-        $limit = $request->input('limit', 20);    // Количество записей на страницу
+        $limit = $request->input('limit', 10);    // Количество записей на страницу
         $offset = $request->input('offset', 0);    // Смещение для пагинации
         $filter = $request->input('filter', '');   // Фильтр по названию курса
         $selectedCategoryId = $request->input('selectedCategory', null); // Фильтр по выбранной категории
