@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-// import Slider from "react-slider"; // Импортируем react-slider
-// import "react-slider/slnpm install react-sliderider.css"; // Импортируем стили для ползунка
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css"; // Импортируем стили
+import Categories from "../Components/Courses/Categories";
 
 const Courses = () => {
 	const recordsPerPage = 20; // Количество записей на странице
@@ -16,15 +15,14 @@ const Courses = () => {
 	const [error, setError] = useState(null); // Состояние для ошибок
 
 	const [loadingCourses, setLoadingCourses] = useState(true); // Состояние для отслеживания загрузки
-	const [loadingCategories, setLoadingCategories] = useState(true); // Состояние для отслеживания загрузки
-	const [loadingSchools, setLoadingSchools] = useState(true); // Состояние для отслеживания загрузки
+		const [loadingSchools, setLoadingSchools] = useState(true); // Состояние для отслеживания загрузки
 	const [loadingPrice, setLoadingPrice] = useState(true); // Состояние для отслеживания загрузки
 	const [disabledPrise, setDisabledPrice] = useState(true); // Состояние для отслеживания загрузки
 	const [disabledSchools, setDisabledSchools] = useState(true); // Состояние для отслеживания загрузки
 	const [disabledCategories, setDisabledCategories] = useState(true); // Состояние для отслеживания загрузки
 
 	const [selectedCategory, setSelectedCategory] = useState(null); // Состояние для выбранной категории
-	const [categories, setCategories] = useState([]);
+
 	const [filter, setFilter] = useState("");
 
 	// Состояния для ползунка
@@ -175,36 +173,6 @@ const Courses = () => {
 		setCurrentPage(1); // Сбрасываем на первую страницу при изменении поискового запроса
 	}, [location.search]);
 
-	useEffect(() => {
-
-		axios
-			.get("http://127.0.0.1:8000/api/categories")
-			.then((response) => {
-				console.log("Ответ от API:", response.data); // Проверьте структуру данных
-
-				// Если данные — это массив напрямую или массив внутри объекта с ключом 'data'
-				const result = Array.isArray(response.data)
-					? response.data
-					: response.data && Array.isArray(response.data.data)
-					? response.data.data
-					: null;
-
-				// Если это массив, сохраняем в состояние
-				if (Array.isArray(result)) {
-					setCategories(result);
-				} else {
-					console.error("Ожидался массив, но получено:", response.data);
-				}
-
-			})
-			.catch((error) => {
-				console.error("Ошибка при загрузке категорий:", error);
-
-			}
-    ).finally(()=>{
-      setLoadingCategories(false);
-    });
-	}, []);
 
 	const renderCourses = () => {
 		if (loadingCourses) return <p>Загрузка...</p>;
@@ -293,49 +261,49 @@ const Courses = () => {
 		handleSliderAfterChange(newValues);
 	};
 
-	const renderCategories = () => {
-		const handleCategoryChange = (e) => {
-			loadingDefautSliderValues.current = true;
-			setLoadingSchools(true);
-			setLoadingPrice(true);
-			setSelectedSchools([]);
-			setSliderValues(["", ""]);
-      setCheckedSchoolSpans({});
-			const newCategory = e.target.value;
+	const handleCategoryChange = (e) => {
+		loadingDefautSliderValues.current = true;
+		setLoadingSchools(true);
+		setLoadingPrice(true);
+		setSelectedSchools([]);
+		setSliderValues(["", ""]);
+  setCheckedSchoolSpans({});
+		const newCategory = e.target.value;
 
-			// Если новая категория совпадает с текущей, сбрасываем выбор
-			if (selectedCategory === newCategory) {
-				setSelectedCategory(null);
-			} else {
-				setSelectedCategory(newCategory);
-			}
-			setCurrentPage(1);
-		};
-
-		return (
-			<>
-				{categories.map((category) => (
-					<label
-						className={`categories-filter__lbl ${
-							selectedCategory === category.id.toString() ? "checked" : ""
-						}`}
-						key={category.id}
-					>
-						{category.name}
-						<input
-							className="categories-filter__radio"
-							type="radio"
-							name="categories-filter-radio"
-							value={category.id}
-							onChange={handleCategoryChange}
-							onClick={handleCategoryChange}
-							checked={selectedCategory === category.id.toString()} // Устанавливаем checked, если категория выбрана
-						/>
-					</label>
-				))}
-			</>
-		);
+		// Если новая категория совпадает с текущей, сбрасываем выбор
+		if (selectedCategory === newCategory) {
+			setSelectedCategory(null);
+		} else {
+			setSelectedCategory(newCategory);
+		}
+		setCurrentPage(1);
 	};
+	// const renderCategories = () => {
+
+	// 	return (
+	// 		<>
+	// 			{categories.map((category) => (
+	// 				<label
+	// 					className={`categories-filter__lbl ${
+	// 						selectedCategory === category.id.toString() ? "checked" : ""
+	// 					}`}
+	// 					key={category.id}
+	// 				>
+	// 					{category.name}
+	// 					<input
+	// 						className="categories-filter__radio"
+	// 						type="radio"
+	// 						name="categories-filter-radio"
+	// 						value={category.id}
+	// 						onChange={handleCategoryChange}
+	// 						onClick={handleCategoryChange}
+	// 						checked={selectedCategory === category.id.toString()} // Устанавливаем checked, если категория выбрана
+	// 					/>
+	// 				</label>
+	// 			))}
+	// 		</>
+	// 	);
+	// };
 
 	const renderSchoolCheckboxes = () => {
 		return schools.map((school) => (
@@ -405,13 +373,11 @@ const Courses = () => {
 				</div>
 			</div>
 
-			<div className="categories-filter">
-
-				<div className={`categories-filter__inner container ${disabledCategories?'disabled':''}`}>
-
-					{loadingCategories? <p>загрузка...</p> : renderCategories()}
-				</div>
-			</div>
+			<Categories
+               selectedCategory={selectedCategory}
+        handleCategoryChange={handleCategoryChange}
+        disabledCategories={disabledCategories}
+      />
 
 			<div className="courses-main container">
 				<p className="request-result-count">
