@@ -8,9 +8,10 @@ import Filter from "../Components/Courses/Filter";
 import Loading from "../Components/Loading";
 import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
+import Pagination from "../Components/Courses/Pagination.jsx";
 
 const Courses = () => {
-	const recordsPerPage = 20; // Количество записей на странице
+	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
 
 	const [courses, setCourses] = useState([]);
@@ -187,30 +188,14 @@ const Courses = () => {
 					})}
 				</ul>
 				<div>
-					<button
-						onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-						disabled={currentPage === 1}
-					>
-						Назад
-					</button>
-					{Array.from(
-						{ length: Math.ceil(totalRecords / recordsPerPage) },
-						(_, i) => (
-							<button
-								key={i}
-								onClick={() => setCurrentPage(i + 1)}
-								disabled={currentPage === i + 1} // Деактивируем кнопку для текущей страницы
-							>
-								{i + 1}
-							</button>
-						)
-					)}
-					<button
-						onClick={() => setCurrentPage((prev) => prev + 1)}
-						disabled={currentPage === Math.ceil(totalRecords / recordsPerPage)}
-					>
-						Вперед
-					</button>
+
+
+					<Pagination
+						totalRecords={totalRecords}
+						recordsPerPage={recordsPerPage}
+						currentPage={currentPage}
+						setCurrentPage={setCurrentPage}
+					/>
 				</div>
 			</>
 		);

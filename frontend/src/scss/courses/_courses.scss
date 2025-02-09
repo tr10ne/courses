@@ -6,7 +6,7 @@
 	gap: 20px;
 	padding-top: 43px;
 
-	
+
 }
 
 
@@ -138,7 +138,7 @@ background-color: $color-accent;
 	transition: 0.3s;
 
 	&::after {
-		content: "";
+		content: "✔";
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -146,14 +146,20 @@ background-color: $color-accent;
 		width: 0px;
 		height: 0px;
 		background-color: $color-accent;
+
+		font-size: 14px;
+	color: $color-accent-inner;
+
 		transition: 0.3s;
 	}
 
 	&.checked {
 		border-color: $color-accent;
+		background-color: $color-accent;
+
 		&::after {
-			width: calc(100% + 2px);
-			height: calc(100% + 2px);
+			width: 100% ;
+			height: 100%;
 		}
 	}
 }
@@ -167,6 +173,8 @@ background-color: $color-accent;
     flex-direction: column;
     gap: 70px;
 }
+
+
 
 .courses-grid{
     display: grid;
@@ -185,7 +193,13 @@ line-height: 15px;
 color: $color-text1_2;
 }
 
-
+.courses-item__details{
+	display: grid;
+	gap: 5px 20px;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	justify-items: start
+}
 
 .courses-list {
 	display: flex;
@@ -197,9 +211,95 @@ color: $color-text1_2;
 
 .courses-item {
 	padding: 23px;
+	display: grid;
+	grid-template-columns: 1fr 134px;
+	gap: 20px;
 
 	box-shadow: 0px 9px 15px 0px rgba(226, 226, 226, 0.25);
 	border: $border;
 	border-radius: 5px;
-		height: 250px;
+		min-height: 146px;
 }
+
+.courses-item__content{
+	display: flex;
+	flex-direction: column;
+	gap: 5px ;
+	justify-content: center;
+}
+
+.courses-item__title{
+	font-family: 'Lisboa-Pro-Bold', sans-serif;
+	font-size: 18px;
+font-weight: 700;
+line-height: 24px;
+}
+
+.courses-item__rating{
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+
+	font-size: 18px;
+	line-height: 27px;
+	& svg {
+		width: 14px;
+		height: 14px;
+	}
+}
+.courses-item__reviews-count{
+font-size: 12px;
+	color: $color-accent;
+	line-height: 27px;
+}
+
+.courses-item__price{
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 24px;
+	display: flex;
+	gap: 2px;
+
+	&__currency{
+		font-size: 12px;
+	}
+}
+
+.courses-item__school{
+	font-size: 10px;
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+		padding: 6px 10px;
+		background-color: $color-bg4;
+		border-radius: 50px;
+
+}
+
+.courses-item__controls{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap:4px ;
+}
+
+.courses-item__more-link{
+width: 100%;padding: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+font-weight: 700;
+line-height: 24px;
+border-radius: 100px;
+
+background-color: $color-accent;
+color: $color-accent-inner;
+border: 1px solid $color-accent;
+
+transition: .3s;
+
+&:hover,
+&:focus{
+	background-color: $color-bg1;
+	color: $color-text1;
+	border: 1px solid $color-text1;
+}}
