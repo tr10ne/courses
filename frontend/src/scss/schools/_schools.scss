@@ -1,25 +1,9 @@
 @use "../index" as *;
 
 .schools {
-	// margin-top: 30px;
 	display: grid;
 	grid-template-columns: 1fr 3fr;
 	column-gap: 19px;
-	// row-gap: 32px;
-
-	// &__head {
-	// 	grid-column: span 2;
-	// 	display: flex;
-	// 	flex-direction: column;
-	// 	gap: 10px;
-	// & h1 {
-	//   font-size: 36px;
-	//   font-family: "Lisboa-Heavy-Regular", sans-serif;
-	// }
-	// & p {
-	//   font-family: "FS-Elliot-Pro-Regular", sans-serif;
-	// }
-	// }
 	&__body {
 		display: flex;
 		flex-direction: column;
