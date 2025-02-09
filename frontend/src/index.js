@@ -20,7 +20,7 @@ const container = document.getElementById("root");
 if (container) {
   const root = createRoot(container);
   root.render(
-    <React.StrictMode>
+    // <React.StrictMode>
       <Router>
         <Routes>
           <Route
@@ -41,6 +41,6 @@ if (container) {
           </Route>
         </Routes>
       </Router>
-    </React.StrictMode>
+    // </React.StrictMode>
   );
 }

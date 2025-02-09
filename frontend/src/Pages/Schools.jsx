@@ -49,11 +49,11 @@ const Schools = () => {
 
   return (
     <div className="container">
-      <section className="schools">
-        <div className="schools__head">
+      <section className="schools section">
+        <div className="schools__head block-head">
           <Breadcrumbs crumbs={crumbs} />
-          <h1>Онлайн-школы</h1>
-          <p>Список онлайн-школ с рейтингами, отзывами и категориями.</p>
+          <h1 className="title">Онлайн-школы</h1>
+          <p className="text">Список онлайн-школ с рейтингами, отзывами и категориями.</p>
         </div>
 
         <div className="schools__aside">
