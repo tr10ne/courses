@@ -225,6 +225,7 @@ color: $color-text1_2;
 	display: flex;
 	flex-direction: column;
 	gap: 5px ;
+	justify-content: center;
 }
 
 .courses-item__title{
@@ -276,6 +277,7 @@ font-size: 12px;
 .courses-item__controls{
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	gap:4px ;
 }
 
