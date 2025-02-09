@@ -6,14 +6,12 @@ const Category = ({
   handleCategoryChange
 }) => {
 
-
-
   return (
       <label
               className={`categories-filter__lbl ${
                 selectedCategory === category.id.toString() ? "checked" : ""
               }`}
-              key={category.id}
+              
             >
               {category.name}
               <input

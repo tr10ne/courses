@@ -9,24 +9,22 @@ const Categories = ({
 	disabledCategories,
 }) => {
 
-const [loadingCategories, setLoadingCategories] = useState(true); // Состояние для отслеживания загрузки
+const [loadingCategories, setLoadingCategories] = useState(true);
 const [categories, setCategories] = useState([]);
 
 useEffect(() => {
         axios
             .get("http://127.0.0.1:8000/api/categories")
             .then((response) => {
-                console.log("Ответ от API:", response.data); // Проверьте структуру данных
+                console.log("Ответ от API:", response.data);
 
-                // Если данные — это массив напрямую или массив внутри объекта с ключом 'data'
                 const result = Array.isArray(response.data)
                     ? response.data
                     : response.data && Array.isArray(response.data.data)
                     ? response.data.data
                     : null;
 
-                // Если это массив, сохраняем в состояние
-                if (Array.isArray(result)) {
+                 if (Array.isArray(result)) {
                     setCategories(result);
                 } else {
                     console.error("Ожидался массив, но получено:", response.data);
@@ -54,6 +52,7 @@ useEffect(() => {
 				) : (
 					categories.map((category) => (
 						<Category
+						key={category.id}
 							category={category}
 							selectedCategory={selectedCategory}
 							handleCategoryChange={handleCategoryChange}
