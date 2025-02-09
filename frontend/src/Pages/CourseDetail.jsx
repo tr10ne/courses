@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { apiUrl } from "../js/config.js";
 
 const CourseDetail = () => {
   const { url } = useParams(); // Получаем параметр `url` из URL
@@ -12,7 +13,7 @@ const CourseDetail = () => {
   useEffect(() => {
     // Запрос к API для получения курса по его `url`
     axios
-      .get(`http://127.0.0.1:8000/api/courses/url/${url}`)
+      .get(`${apiUrl}/api/courses/url/${url}`)
       .then((response) => {
         // Проверяем, если данные находятся в объекте с ключом 'data'
         const result = response.data

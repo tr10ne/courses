@@ -6,10 +6,11 @@ import Categories from "../Components/Courses/Categories";
 import Course from "../Components/Courses/Course";
 import Filter from "../Components/Courses/Filter";
 import Loading from "../Components/Loading";
+import { apiUrl } from "../js/config.js";
 
 const Courses = () => {
-	const recordsPerPage = 20; // Количество записей на странице
-	const location = useLocation(); //// Хук для отслеживания изменений в URL
+  const recordsPerPage = 20; // Количество записей на странице
+  const location = useLocation(); //// Хук для отслеживания изменений в URL
 
 	const [courses, setCourses] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -25,10 +26,10 @@ const Courses = () => {
 	const [selectedCategory, setSelectedCategory] = useState(null);
 	const [filter, setFilter] = useState("");
 
-	// Состояния для ползунка
-	const [sliderMin, setSliderMin] = useState(0);
-	const [sliderMax, setSliderMax] = useState(0);
-	const [sliderValues, setSliderValues] = useState(["", ""]);
+  // Состояния для ползунка
+  const [sliderMin, setSliderMin] = useState(0);
+  const [sliderMax, setSliderMax] = useState(0);
+  const [sliderValues, setSliderValues] = useState(["", ""]);
 
 	//
 	const [schools, setSchools] = useState([]);
@@ -40,10 +41,11 @@ const Courses = () => {
 	const abortControllerRef = useRef(null);
 	const loadingDefautSliderValues = useRef(true);
 
+
 	const fetchCourses = useCallback(() => {
 		// Отменяем предыдущий запрос, если он существует
 		if (abortControllerRef.current) {
-			abortControllerRef.current.abort();
+		  abortControllerRef.current.abort();
 		}
 
 		// Создаем новый AbortController для текущего запроса
@@ -59,102 +61,102 @@ const Courses = () => {
 		setFilter(newFilter);
 
 		const params = {
-			limit: recordsPerPage,
-			offset: (currentPage - 1) * recordsPerPage,
-			selectedCategory: selectedCategory,
-			filter: newFilter, // Передаем фильтр
-			minPrice: sliderValues[0], // Используем значения из ползунка
-			maxPrice: sliderValues[1],
-			selectedSchools: selectedSchools.join(","), // Передаем выбранные школы
+		  limit: recordsPerPage,
+		  offset: (currentPage - 1) * recordsPerPage,
+		  selectedCategory: selectedCategory,
+		  filter: newFilter, // Передаем фильтр
+		  minPrice: sliderValues[0], // Используем значения из ползунка
+		  maxPrice: sliderValues[1],
+		  selectedSchools: selectedSchools.join(","), // Передаем выбранные школы
 		};
 
 		axios
-			.get("http://127.0.0.1:8000/api/courses", {
-				params,
-				signal: controller.signal, // Передаем signal для отмены запроса
-			})
-			.then((response) => {
-				console.log("Ответ от API:", response.data); // Проверьте структуру данных
+		  .get(`${apiUrl}/api/courses`, {
+			params,
+			signal: controller.signal, // Передаем signal для отмены запроса
+		  })
+		  .then((response) => {
+			console.log("Ответ от API:", response.data); // Проверьте структуру данных
 
-				// Обрабатываем данные: если ответ — это объект с ключом 'courses' или просто массив
-				const courses = Array.isArray(response.data)
-					? response.data
-					: response.data && Array.isArray(response.data.courses)
-					? response.data.courses
-					: null;
-				console.log("message");
+			// Обрабатываем данные: если ответ — это объект с ключом 'courses' или просто массив
+			const courses = Array.isArray(response.data)
+			  ? response.data
+			  : response.data && Array.isArray(response.data.courses)
+			  ? response.data.courses
+			  : null;
+			console.log("message");
 
-				// Если данные курса есть, сохраняем их в состояние
-				if (courses) {
-					setCourses(courses);
-					setSchools(response.data.schools);
-					setTotalRecords(response.data.total || 0); // Устанавливаем общее количество записей
+			// Если данные курса есть, сохраняем их в состояние
+			if (courses) {
+			  setCourses(courses);
+			  setSchools(response.data.schools);
+			  setTotalRecords(response.data.total || 0); // Устанавливаем общее количество записей
 
-					setSliderMin(parseFloat(response.data.min_total_price));
-					setSliderMax(parseFloat(response.data.max_total_price));
+			  setSliderMin(parseFloat(response.data.min_total_price));
+			  setSliderMax(parseFloat(response.data.max_total_price));
 
-					if (loadingDefautSliderValues.current) {
-						setSliderValues([
-							parseFloat(response.data.min_total_price),
-							parseFloat(response.data.max_total_price),
-						]);
+			  if (loadingDefautSliderValues.current) {
+				setSliderValues([
+				  parseFloat(response.data.min_total_price),
+				  parseFloat(response.data.max_total_price),
+				]);
 
-						loadingDefautSliderValues.current = false;
-					}
-				} else {
-					console.error("Ожидались курсы, но получено:", response.data);
-					setError("Не удалось загрузить курсы.");
-				}
-			})
-			.catch((error) => {
-				if (error.name !== "CanceledError") {
-					// Игнорируем ошибку отмены запроса
-					console.error("Ошибка при загрузке курсов:", error);
-					setError("Не удалось загрузить курсы. Пожалуйста, попробуйте позже.");
-				}
-			})
-			.finally(() => {
-				setLoadingCourses(false);
-				setLoadingSchools(false);
-				setLoadingPrice(false);
-				setDisabledPrice(false);
-				setDisabledSchools(false);
-				setDisabledCategories(false);
-			});
+				loadingDefautSliderValues.current = false;
+			  }
+			} else {
+			  console.error("Ожидались курсы, но получено:", response.data);
+			  setError("Не удалось загрузить курсы.");
+			}
+		  })
+		  .catch((error) => {
+			if (error.name !== "CanceledError") {
+			  // Игнорируем ошибку отмены запроса
+			  console.error("Ошибка при загрузке курсов:", error);
+			  setError("Не удалось загрузить курсы. Пожалуйста, попробуйте позже.");
+			}
+		  })
+		  .finally(() => {
+			setLoadingCourses(false);
+			setLoadingSchools(false);
+			setLoadingPrice(false);
+			setDisabledPrice(false);
+			setDisabledSchools(false);
+			setDisabledCategories(false);
+		  });
 		// Очищаем AbortController при размонтировании или изменении зависимостей
 		return () => {
-			if (abortControllerRef.current) {
-				abortControllerRef.current.abort();
-			}
+		  if (abortControllerRef.current) {
+			abortControllerRef.current.abort();
+		  }
 		};
 
 		//Если вы уверены, что sliderValues, sliderMin и sliderMax не должны вызывать пересоздание fetchCourses, можно отключить предупреждение с помощью комментария
 		//  eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
+	  }, [
 		currentPage,
 		selectedCategory,
 		location.search,
 		reloadSate,
 		selectedSchools,
-	]);
+	  ]);
 
-	//чтобы избежать утечек памяти.
-	useEffect(() => {
-		return () => {
-			if (abortControllerRef.current) {
-				abortControllerRef.current.abort();
-			}
-		};
-	}, []);
+  //чтобы избежать утечек памяти.
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
-	useEffect(() => {
-		fetchCourses();
-	}, [fetchCourses]);
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
-	// Обработчик изменения значений ползунка
-	const handleSliderChange = (values) => {
-		setSliderValues(values);
-	};
+  // Обработчик изменения значений ползунка
+  const handleSliderChange = (values) => {
+    setSliderValues(values);
+  };
 
 	// Обработчик завершения перемещения ползунка
 	const handleSliderAfterChange = (values) => {
@@ -168,9 +170,9 @@ const Courses = () => {
 		else setRealoadState(!reloadSate);
 	};
 
-	useEffect(() => {
-		setCurrentPage(1); // Сбрасываем на первую страницу при изменении поискового запроса
-	}, [location.search]);
+  useEffect(() => {
+    setCurrentPage(1); // Сбрасываем на первую страницу при изменении поискового запроса
+  }, [location.search]);
 
 	const renderCourses = () => {
 		if (loadingCourses) return <Loading />;
@@ -214,19 +216,19 @@ const Courses = () => {
 		);
 	};
 
-	const handleManualInputChange = (index, value) => {
-		const newValue = parseFloat(value);
-		if (isNaN(newValue)) return;
+  const handleManualInputChange = (index, value) => {
+    const newValue = parseFloat(value);
+    if (isNaN(newValue)) return;
 
-		const newValues = [...sliderValues];
-		newValues[index] = newValue;
+    const newValues = [...sliderValues];
+    newValues[index] = newValue;
 
-		// Проверка, чтобы значения не выходили за пределы диапазона
-		if (index === 0 && newValue >= sliderValues[1]) return;
-		if (index === 1 && newValue <= sliderValues[0]) return;
+    // Проверка, чтобы значения не выходили за пределы диапазона
+    if (index === 0 && newValue >= sliderValues[1]) return;
+    if (index === 1 && newValue <= sliderValues[0]) return;
 
-		handleSliderAfterChange(newValues);
-	};
+    handleSliderAfterChange(newValues);
+  };
 
 	const handleCategoryChange = (e) => {
 		loadingDefautSliderValues.current = true;
@@ -259,11 +261,11 @@ const Courses = () => {
 			}
 		});
 
-		setCheckedSchoolSpans((prev) => ({
-			...prev,
-			[schoolId]: !prev[schoolId],
-		}));
-	};
+    setCheckedSchoolSpans((prev) => ({
+      ...prev,
+      [schoolId]: !prev[schoolId],
+    }));
+  };
 
 	const handleFilterReset = () => {
 		loadingDefautSliderValues.current = true;
@@ -274,26 +276,26 @@ const Courses = () => {
 		setLoadingSchools(true);
 		setLoadingPrice(true);
 
-		schoolsBlockRef.current.classList.add("courses-filter__block_hide");
-	};
+    schoolsBlockRef.current.classList.add("courses-filter__block_hide");
+  };
 
-	const handleShowSchools = () => {
-		schoolsBlockRef.current.classList.remove("courses-filter__block_hide");
-	};
+  const handleShowSchools = () => {
+    schoolsBlockRef.current.classList.remove("courses-filter__block_hide");
+  };
 
-	return (
-		<>
-			<div className="block-intro">
-				<div className="container">
-					<h1 className="title">Онлайн-курсы</h1>
-					<p className="text">
-						Список всех онлайн-курсов с рейтингом, отзывами и детальным
-						описанием курса 2025 года. Для удобства поиска курса используйте
-						фильтры, сортировку, сравнение и поиск. Мы обновляем информацию о
-						всех курсах каждую неделю.
-					</p>
-				</div>
-			</div>
+  return (
+    <>
+      <div className="block-intro">
+        <div className="container">
+          <h1 className="title">Онлайн-курсы</h1>
+          <p className="text">
+            Список всех онлайн-курсов с рейтингом, отзывами и детальным
+            описанием курса 2025 года. Для удобства поиска курса используйте
+            фильтры, сортировку, сравнение и поиск. Мы обновляем информацию о
+            всех курсах каждую неделю.
+          </p>
+        </div>
+      </div>
 
 			<Categories
 				selectedCategory={selectedCategory}
@@ -345,10 +347,10 @@ const Courses = () => {
 					handleShowSchools={handleShowSchools}
 				/>
 
-				<div className="courses-content">{renderCourses()}</div>
-			</div>
-		</>
-	);
+        <div className="courses-content">{renderCourses()}</div>
+      </div>
+    </>
+  );
 };
 
 export default Courses;

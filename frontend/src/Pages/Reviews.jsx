@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../js/config.js";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/reviews")
+      .get(`${apiUrl}/api/reviews`)
       .then((response) => {
         console.log("Ответ от API:", response.data); // Проверка структуры данных
 

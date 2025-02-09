@@ -20,7 +20,7 @@ const container = document.getElementById("root");
 if (container) {
   const root = createRoot(container);
   root.render(
-    // <React.StrictMode>
+    <React.StrictMode>
       <Router>
         <Routes>
           <Route
@@ -37,10 +37,10 @@ if (container) {
             <Route path="reviews" element={<Reviews />} />
             <Route path="users" element={<Users />} />
             <Route path="courses/:url" element={<CourseDetail />} />
-            <Route path="school/:url" element={<SchoolDetail />} />
+            <Route path="schools/:url" element={<SchoolDetail />} />
           </Route>
         </Routes>
       </Router>
-    //  </React.StrictMode>
+    </React.StrictMode>
   );
 }

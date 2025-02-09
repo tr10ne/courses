@@ -21,7 +21,7 @@ const SchoolsFilter = ({
 						checkedSchoolSpans={checkedSchoolSpans}
 					/>
 				))}
-				;
+				
 			</div>
 
 			<button

@@ -95,5 +95,64 @@ line-height: 24px;
   margin: 0 auto;
 }
 
+.breadcrumbs {
+  font-size: 14px;
+  color: $color-text1;
+  margin-bottom: 10px;
+}
+
+.separator {
+  color: $color-text3_2;
+}
+
+.crumb-link {
+  font-size: 12px;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.crumb-link:hover {
+  color: $color-accent;
+}
+
+.crumb-current {
+  color: $color-text3_2;
+  font-size: 12px;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-button {
+  width: 46px;
+  height: 46px;
+  border: none;
+  background: $color-bg1;
+  color: $color-text2;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  border: $border;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.page-button.active,
+.page-button:hover {
+  background: $color-accent;
+  color: $color-bg1;
+  border: 1px solid transparent;
+}
+
+.dots {
+  color: $color-text1_2;
+  font-weight: bold;
+}
+
 /* ============================= */
 /* Media */

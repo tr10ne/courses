@@ -1,35 +1,36 @@
 @use "../index" as *;
 
-.categories-filter{
-padding-top: 16px;
-padding-bottom: 16px;
-border-bottom: $border;
+.categories-filter {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: $border;
 
-&__inner{
-    display: flex; align-items: center;
-    gap: 10px 20px; flex-wrap: wrap;
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 10px 20px;
+    flex-wrap: wrap;
+  }
 }
-}
 
-.categories-filter__lbl{
-    font-size: 14px;
-    line-height: 14px;
-    padding: 11px;
+.categories-filter__lbl {
+  font-size: 14px;
+  line-height: 14px;
+  padding: 11px;
 
-border-radius: 20px;
+  border-radius: 20px;
 
-    transition: .2s;
-    cursor: pointer;
+  transition: 0.2s;
+  cursor: pointer;
 
-&:hover,
-&:focus,
-&.checked{
+  &:hover,
+  &:focus,
+  &.checked {
     background-color: $color-accent;
     color: $color-accent-inner;
+  }
 }
 
-}
-
-.categories-filter__radio{
-    display: none;
+.categories-filter__radio {
+  display: none;
 }

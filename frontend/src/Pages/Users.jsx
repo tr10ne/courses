@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../js/config.js";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/users")
+      .get(`${apiUrl}/api/users`)
       .then((response) => {
         console.log("Ответ от API:", response.data); // Проверьте структуру данных
 

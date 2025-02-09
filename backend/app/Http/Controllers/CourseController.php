@@ -9,8 +9,7 @@ use App\Http\Resources\CourseResource;
 
 class CourseController extends Controller
 {
-
-
+    // Метод для получения списка курсов с фильтрацией и пагинацией
     public function index(Request $request)
     {
         // Получаем параметры из запроса
@@ -243,7 +242,6 @@ $totalMinPrice = 0;
         $reviews = $course->reviews;
         return response()->json($reviews);
     }
-
     // Метод для получения курса по URL
     public function showByUrl($url)
     {
@@ -253,4 +251,3 @@ $totalMinPrice = 0;
         return new CourseResource($course);
     }
 }
-

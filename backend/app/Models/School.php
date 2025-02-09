@@ -32,4 +32,28 @@ class School extends Model
         // Возвращаем все отзывы, связанные с данной школой через промежуточную таблицу 'review_school'
         return $this->belongsToMany(Review::class, 'review_school', 'school_id', 'review_id');
     }
+
+    public function categories()
+    {
+        return $this->hasManyThrough(
+            Category::class,                  // Конечная модель (Category)
+            Subcategory::class,               // Промежуточная модель (Subcategory)
+            'id',                             // Локальный ключ в subcategories
+            'id',                             // Локальный ключ в categories
+            'id',                             // Локальный ключ в schools
+            'category_id'                     // Внешний ключ на category в subcategories
+        ); // Убираем дубликаты категорий
+    }
+    
+    public function subcategories()
+    {
+        return $this->hasManyThrough(
+            Subcategory::class,               // Конечная модель (Subcategory)
+            Course::class,                    // Промежуточная модель (Course)
+            'school_id',                      // Внешний ключ на school в courses
+            'id',                             // Локальный ключ в subcategories
+            'id',                             // Локальный ключ в schools
+            'subcategory_id'                  // Внешний ключ на subcategory в courses
+        ); // Убираем дубликаты подкатегорий
+    }
 }
