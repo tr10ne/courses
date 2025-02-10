@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../Loading";
 import Category from "./Category";
+import { apiUrl } from "../../js/config";
 
 const Categories = ({
 	selectedCategory,
@@ -14,7 +15,7 @@ const [categories, setCategories] = useState([]);
 
 useEffect(() => {
         axios
-            .get("http://127.0.0.1:8000/api/categories")
+            .get(`${apiUrl}/api/categories`)
             .then((response) => {
                 console.log("Ответ от API:", response.data);
 

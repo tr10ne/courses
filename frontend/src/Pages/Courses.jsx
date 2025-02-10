@@ -8,14 +8,21 @@ import Filter from "../Components/Courses/Filter";
 import Loading from "../Components/Loading";
 import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
-import Pagination from "../Components/Courses/Pagination.jsx";
+import Pagination from "../Components/Pagination.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
 
 	const [courses, setCourses] = useState([]);
-	const [currentPage, setCurrentPage] = useState(1);
+
+
+	const [pagination, setPagination] = useState({
+		current_page: 1,
+		last_page: 1,
+	  });
+
+
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [error, setError] = useState(null);
 	const [loadingCourses, setLoadingCourses] = useState(true);
@@ -63,7 +70,7 @@ const Courses = () => {
 
 		const params = {
 			limit: recordsPerPage,
-			offset: (currentPage - 1) * recordsPerPage,
+			page: pagination.current_page,
 			selectedCategory: selectedCategory,
 			filter: newFilter, // Передаем фильтр
 			minPrice: sliderValues[0], // Используем значения из ползунка
@@ -85,13 +92,12 @@ const Courses = () => {
 					: response.data && Array.isArray(response.data.courses)
 					? response.data.courses
 					: null;
-				console.log("message");
 
 				// Если данные курса есть, сохраняем их в состояние
 				if (courses) {
 					setCourses(courses);
 					setSchools(response.data.schools);
-					setTotalRecords(response.data.total || 0); // Устанавливаем общее количество записей
+					setTotalRecords(response.data.meta.total || 0); // Устанавливаем общее количество записей
 
 					setSliderMin(parseFloat(response.data.min_total_price));
 					setSliderMax(parseFloat(response.data.max_total_price));
@@ -104,6 +110,8 @@ const Courses = () => {
 
 						loadingDefautSliderValues.current = false;
 					}
+
+					setPagination(response.data.meta);
 				} else {
 					console.error("Ожидались курсы, но получено:", response.data);
 					setError("Не удалось загрузить курсы.");
@@ -134,7 +142,7 @@ const Courses = () => {
 		//Если вы уверены, что sliderValues, sliderMin и sliderMax не должны вызывать пересоздание fetchCourses, можно отключить предупреждение с помощью комментария
 		//  eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
-		currentPage,
+		pagination.current_page,
 		selectedCategory,
 		location.search,
 		reloadSate,
@@ -154,6 +162,10 @@ const Courses = () => {
 		fetchCourses();
 	}, [fetchCourses]);
 
+	const handlePageChange = (newPage) => {
+		setPagination((prev) => ({ ...prev, current_page: newPage }));
+	  };
+
 	// Обработчик изменения значений ползунка
 	const handleSliderChange = (values) => {
 		setSliderValues(values);
@@ -166,14 +178,17 @@ const Courses = () => {
 		setDisabledPrice(true);
 		setCheckedSchoolSpans({});
 		if (selectedSchools.length !== 0) setSelectedSchools([]);
-		else if (currentPage !== 1)
-			setCurrentPage(1); // Сбрасываем на первую страницу
+		else if (pagination.current_page !== 1)
+			setPagination({
+				current_page: 1,
+				last_page: 1,
+			  });
 		else setRealoadState(!reloadSate);
 	};
 
-	useEffect(() => {
-		setCurrentPage(1); // Сбрасываем на первую страницу при изменении поискового запроса
-	}, [location.search]);
+	// useEffect(() => {
+	// 	setCurrentPage(1); // Сбрасываем на первую страницу при изменении поискового запроса
+	// }, [location.search]);
 
 	const renderCourses = () => {
 		if (loadingCourses) return <Loading />;
@@ -184,18 +199,17 @@ const Courses = () => {
 			<>
 				<ul className="courses-list">
 					{courses.map((course) => {
-						return <Course key={course.course.id} course={course} />;
+						return <Course key={course.id} course={course} />;
 					})}
 				</ul>
 				<div>
 
 
-					<Pagination
-						totalRecords={totalRecords}
-						recordsPerPage={recordsPerPage}
-						currentPage={currentPage}
-						setCurrentPage={setCurrentPage}
-					/>
+				<Pagination
+            currentPage={pagination.current_page}
+            lastPage={pagination.last_page}
+            onPageChange={handlePageChange}
+          />
 				</div>
 			</>
 		);
@@ -230,7 +244,11 @@ const Courses = () => {
 		} else {
 			setSelectedCategory(newCategory);
 		}
-		setCurrentPage(1);
+
+		setPagination({
+			current_page: 1,
+			last_page: 1,
+		  });
 	};
 
 	const handleSchoolCheckboxChange = (schoolId) => {
@@ -260,6 +278,10 @@ const Courses = () => {
 		setCheckedSchoolSpans({});
 		setLoadingSchools(true);
 		setLoadingPrice(true);
+		setPagination({
+			current_page: 1,
+			last_page: 1,
+		  });
 
 		schoolsBlockRef.current.classList.add("courses-filter__block_hide");
 	};

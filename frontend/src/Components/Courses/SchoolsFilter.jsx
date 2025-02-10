@@ -14,14 +14,13 @@ const SchoolsFilter = ({
 			<div className={`schools-filter  ${disabledSchools ? "disabled" : ""}`}>
 				{schools.map((school) => (
 					<SchoolFilter
-                    key={school.id}
+						key={school.id}
 						school={school}
 						selectedSchools={selectedSchools}
 						handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 						checkedSchoolSpans={checkedSchoolSpans}
 					/>
 				))}
-				
 			</div>
 
 			<button

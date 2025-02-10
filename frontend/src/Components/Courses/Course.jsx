@@ -5,11 +5,8 @@ const Course = ({ course }) => {
 	return (
 		<li className="courses-item ">
 			<div className="courses-item__content">
-				<Link
-					className="courses-item__title"
-					to={`/courses/${course.course.url}`}
-				>
-					{course.course.name}
+				<Link className="courses-item__title" to={`/courses/${course.url}`}>
+					{course.name}
 				</Link>
 
 				<div className="courses-item__details">
@@ -22,18 +19,16 @@ const Course = ({ course }) => {
 								fillRule="nonzero"
 							/>
 						</svg>
-						<p className="rating-value">
-							{course.course_rating == null ? "0" : course.course_rating}
-						</p>
+						<p className="rating-value">{course.average_rating}</p>
 					</div>
 
 					<p className="courses-item__price">
-						{course.course.price}
+						{course.price}
 						<span className="courses-item__price__currency">руб.</span>
 					</p>
 
 					<p className="courses-item__reviews-count">
-						Отзывовы о курсе: {course.review_count}
+						Отзывовы о курсе: {course.reviews_count}
 					</p>
 
 					<p className="courses-item__school">
@@ -42,13 +37,10 @@ const Course = ({ course }) => {
 				</div>
 			</div>
 			<div className="courses-item__controls">
-				<Link className="courses-item__more-link" to={course.course.link}>
+				<Link className="courses-item__more-link" to={course.link}>
 					На сайт курса
 				</Link>
-				<Link
-					className="courses-item__more-link"
-					to={`/courses/${course.course.url}`}
-				>
+				<Link className="courses-item__more-link" to={`/courses/${course.url}`}>
 					Подробнее
 				</Link>
 			</div>
