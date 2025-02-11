@@ -267,7 +267,7 @@
     z-index: -1;
     translate: 0 -100%;
     overflow-y: auto;
-    max-height: var(--element-height);
+    max-height: var(--element-height-px);
     background-color: rgba($color: $color-bg1, $alpha: 0.95);
     opacity: 0;
     transition: 0.3s;
@@ -305,7 +305,7 @@
     z-index: -1;
     translate: 0 -100%;
     overflow-y: auto;
-    max-height: var(--element-height);
+    max-height: var(--element-height-px);
     background-color: rgba($color: $color-bg1, $alpha: 0.95);
     opacity: 0;
     transition: 0.3s;

@@ -1,0 +1,69 @@
+@use "../index" as *;
+
+/* ============================= */
+/* Filter block */
+
+.courses-filter {
+	border: $border;
+	border-radius: 5px;
+	align-self: start;
+	background-color: $color-bg1;
+	overflow: hidden;
+
+	&__header {
+		padding: 15px 20px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: $border;
+
+		font-size: 18px;
+		line-height: 22px;
+	}
+
+	&__content {
+		padding: 15px 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+		overflow-y: auto;
+
+		&__title {
+			margin-bottom: 15px;
+		}
+	}
+}
+
+.courses-filter__block {
+	display: flex;
+	flex-direction: column;
+
+	&_hide {
+		& .schools-filter {
+			max-height: 200px;
+			overflow: hidden;
+		}
+
+		& .show-schools-btn {
+			display: block;
+		}
+	}
+}
+
+.courses-filter__reset-btn {
+	display: flex;
+	padding: 2px 4px;
+
+	& svg {
+		width: 19px;
+		fill: $color-text1_2;
+		transition: 0.3s;
+	}
+
+	&:hover,
+	&:focus {
+		& svg {
+			fill: $color-accent;
+		}
+	}
+}

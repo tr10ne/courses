@@ -1,161 +1,182 @@
 @use "index" as *;
 
 .page {
-  overflow: hidden;
-  background-color: $color-bg1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin: 0 auto;
+	// overflow: hidden; //мешает делать stick для элементов
+	background-color: $color-bg1;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	margin: 0 auto;
 
-  font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  font-weight: 700;
+	font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	font-weight: 700;
 }
 
 .container {
-  max-width: 1440px;
-  padding-left: clamp(1rem, -6.47rem + 15.52vw, 7.5rem);
-  padding-right: clamp(1rem, -6.47rem + 15.52vw, 7.5rem);
-  margin: 0 auto;
-  width: 100%;
+	max-width: 1440px;
+	padding-left: clamp(1rem, -6.47rem + 15.52vw, 7.5rem);
+	padding-right: clamp(1rem, -6.47rem + 15.52vw, 7.5rem);
+	margin: 0 auto;
+	width: 100%;
 }
 
 .main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
 }
 
 .section {
-  padding-top: 30px;
-  padding-bottom: 30px;
+	padding-top: 30px;
+	padding-bottom: 30px;
 }
 
 .no-scroll {
-  overflow: hidden;
-  height: 100%;
+	overflow: hidden;
+	height: 100%;
 }
 
 .block-head {
-  grid-column: span 2;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 32px;
-  gap: 10px;
+	grid-column: span 2;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 32px;
+	gap: 10px;
 }
 
 .title {
-  font-family: "Lisboa-Heavy-Regular", sans-serif;
-  font-weight: 400;
-  font-size: 36px;
-  text-transform: none;
+	font-family: "Lisboa-Heavy-Regular", sans-serif;
+	font-weight: 400;
+	font-size: 36px;
+	text-transform: none;
 }
 .text {
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 24px;
 }
 
 .hide {
-  display: none !important;
+	display: none !important;
 }
 
 .disabled {
-  pointer-events: none; /* Отключает взаимодействие */
-  opacity: 0.6; /* Делает содержимое полупрозрачным, чтобы показать, что оно неактивно */
+	pointer-events: none; /* Отключает взаимодействие */
+	opacity: 0.6; /* Делает содержимое полупрозрачным, чтобы показать, что оно неактивно */
+}
+
+.scrollbar {
+	&::-webkit-scrollbar {
+		width: 4px; /* ширина полосы прокрутки */
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border-radius: 2px;
+		height: 100px;
+		background-color: $color-text1_3;
+		cursor: grab;
+	}
+
+	&:hover::-webkit-scrollbar-thumb {
+		background-color: $color-accent;
+	}
+
+	&:active::-webkit-scrollbar-thumb {
+		cursor: grabbing;
+	}
 }
 
 .mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  opacity: 0;
-  visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.9);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	opacity: 0;
+	visibility: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	background: rgba(0, 0, 0, 0.9);
 
-  &.active {
-    opacity: 1;
-    visibility: visible;
+	&.active {
+		opacity: 1;
+		visibility: visible;
 
-    & .mask__loader {
-      animation: rotate 1s linear infinite;
-    }
-  }
+		& .mask__loader {
+			animation: rotate 1s linear infinite;
+		}
+	}
 }
 
 .mask__loader {
-  width: 50px;
-  height: 50px;
-  border-top: 3px solid red;
-  border-right: 3px solid red;
-  border-radius: 50%;
-  animation: rotate 1s linear infinite;
-  margin: 0 auto;
+	width: 50px;
+	height: 50px;
+	border-top: 3px solid red;
+	border-right: 3px solid red;
+	border-radius: 50%;
+	animation: rotate 1s linear infinite;
+	margin: 0 auto;
 }
 
 .breadcrumbs {
-  font-size: 14px;
-  color: $color-text1;
+	font-size: 14px;
+	color: $color-text1;
 }
 
 .separator {
-  color: $color-text3_2;
+	color: $color-text3_2;
 }
 
 .crumb-link {
-  font-size: 12px;
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  color: inherit;
-  text-decoration: none;
-  transition: color 0.3s ease;
+	font-size: 12px;
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	color: inherit;
+	text-decoration: none;
+	transition: color 0.3s ease;
 }
 
 .crumb-link:hover {
-  color: $color-accent;
+	color: $color-accent;
 }
 
 .crumb-current {
-  color: $color-text3_2;
-  font-size: 12px;
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	color: $color-text3_2;
+	font-size: 12px;
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
 }
 
 .pagination {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .page-button {
-  width: 46px;
-  height: 46px;
-  border: none;
-  background: $color-bg1;
-  color: $color-text2;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-  border: $border;
-  border-radius: 5px;
-  font-weight: bold;
+	width: 46px;
+	height: 46px;
+	border: none;
+	background: $color-bg1;
+	color: $color-text2;
+	cursor: pointer;
+	transition: background 0.3s, color 0.3s;
+	border: $border;
+	border-radius: 5px;
+	font-weight: bold;
 }
 
 .page-button.active,
 .page-button:hover {
-  background: $color-accent;
-  color: $color-bg1;
-  border: 1px solid transparent;
+	background: $color-accent;
+	color: $color-bg1;
+	border: 1px solid transparent;
 }
 
 .dots {
-  color: $color-text1_2;
-  font-weight: bold;
+	color: $color-text1_2;
+	font-weight: bold;
 }
 
 /* ============================= */

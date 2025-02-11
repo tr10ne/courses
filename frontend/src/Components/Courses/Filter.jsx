@@ -16,21 +16,21 @@ const Filter = ({
 	handleManualInputChange,
 	schoolsBlockRef,
 	loadingSchools,
-    schools,
+	schools,
 	disabledSchools,
 	selectedSchools,
 	handleSchoolCheckboxChange,
 	checkedSchoolSpans,
-	handleShowSchools
+	handleShowSchools,
 }) => {
 	return (
-		<div className="courses-filter">
+		<div className={`courses-filter`}>
 			<span className="courses-filter__header">
 				Фильтры
 				<ResetFilterButton handleFilterReset={handleFilterReset} />
 			</span>
 
-			<div className="courses-filter__content ">
+			<div className="courses-filter__content scrollbar">
 				<div className="courses-filter__block">
 					<span className="courses-filter__content__title">Цена</span>
 					{loadingPrice ? (

@@ -16,12 +16,10 @@ const Courses = () => {
 
 	const [courses, setCourses] = useState([]);
 
-
 	const [pagination, setPagination] = useState({
 		current_page: 1,
 		last_page: 1,
-	  });
-
+	});
 
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [error, setError] = useState(null);
@@ -164,7 +162,7 @@ const Courses = () => {
 
 	const handlePageChange = (newPage) => {
 		setPagination((prev) => ({ ...prev, current_page: newPage }));
-	  };
+	};
 
 	// Обработчик изменения значений ползунка
 	const handleSliderChange = (values) => {
@@ -182,7 +180,7 @@ const Courses = () => {
 			setPagination({
 				current_page: 1,
 				last_page: 1,
-			  });
+			});
 		else setRealoadState(!reloadSate);
 	};
 
@@ -203,13 +201,11 @@ const Courses = () => {
 					})}
 				</ul>
 				<div>
-
-
-				<Pagination
-            currentPage={pagination.current_page}
-            lastPage={pagination.last_page}
-            onPageChange={handlePageChange}
-          />
+					<Pagination
+						currentPage={pagination.current_page}
+						lastPage={pagination.last_page}
+						onPageChange={handlePageChange}
+					/>
 				</div>
 			</>
 		);
@@ -248,7 +244,7 @@ const Courses = () => {
 		setPagination({
 			current_page: 1,
 			last_page: 1,
-		  });
+		});
 	};
 
 	const handleSchoolCheckboxChange = (schoolId) => {
@@ -281,7 +277,7 @@ const Courses = () => {
 		setPagination({
 			current_page: 1,
 			last_page: 1,
-		  });
+		});
 
 		schoolsBlockRef.current.classList.add("courses-filter__block_hide");
 	};
@@ -294,6 +290,34 @@ const Courses = () => {
 		{ path: "/", name: "Главная" },
 		{ path: "/courses", name: "Онлайн-курсы" },
 	];
+
+	const sidebarRef = useRef(null);
+
+	useEffect(() => {
+		const handleFilterMaxHeight = () => {
+			const filter = sidebarRef.current.querySelector(
+				".courses-filter__content"
+			);
+			const INDENT = 20;
+			const windowHeight = window.innerHeight;
+			const headerHeight =
+				document.documentElement.style.getPropertyValue("--header-height");
+			const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
+			const filterTop = filter.getBoundingClientRect().top;
+
+			const filterMaxHeight =
+				windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
+
+			filter.style.maxHeight = filterMaxHeight + "px";
+		};
+
+		if (!loadingCourses) handleFilterMaxHeight();
+
+		window.addEventListener("resize", handleFilterMaxHeight);
+		return () => {
+			window.removeEventListener("resize", handleFilterMaxHeight);
+		};
+	}, [loadingCourses]);
 
 	return (
 		<section className="courses section">
@@ -316,50 +340,38 @@ const Courses = () => {
 				disabledCategories={disabledCategories}
 			/>
 
-			<div className="courses-main container">
-				<p className="request-result-count">
-					{loadingCourses
-						? "выполняется запрос..."
-						: `По вашему запросу ${filter !== "" ? `"${filter}"` : ""} найдено
-						${totalRecords} курсов`}
-				</p>
-				<div className="column-title courses-grid">
-					<div className="column-title__item">
-						<span className="column-title__text">Курс</span>
-					</div>
-					<div className="column-title__item">
-						<span className="column-title__text">Рейтинг</span>
-					</div>
-					<div className="column-title__item">
-						<span className="column-title__text">Цена</span>
-					</div>
-					<div className="column-title__item">
-						<span className="column-title__text">Школа</span>
-					</div>
-					<div className="column-title__item">
-						<span className="column-title__text">Ссылка на курс</span>
-					</div>
-				</div>
-				<Filter
-					handleFilterReset={handleFilterReset}
-					loadingPrice={loadingPrice}
-					disabledPrise={disabledPrise}
-					sliderMin={sliderMin}
-					sliderMax={sliderMax}
-					sliderValues={sliderValues}
-					handleSliderChange={handleSliderChange}
-					handleSliderAfterChange={handleSliderAfterChange}
-					handleManualInputChange={handleManualInputChange}
-					schoolsBlockRef={schoolsBlockRef}
-					loadingSchools={loadingSchools}
-					schools={schools}
-					disabledSchools={disabledSchools}
-					selectedSchools={selectedSchools}
-					handleSchoolCheckboxChange={handleSchoolCheckboxChange}
-					checkedSchoolSpans={checkedSchoolSpans}
-					handleShowSchools={handleShowSchools}
-				/>
+			<div className={`courses-main container`}>
+				<aside className="courses-sidebar" ref={sidebarRef}>
+					{/* <div className="courses-side-bar__inner"> */}
 
+					<p className="request-result-count ">
+						{loadingCourses
+							? "выполняется запрос..."
+							: `По вашему запросу ${filter !== "" ? `"${filter}"` : ""} найдено
+						${totalRecords} курсов`}
+					</p>
+
+					<Filter
+						handleFilterReset={handleFilterReset}
+						loadingPrice={loadingPrice}
+						disabledPrise={disabledPrise}
+						sliderMin={sliderMin}
+						sliderMax={sliderMax}
+						sliderValues={sliderValues}
+						handleSliderChange={handleSliderChange}
+						handleSliderAfterChange={handleSliderAfterChange}
+						handleManualInputChange={handleManualInputChange}
+						schoolsBlockRef={schoolsBlockRef}
+						loadingSchools={loadingSchools}
+						schools={schools}
+						disabledSchools={disabledSchools}
+						selectedSchools={selectedSchools}
+						handleSchoolCheckboxChange={handleSchoolCheckboxChange}
+						checkedSchoolSpans={checkedSchoolSpans}
+						handleShowSchools={handleShowSchools}
+					/>
+					{/* </div> */}
+				</aside>
 				<div className="courses-content">{renderCourses()}</div>
 			</div>
 		</section>

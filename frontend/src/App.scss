@@ -9,9 +9,12 @@
 @use "./scss/schools/schools";
 @use "./scss/schoolDetail/school-detail";
 
-@use "./scss/courses/categories-filter";
+//Courses
 @use "./scss/courses/courses";
-@use "./scss/courses/slider";
+@use "./scss/courses/filter";
+@use "./scss/courses/school-filter";
+@use "./scss/courses/categories-filter";
+@use "./scss/courses/price-filter-slider";
 
 @use "./scss/home/intro";
 
