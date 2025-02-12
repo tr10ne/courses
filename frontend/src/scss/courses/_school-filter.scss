@@ -15,22 +15,22 @@
 }
 
 .show-schools-btn {
-    display: none;
-    position: relative;
-    padding: 11px;
+	display: none;
+	position: relative;
+	padding: 11px;
 
-    box-shadow: 0 -8px 21px 15px $color-bg1;
-    font-size: 14px;
-    line-height: 14px;
-    border-radius: 20px;
-    font-family: inherit;
-    transition: 0.2s;
-    cursor: pointer;
+	box-shadow: 0 -8px 21px 15px $color-bg1;
+	font-size: 14px;
+	line-height: 14px;
+	border-radius: 20px;
+	font-family: inherit;
+	transition: 0.2s;
+	cursor: pointer;
 
-   &:hover{
-color: $color-accent-inner;
-background-color: $color-accent;
-    }
+	&:hover {
+		color: $color-accent-inner;
+		background-color: $color-accent;
+	}
 }
 
 .schools-filter__lbl {
@@ -58,10 +58,11 @@ background-color: $color-accent;
 		transform: translate(-50%, -50%);
 		width: 0px;
 		height: 0px;
+		opacity: 0;
 		background-color: $color-accent;
 
 		font-size: 14px;
-	color: $color-accent-inner;
+		color: $color-accent-inner;
 
 		transition: 0.3s;
 	}
@@ -71,7 +72,8 @@ background-color: $color-accent;
 		background-color: $color-accent;
 
 		&::after {
-			width: 100% ;
+			width: 100%;
+			opacity: 1;
 			height: 100%;
 		}
 	}

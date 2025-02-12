@@ -13,6 +13,7 @@ class CourseResource extends JsonResource
         return [
             'id' => $this->id,                  // Идентификатор курса
             'subcategory_id' => $this->subcategory_id, // Идентификатор подкатегории, к которой относится курс
+            'subcategory_name' => $this->subcategory->name, // Идентификатор подкатегории, к которой относится курс
             'school_id' => $this->school_id,     // Идентификатор школы, которая предоставляет курс
             'name' => $this->name,               // Название курса
             'description' => $this->description, // Описание курса
@@ -30,7 +31,7 @@ class CourseResource extends JsonResource
                 'id' => $this->subcategory->category->id,
                 'name' => $this->subcategory->category->name,
             ],
-            'reviews_count' => $this->reviews_count,
+                        'reviews_count' => $this->reviews_count,
             'average_rating' => round($this->avg_rating, 2),
             // 'rating' => round($this->getAverageRating(), 2)
         ];

@@ -33,8 +33,13 @@ class CategoryController extends Controller
     // Метод для получения категории по её идентификатору
     public function show($id)
     {
+        $category = Category::findOrFail($id);
+
         // Находим категорию по ID, если не найдено - будет ошибка 404
-        return new CategoryResource(Category::findOrFail($id));
+        return  response()->json([
+            "category" => new CategoryResource($category),
+            "subcategories" => $category->subcategories
+        ]);
     }
 
     // Метод для обновления существующей категории
@@ -48,7 +53,7 @@ class CategoryController extends Controller
             'name' => 'sometimes|required|string|unique:categories,name,' . $category->id, // Имя может быть изменено, но должно оставаться уникальным
             'url' => 'sometimes|required|string|unique:categories,url,' . $category->id, // URL категории обязателен и должен оставаться уникальным
         ]);
-        
+
 
         // Обновление категории с новыми данными
         $category->update($request->all());

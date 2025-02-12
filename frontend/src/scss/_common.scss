@@ -179,5 +179,30 @@
 	font-weight: bold;
 }
 
+.loader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+}
+
+.loader__circle {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin: 10px;
+
+	&_1 {
+		animation: loader 1s infinite;
+	}
+
+	&_2 {
+		animation: loader 1s 0.3s infinite;
+	}
+	&_3 {
+		animation: loader 1s 0.6s infinite;
+	}
+}
+
 /* ============================= */
 /* Media */

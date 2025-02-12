@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Course = ({ course }) => {
+const Course = ({ course, foo }) => {
+if(foo) return <div className="courses-item courses-item_foo">{foo}</div>
+
   return (
     <li className="courses-item ">
       <div className="courses-item__content">

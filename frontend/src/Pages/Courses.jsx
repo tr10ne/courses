@@ -9,6 +9,7 @@ import Loading from "../Components/Loading";
 import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Pagination from "../Components/Pagination.jsx";
+import Subcategories from "../Components/Courses/Subcategories.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -30,7 +31,10 @@ const Courses = () => {
 	const [disabledSchools, setDisabledSchools] = useState(true);
 	const [disabledCategories, setDisabledCategories] = useState(true);
 
-	const [selectedCategory, setSelectedCategory] = useState(null);
+	const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+	const [selectedSubcategoryId, setSelectedSubcategoryId] = useState(null);
+	const [selectedSubcategoryName, setSelectedSubcategoryName] = useState(null);
+
 	const [filter, setFilter] = useState("");
 
 	// Состояния для ползунка
@@ -69,7 +73,8 @@ const Courses = () => {
 		const params = {
 			limit: recordsPerPage,
 			page: pagination.current_page,
-			selectedCategory: selectedCategory,
+			selectedCategoryId: selectedCategoryId,
+			selectedSubcategoryId: selectedSubcategoryId,
 			filter: newFilter, // Передаем фильтр
 			minPrice: sliderValues[0], // Используем значения из ползунка
 			maxPrice: sliderValues[1],
@@ -141,7 +146,8 @@ const Courses = () => {
 		//  eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		pagination.current_page,
-		selectedCategory,
+		selectedCategoryId,
+		selectedSubcategoryId,
 		location.search,
 		reloadSate,
 		selectedSchools,
@@ -176,18 +182,19 @@ const Courses = () => {
 		setDisabledPrice(true);
 		setCheckedSchoolSpans({});
 		if (selectedSchools.length !== 0) setSelectedSchools([]);
-		else if (pagination.current_page !== 1)
-			setPagination({
-				current_page: 1,
-				last_page: 1,
-			});
+		else if (pagination.current_page !== 1) setDefaultPagination();
 		else setRealoadState(!reloadSate);
 	};
 
-	// useEffect(() => {
-	// 	setCurrentPage(1); // Сбрасываем на первую страницу при изменении поискового запроса
-	// }, [location.search]);
+	//устанавливаем пагинации значения поумолчанию
+	const setDefaultPagination = () => {
+		setPagination({
+			current_page: 1,
+			last_page: 1,
+		});
+	};
 
+	// отрисовываем курсы с пагинацией
 	const renderCourses = () => {
 		if (loadingCourses) return <Loading />;
 
@@ -195,10 +202,21 @@ const Courses = () => {
 
 		return (
 			<>
+				{selectedSubcategoryId ? (
+					<p className="courses-subcategory">
+						Курсы по категории {selectedSubcategoryName}
+					</p>
+				) : (
+					""
+				)}
 				<ul className="courses-list">
-					{courses.map((course) => {
-						return <Course key={course.id} course={course} />;
-					})}
+					{!courses || courses.length === 0 ? (
+						<Course foo={"Не найдено ни одно курса"} />
+					) : (
+						courses.map((course) => {
+							return <Course key={course.id} course={course} />;
+						})
+					)}
 				</ul>
 				<div>
 					<Pagination
@@ -225,6 +243,7 @@ const Courses = () => {
 		handleSliderAfterChange(newValues);
 	};
 
+	//
 	const handleCategoryChange = (e) => {
 		loadingDefautSliderValues.current = true;
 		setLoadingSchools(true);
@@ -235,16 +254,16 @@ const Courses = () => {
 		const newCategory = e.target.value;
 
 		// Если новая категория совпадает с текущей, сбрасываем выбор
-		if (selectedCategory === newCategory) {
-			setSelectedCategory(null);
+		if (selectedCategoryId === newCategory) {
+			setSelectedCategoryId(null);
+
+			setSelectedSubcategoryId(null);
+			setSelectedSubcategoryName(null);
 		} else {
-			setSelectedCategory(newCategory);
+			setSelectedCategoryId(newCategory);
 		}
 
-		setPagination({
-			current_page: 1,
-			last_page: 1,
-		});
+		setDefaultPagination();
 	};
 
 	const handleSchoolCheckboxChange = (schoolId) => {
@@ -266,18 +285,32 @@ const Courses = () => {
 		}));
 	};
 
+	//обработчик нажатия на подкатегорию
+	const handleSubcategoryClick = (subcategory) => {
+		setSelectedSubcategoryId(subcategory.id);
+		setSelectedSubcategoryName(subcategory.name);
+
+		loadingDefautSliderValues.current = true;
+		setLoadingSchools(true);
+		setLoadingPrice(true);
+		setSelectedSchools([]);
+		setSliderValues(["", ""]);
+		setCheckedSchoolSpans({});
+		setDefaultPagination();
+	};
+
+	//обработчик нажатия на кнопку reset в фильтрах
 	const handleFilterReset = () => {
 		loadingDefautSliderValues.current = true;
 		setSliderValues(sliderMin, sliderMax);
+		setSelectedCategoryId(null);
+		setSelectedSubcategoryId(null);
+		setSelectedSubcategoryName(null);
 		setSelectedSchools([]);
-		setSelectedCategory(null);
 		setCheckedSchoolSpans({});
 		setLoadingSchools(true);
 		setLoadingPrice(true);
-		setPagination({
-			current_page: 1,
-			last_page: 1,
-		});
+		setDefaultPagination();
 
 		schoolsBlockRef.current.classList.add("courses-filter__block_hide");
 	};
@@ -335,15 +368,13 @@ const Courses = () => {
 			</div>
 
 			<Categories
-				selectedCategory={selectedCategory}
+				selectedCategoryId={selectedCategoryId}
 				handleCategoryChange={handleCategoryChange}
 				disabledCategories={disabledCategories}
 			/>
 
 			<div className={`courses-main container`}>
 				<aside className="courses-sidebar" ref={sidebarRef}>
-					{/* <div className="courses-side-bar__inner"> */}
-
 					<p className="request-result-count ">
 						{loadingCourses
 							? "выполняется запрос..."
@@ -370,9 +401,17 @@ const Courses = () => {
 						checkedSchoolSpans={checkedSchoolSpans}
 						handleShowSchools={handleShowSchools}
 					/>
-					{/* </div> */}
 				</aside>
-				<div className="courses-content">{renderCourses()}</div>
+				<div className="courses-content">
+					{renderCourses()}
+					<Subcategories
+						selectedCategoryId={selectedCategoryId}
+						loadingCourses={loadingCourses}
+						handleSubcategoryClick={handleSubcategoryClick}
+					/>
+
+					{/* <Schools /> */}
+				</div>
 			</div>
 		</section>
 	);

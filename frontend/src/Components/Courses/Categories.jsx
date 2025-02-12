@@ -5,7 +5,7 @@ import Category from "./Category";
 import { apiUrl } from "../../js/config";
 
 const Categories = ({
-	selectedCategory,
+	selectedCategoryId,
 	handleCategoryChange,
 	disabledCategories,
 }) => {
@@ -52,7 +52,7 @@ const Categories = ({
 						<Category
 							key={category.id}
 							category={category}
-							selectedCategory={selectedCategory}
+							selectedCategoryId={selectedCategoryId}
 							handleCategoryChange={handleCategoryChange}
 						/>
 					))

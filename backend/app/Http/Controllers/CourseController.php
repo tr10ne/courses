@@ -15,7 +15,8 @@ class CourseController extends Controller
         // Получаем параметры из запроса
         $limit = $request->input('limit', 10);    // Количество записей на страницу
         $filter = $request->input('filter', '');   // Фильтр по названию курса
-        $selectedCategoryId = $request->input('selectedCategory', null); // Фильтр по выбранной категории
+        $selectedCategoryId = $request->input('selectedCategoryId', null); // Фильтр по выбранной категории
+        $selectedSubcategoryId = $request->input('selectedSubcategoryId', null);
         $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
         $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
         $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
@@ -27,11 +28,14 @@ class CourseController extends Controller
             ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
         JOIN reviews ON reviews.id = review_course.review_id
         WHERE review_course.course_id = courses.id), 0) as avg_rating')
-            ->where(function ($query) use ($filter, $selectedCategoryId) {
+            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId) {
+                if ($selectedSubcategoryId) {
+                    $query->where('subcategory_id', $selectedSubcategoryId);
+                }
                 if ($filter) {
                     $query->where('courses.name', 'like', '%' . $filter . '%');
                 }
-                if ($selectedCategoryId) {
+                if (!$selectedSubcategoryId && $selectedCategoryId) {
                     $query->whereHas('subcategory.category', function ($query) use ($selectedCategoryId) {
                         $query->where('id', $selectedCategoryId);
                     });

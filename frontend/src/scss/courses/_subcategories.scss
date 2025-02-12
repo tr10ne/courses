@@ -1,0 +1,36 @@
+@use "../index" as *;
+
+.subcategories {
+	margin-bottom: 50px;
+	display: flex;
+	flex-direction: column;
+	gap: 27px;
+}
+
+.subcategories__title {
+	font-size: 24px;
+	line-height: 29px;
+}
+
+.subcategories__list {
+	list-style: none;
+
+	column-count: 4;
+	column-gap: 69px;
+}
+
+.subcategories__item {
+	margin-bottom: 10px;
+
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 24px;
+
+	cursor: pointer;
+	transition: 0.3s;
+
+	&:hover {
+		color: $color-accent;
+	}
+}
