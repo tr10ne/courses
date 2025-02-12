@@ -10,47 +10,48 @@ import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Pagination from "../Components/Pagination.jsx";
 import Subcategories from "../Components/Courses/Subcategories.jsx";
+import { scroller } from 'react-scroll';
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
-
-	const [courses, setCourses] = useState([]);
-
+	const [error, setError] = useState(null);
+	const [reloadSate, setRealoadState] = useState(false);
+	const abortControllerRef = useRef(null);
 	const [pagination, setPagination] = useState({
 		current_page: 1,
 		last_page: 1,
 	});
 
-	const [totalRecords, setTotalRecords] = useState(0);
-	const [error, setError] = useState(null);
+	//courses
+	const [courses, setCourses] = useState([]);
 	const [loadingCourses, setLoadingCourses] = useState(true);
-	const [loadingSchools, setLoadingSchools] = useState(true);
-	const [loadingPrice, setLoadingPrice] = useState(true);
-	const [disabledPrise, setDisabledPrice] = useState(true);
-	const [disabledSchools, setDisabledSchools] = useState(true);
-	const [disabledCategories, setDisabledCategories] = useState(true);
 
+	//categories
 	const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 	const [selectedSubcategoryId, setSelectedSubcategoryId] = useState(null);
 	const [selectedSubcategoryName, setSelectedSubcategoryName] = useState(null);
+	const [disabledCategories, setDisabledCategories] = useState(true);
 
+	// filter
+	const [totalRecords, setTotalRecords] = useState(0);
 	const [filter, setFilter] = useState("");
 
-	// Состояния для ползунка
+	//filter - price
+	const [loadingPrice, setLoadingPrice] = useState(true);
+	const [disabledPrise, setDisabledPrice] = useState(true);
 	const [sliderMin, setSliderMin] = useState(0);
 	const [sliderMax, setSliderMax] = useState(0);
 	const [sliderValues, setSliderValues] = useState(["", ""]);
+	const loadingDefautSliderValues = useRef(true);
 
-	//
+	//filter - schools
+	const [loadingSchools, setLoadingSchools] = useState(true);
+	const [disabledSchools, setDisabledSchools] = useState(true);
 	const [schools, setSchools] = useState([]);
 	const [selectedSchools, setSelectedSchools] = useState([]);
 	const [checkedSchoolSpans, setCheckedSchoolSpans] = useState({});
 	const schoolsBlockRef = useRef(null);
-
-	const [reloadSate, setRealoadState] = useState(false);
-	const abortControllerRef = useRef(null);
-	const loadingDefautSliderValues = useRef(true);
 
 	const fetchCourses = useCallback(() => {
 		// Отменяем предыдущий запрос, если он существует
@@ -168,6 +169,8 @@ const Courses = () => {
 
 	const handlePageChange = (newPage) => {
 		setPagination((prev) => ({ ...prev, current_page: newPage }));
+
+scrollTo('courses');
 	};
 
 	// Обработчик изменения значений ползунка
@@ -194,40 +197,17 @@ const Courses = () => {
 		});
 	};
 
-	// отрисовываем курсы с пагинацией
-	const renderCourses = () => {
-		if (loadingCourses) return <Loading />;
 
-		if (error) return <p>{error}</p>; // Показываем сообщение об ошибке
+	const scrollTo = (name)=>{
+		const headerHeight = document.documentElement.style.getPropertyValue("--header-height");
+		scroller.scrollTo(name, {
+			duration: 1000,
+			smooth: true,
+			offset: headerHeight * -1,
+		  });
+	}
 
-		return (
-			<>
-				{selectedSubcategoryId ? (
-					<p className="courses-subcategory">
-						Курсы по категории {selectedSubcategoryName}
-					</p>
-				) : (
-					""
-				)}
-				<ul className="courses-list">
-					{!courses || courses.length === 0 ? (
-						<Course foo={"Не найдено ни одно курса"} />
-					) : (
-						courses.map((course) => {
-							return <Course key={course.id} course={course} />;
-						})
-					)}
-				</ul>
-				<div>
-					<Pagination
-						currentPage={pagination.current_page}
-						lastPage={pagination.last_page}
-						onPageChange={handlePageChange}
-					/>
-				</div>
-			</>
-		);
-	};
+
 
 	const handleManualInputChange = (index, value) => {
 		const newValue = parseFloat(value);
@@ -297,6 +277,7 @@ const Courses = () => {
 		setSliderValues(["", ""]);
 		setCheckedSchoolSpans({});
 		setDefaultPagination();
+scrollTo('categories');
 	};
 
 	//обработчик нажатия на кнопку reset в фильтрах
@@ -352,6 +333,42 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
+	// отрисовываем курсы с пагинацией
+	const renderCourses = () => {
+		if (loadingCourses) return <Loading />;
+
+		if (error) return <p>{error}</p>; // Показываем сообщение об ошибке
+
+		return (
+			<>
+				{selectedSubcategoryId ? (
+					<p className="courses-subcategory">
+						Курсы по категории {selectedSubcategoryName}
+					</p>
+				) : (
+					""
+				)}
+				<ul className="courses-list">
+					{!courses || courses.length === 0 ? (
+						<Course foo={"Не найдено ни одно курса"} />
+					) : (
+						courses.map((course) => {
+							return <Course key={course.id} course={course} />;
+						})
+					)}
+				</ul>
+				<div>
+					<Pagination
+
+						currentPage={pagination.current_page}
+						lastPage={pagination.last_page}
+						onPageChange={handlePageChange}
+					/>
+				</div>
+			</>
+		);
+	};
+
 	return (
 		<section className="courses section">
 			<div className="container">
@@ -373,7 +390,7 @@ const Courses = () => {
 				disabledCategories={disabledCategories}
 			/>
 
-			<div className={`courses-main container`}>
+			<div className={`courses-main container`} name='courses'>
 				<aside className="courses-sidebar" ref={sidebarRef}>
 					<p className="request-result-count ">
 						{loadingCourses
@@ -402,7 +419,7 @@ const Courses = () => {
 						handleShowSchools={handleShowSchools}
 					/>
 				</aside>
-				<div className="courses-content">
+				<div className="courses-content" >
 					{renderCourses()}
 					<Subcategories
 						selectedCategoryId={selectedCategoryId}

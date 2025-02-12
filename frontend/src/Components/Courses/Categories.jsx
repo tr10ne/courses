@@ -39,7 +39,7 @@ const Categories = ({
 	}, []);
 
 	return (
-		<div className="categories-filter">
+		<div className="categories-filter" name='categories'>
 			<div
 				className={`categories-filter__inner container ${
 					disabledCategories ? "disabled" : ""
