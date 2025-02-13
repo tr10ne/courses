@@ -10,7 +10,8 @@ import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Pagination from "../Components/Pagination.jsx";
 import Subcategories from "../Components/Courses/Subcategories.jsx";
-import { scroller } from 'react-scroll';
+import { scroller } from "react-scroll";
+import Schools from "../Components/Courses/Schools.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -29,6 +30,7 @@ const Courses = () => {
 
 	//categories
 	const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+	const [selectedCategoryName, setSelectedCategoryName] = useState(null);
 	const [selectedSubcategoryId, setSelectedSubcategoryId] = useState(null);
 	const [selectedSubcategoryName, setSelectedSubcategoryName] = useState(null);
 	const [disabledCategories, setDisabledCategories] = useState(true);
@@ -170,7 +172,7 @@ const Courses = () => {
 	const handlePageChange = (newPage) => {
 		setPagination((prev) => ({ ...prev, current_page: newPage }));
 
-scrollTo('courses');
+		scrollTo("courses");
 	};
 
 	// Обработчик изменения значений ползунка
@@ -197,17 +199,15 @@ scrollTo('courses');
 		});
 	};
 
-
-	const scrollTo = (name)=>{
-		const headerHeight = document.documentElement.style.getPropertyValue("--header-height");
+	const scrollTo = (name) => {
+		const headerHeight =
+			document.documentElement.style.getPropertyValue("--header-height");
 		scroller.scrollTo(name, {
 			duration: 1000,
 			smooth: true,
 			offset: headerHeight * -1,
-		  });
-	}
-
-
+		});
+	};
 
 	const handleManualInputChange = (index, value) => {
 		const newValue = parseFloat(value);
@@ -236,6 +236,7 @@ scrollTo('courses');
 		// Если новая категория совпадает с текущей, сбрасываем выбор
 		if (selectedCategoryId === newCategory) {
 			setSelectedCategoryId(null);
+			setSelectedCategoryName(null);
 
 			setSelectedSubcategoryId(null);
 			setSelectedSubcategoryName(null);
@@ -277,7 +278,7 @@ scrollTo('courses');
 		setSliderValues(["", ""]);
 		setCheckedSchoolSpans({});
 		setDefaultPagination();
-scrollTo('categories');
+		scrollTo("categories");
 	};
 
 	//обработчик нажатия на кнопку reset в фильтрах
@@ -285,6 +286,7 @@ scrollTo('categories');
 		loadingDefautSliderValues.current = true;
 		setSliderValues(sliderMin, sliderMax);
 		setSelectedCategoryId(null);
+		setSelectedCategoryName(null);
 		setSelectedSubcategoryId(null);
 		setSelectedSubcategoryName(null);
 		setSelectedSchools([]);
@@ -359,7 +361,6 @@ scrollTo('categories');
 				</ul>
 				<div>
 					<Pagination
-
 						currentPage={pagination.current_page}
 						lastPage={pagination.last_page}
 						onPageChange={handlePageChange}
@@ -390,7 +391,7 @@ scrollTo('categories');
 				disabledCategories={disabledCategories}
 			/>
 
-			<div className={`courses-main container`} name='courses'>
+			<div className={`courses-main container`} name="courses">
 				<aside className="courses-sidebar" ref={sidebarRef}>
 					<p className="request-result-count ">
 						{loadingCourses
@@ -419,15 +420,20 @@ scrollTo('categories');
 						handleShowSchools={handleShowSchools}
 					/>
 				</aside>
-				<div className="courses-content" >
+				<div className="courses-content">
 					{renderCourses()}
 					<Subcategories
 						selectedCategoryId={selectedCategoryId}
 						loadingCourses={loadingCourses}
 						handleSubcategoryClick={handleSubcategoryClick}
+						setSelectedCategoryName={setSelectedCategoryName}
 					/>
 
-					{/* <Schools /> */}
+					<Schools
+						selectedCategoryName={selectedCategoryName}
+						loadingCourses={loadingCourses}
+						schools={Array.isArray(schools) ? schools.slice(0, 2) : []}
+					/>
 				</div>
 			</div>
 		</section>

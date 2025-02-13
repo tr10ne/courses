@@ -23,15 +23,12 @@ class CourseResource extends JsonResource
             'link_more' => $this->link_more,     // Дополнительная информация о курсе
             'created_at' => $this->created_at,   // Дата и время создания курса
             'updated_at' => $this->updated_at,   // Дата и время последнего обновления курса
-            'school' => [
-                'id' => $this->school->id,
-                'name' => $this->school->name,
-            ],
+            'school' => $this->school,
             'category' => [
                 'id' => $this->subcategory->category->id,
                 'name' => $this->subcategory->category->name,
             ],
-                        'reviews_count' => $this->reviews_count,
+            'reviews_count' => $this->reviews_count,
             'average_rating' => round($this->avg_rating, 2),
             // 'rating' => round($this->getAverageRating(), 2)
         ];

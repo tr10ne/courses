@@ -1,7 +1,16 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../../js/config";
+import React from "react";
+import SchoolItem from "../Schools/SchoolItem";
 
-const Schools = ({}) => {};
+const Schools = ({ selectedCategoryName, loadingCourses, schools }) => {
+	if (selectedCategoryName && !loadingCourses && schools)
+		return (
+			<div className="courses__schools">
+				<h2 className="courses__schools__title">{`Онлайн-школы преподающие ${selectedCategoryName}`}</h2>
+				{schools.map((school) => {
+					return <SchoolItem key={school.id} school={school} />;
+				})}
+			</div>
+		);
+};
 
 export default Schools;

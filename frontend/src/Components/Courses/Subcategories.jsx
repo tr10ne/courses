@@ -6,6 +6,7 @@ const Subcategories = ({
 	selectedCategoryId,
 	loadingCourses,
 	handleSubcategoryClick,
+	setSelectedCategoryName
 }) => {
 	const [subcategories, setSubcategories] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState(null);
@@ -19,26 +20,32 @@ const Subcategories = ({
 			.then((response) => {
 				setSelectedCategory(response.data.category);
 				setSubcategories(response.data.subcategories);
+
 			})
 			.catch((error) => {
 				console.error("Ошибка при загрузке категории:", error);
 			});
-	}, [selectedCategoryId]);
+		}, [selectedCategoryId]);
 
-	useEffect(() => {
-		if (!selectedCategoryId) setSelectedCategory(null);
-	}, [selectedCategoryId]);
+		useEffect(() => {
+			if (!selectedCategoryId) setSelectedCategory(null);
+		}, [selectedCategoryId]);
 
-	if (!selectedCategory || loadingCourses) return;
+		useEffect(()=>{
+			if(selectedCategory)
+				setSelectedCategoryName(selectedCategory.name);
+			//  eslint-disable-next-line react-hooks/exhaustive-deps
+},[selectedCategory])
 
+	if (selectedCategory &&  !loadingCourses)
 	return (
-		<div className="subcategories">
-			<h2 className="subcategories__title">{`Категории курсов по направлению ${selectedCategory.name}`}</h2>
-			<ul className="subcategories__list">
+		<div className="courses__subcategories">
+			<h2 className="courses__subcategories__title">{`Категории курсов по направлению ${selectedCategory.name}`}</h2>
+			<ul className="courses__subcategories__list">
 				{subcategories.map((subcategory) => {
 					return (
 						<li
-							className="subcategories__item"
+							className="courses__subcategories__item"
 							key={subcategory.id}
 							onClick={() => handleSubcategoryClick(subcategory)}
 						>

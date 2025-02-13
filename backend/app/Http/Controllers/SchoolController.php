@@ -23,8 +23,8 @@ class SchoolController extends Controller
             ->withCount('reviews as reviews_count')
             ->with(['categories', 'subcategories'])
             ->withCasts(['avg_rating' => 'float'])
-            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school 
-                        JOIN reviews ON reviews.id = review_school.review_id 
+            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
+                        JOIN reviews ON reviews.id = review_school.review_id
                         WHERE review_school.school_id = schools.id), 0) as avg_rating');
 
         // Фильтрация по категориям, если они выбраны
@@ -35,9 +35,9 @@ class SchoolController extends Controller
         }
 
         $schools = $query->paginate($perPage);
-    
+
         return SchoolResource::collection($schools)->response()->getData(true);
-    }    
+    }
 
     // Метод для создания новой школы
     public function store(Request $request)
@@ -65,8 +65,8 @@ class SchoolController extends Controller
             ->withCount('reviews as reviews_count')
             ->with(['categories', 'subcategories'])
             ->withCasts(['avg_rating' => 'float'])
-            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school 
-                        JOIN reviews ON reviews.id = review_school.review_id 
+            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
+                        JOIN reviews ON reviews.id = review_school.review_id
                         WHERE review_school.school_id = schools.id), 0) as avg_rating')
             ->firstOrFail();
 
@@ -112,11 +112,11 @@ class SchoolController extends Controller
             ->withCount('reviews as reviews_count')
             ->with(['categories', 'subcategories'])
             ->withCasts(['avg_rating' => 'float'])
-            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school 
-                        JOIN reviews ON reviews.id = review_school.review_id 
+            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
+                        JOIN reviews ON reviews.id = review_school.review_id
                         WHERE review_school.school_id = schools.id), 0) as avg_rating')
             ->firstOrFail();
-    
+
         return new SchoolResource($school);
     }
 }

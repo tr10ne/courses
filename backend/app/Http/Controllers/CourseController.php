@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\SchoolResource;
 
 class CourseController extends Controller
 {
@@ -22,7 +23,14 @@ class CourseController extends Controller
         $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
 
         // Создаем запрос для выборки курсов
-        $query = Course::with(['school', 'subcategory.category'])
+        $query = Course::with(['school' => function ($query) {
+            $query->withCount('reviews as reviews_count')
+                ->withCasts(['avg_rating' => 'float'])
+                ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
+                                JOIN reviews ON reviews.id = review_school.review_id
+                                WHERE review_school.school_id = schools.id), 0) as avg_rating');
+        }])
+            ->with(['subcategory.category'])
             ->withCount('reviews as reviews_count')
             ->withAvg('reviews', 'rating')
             ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
@@ -60,12 +68,14 @@ class CourseController extends Controller
             $maxPrice =  $maxTotalPrice;
         }
 
-        $schoolNames = $query->get()->map(function ($item) {
-            return [
-                'id' => $item->school_id,
-                'name' => $item->school->name,
-            ];
-        })->unique('id')->values();
+        // $schoolNames = $query->get()->map(function ($item) {
+        //     return [
+        //         'id' => $item->school_id,
+        //         'name' => $item->school->name,
+        //     ];
+        // })->unique('id')->values();
+
+        $schools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
         if ($selectedSchools) {
             $query->whereIn('school_id', explode(',', $selectedSchools));
@@ -86,7 +96,7 @@ class CourseController extends Controller
         return response()->json([
             'min_total_price' => $minTotalPrice,
             'max_total_price' => $maxTotalPrice,
-            'schools' => $schoolNames,
+            'schools' => $schools,
             'meta' => [
                 'current_page' => $courses->currentPage(),
                 'from' => $courses->firstItem(),

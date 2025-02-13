@@ -12,7 +12,7 @@ class SchoolResource extends JsonResource
 
         // Проверяем имя текущего маршрута
         $routeName = $request->route()->getName();
-        
+
         // Проверяем, является ли текущий маршрут детальной страницей
         $isDetailPage = in_array($routeName, ['schools.show', 'schools.showByUrl'], true);
 
@@ -24,7 +24,7 @@ class SchoolResource extends JsonResource
             ->take(2); // Берем только 2 самые частые
 
         // Преобразуем ключи (названия подкатегорий) в массив
-        $topSubcategories = $subcategoriesCount->keys()->values(); 
+        $topSubcategories = $subcategoriesCount->keys()->values();
 
         // Основная информация о школе
         $data = [

@@ -44,7 +44,7 @@ class School extends Model
             'category_id'                     // Внешний ключ на category в subcategories
         ); // Убираем дубликаты категорий
     }
-    
+
     public function subcategories()
     {
         return $this->hasManyThrough(
