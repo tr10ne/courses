@@ -4,12 +4,11 @@ import { apiUrl } from "../../js/config";
 
 const Subcategories = ({
 	selectedCategoryId,
+	selectedCategoryName,
 	loadingCourses,
 	handleSubcategoryClick,
-	setSelectedCategoryName
 }) => {
 	const [subcategories, setSubcategories] = useState([]);
-	const [selectedCategory, setSelectedCategory] = useState(null);
 
 	//запрос к БД для получения категории и подкатегорий с ней связанных
 	useEffect(() => {
@@ -18,7 +17,7 @@ const Subcategories = ({
 		axios
 			.get(`${apiUrl}/api/categories/${selectedCategoryId}`)
 			.then((response) => {
-				setSelectedCategory(response.data.category);
+				// setSelectedCategory(response.data.category);
 				setSubcategories(response.data.subcategories);
 
 			})
@@ -27,20 +26,12 @@ const Subcategories = ({
 			});
 		}, [selectedCategoryId]);
 
-		useEffect(() => {
-			if (!selectedCategoryId) setSelectedCategory(null);
-		}, [selectedCategoryId]);
 
-		useEffect(()=>{
-			if(selectedCategory)
-				setSelectedCategoryName(selectedCategory.name);
-			//  eslint-disable-next-line react-hooks/exhaustive-deps
-},[selectedCategory])
 
-	if (selectedCategory &&  !loadingCourses)
+	if (selectedCategoryId &&  !loadingCourses)
 	return (
 		<div className="courses__subcategories">
-			<h2 className="courses__subcategories__title">{`Категории курсов по направлению ${selectedCategory.name}`}</h2>
+			<h2 className="courses__subcategories__title">{`Категории курсов по направлению ${selectedCategoryName}`}</h2>
 			<ul className="courses__subcategories__list">
 				{subcategories.map((subcategory) => {
 					return (

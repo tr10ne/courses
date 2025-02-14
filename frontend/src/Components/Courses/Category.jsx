@@ -1,10 +1,14 @@
 import React from "react";
 
 const Category = ({ category, selectedCategoryId, handleCategoryChange }) => {
+	const handleClick = () => {
+		handleCategoryChange(category);
+	};
+
 	return (
 		<label
 			className={`categories-filter__lbl ${
-				selectedCategoryId === category.id.toString() ? "checked" : ""
+				selectedCategoryId === category.id ? "checked" : ""
 			}`}
 		>
 			{category.name}
@@ -13,8 +17,8 @@ const Category = ({ category, selectedCategoryId, handleCategoryChange }) => {
 				type="radio"
 				name="categories-filter-radio"
 				value={category.id}
-				onChange={handleCategoryChange}
-				onClick={handleCategoryChange}
+				onChange={handleClick}
+				onClick={handleClick}
 				checked={selectedCategoryId === category.id.toString()}
 			/>
 		</label>

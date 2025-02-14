@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
 import Categories from "../Components/Courses/Categories";
@@ -14,6 +14,7 @@ import { scroller } from "react-scroll";
 import Schools from "../Components/Courses/Schools.jsx";
 
 const Courses = () => {
+	const navigate = useNavigate();
 	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
 	const [error, setError] = useState(null);
@@ -23,6 +24,12 @@ const Courses = () => {
 		current_page: 1,
 		last_page: 1,
 	});
+	const crumbs = [
+		{ path: "/", name: "Главная" },
+		{ path: "/courses", name: "Онлайн-курсы" },
+	];
+
+
 
 	//courses
 	const [courses, setCourses] = useState([]);
@@ -38,6 +45,7 @@ const Courses = () => {
 	// filter
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [filter, setFilter] = useState("");
+	const sidebarRef = useRef(null);
 
 	//filter - price
 	const [loadingPrice, setLoadingPrice] = useState(true);
@@ -71,6 +79,7 @@ const Courses = () => {
 
 		const searchParams = new URLSearchParams(location.search);
 		const newFilter = searchParams.get("search") || ""; // Используем значение из URL напрямую
+
 		setFilter(newFilter);
 
 		const params = {
@@ -224,25 +233,27 @@ const Courses = () => {
 	};
 
 	//
-	const handleCategoryChange = (e) => {
+	const handleCategoryChange = (category) => {
+		const newCategoryId = category.id;
+		const newCategoryName = category.name;
+
 		loadingDefautSliderValues.current = true;
 		setLoadingSchools(true);
 		setLoadingPrice(true);
 		setSelectedSchools([]);
 		setSliderValues(["", ""]);
 		setCheckedSchoolSpans({});
-		const newCategory = e.target.value;
-
 		// Если новая категория совпадает с текущей, сбрасываем выбор
-		if (selectedCategoryId === newCategory) {
+		if (selectedCategoryId === newCategoryId) {
 			setSelectedCategoryId(null);
 			setSelectedCategoryName(null);
-
-			setSelectedSubcategoryId(null);
-			setSelectedSubcategoryName(null);
 		} else {
-			setSelectedCategoryId(newCategory);
+			setSelectedCategoryId(newCategoryId);
+			setSelectedCategoryName(newCategoryName);
 		}
+
+		setSelectedSubcategoryId(null);
+			setSelectedSubcategoryName(null);
 
 		setDefaultPagination();
 	};
@@ -302,40 +313,50 @@ const Courses = () => {
 		schoolsBlockRef.current.classList.remove("courses-filter__block_hide");
 	};
 
-	const crumbs = [
-		{ path: "/", name: "Главная" },
-		{ path: "/courses", name: "Онлайн-курсы" },
-	];
-
-	const sidebarRef = useRef(null);
-
+	//делаем высоту для filter
 	useEffect(() => {
 		const handleFilterMaxHeight = () => {
-			const filter = sidebarRef.current.querySelector(
-				".courses-filter__content"
-			);
-			const INDENT = 20;
-			const windowHeight = window.innerHeight;
-			const headerHeight =
-				document.documentElement.style.getPropertyValue("--header-height");
-			const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
-			const filterTop = filter.getBoundingClientRect().top;
+							const filter = sidebarRef.current.querySelector(
+								".courses-filter__content"
+							);
+							const INDENT = 20;
+							const windowHeight = window.innerHeight;
+							const headerHeight =
+								document.documentElement.style.getPropertyValue("--header-height");
+							const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
+							const filterTop = filter.getBoundingClientRect().top;
 
-			const filterMaxHeight =
-				windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
+							const filterMaxHeight =
+								windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
 
-			filter.style.maxHeight = filterMaxHeight + "px";
-		};
+							filter.style.maxHeight = filterMaxHeight + "px";
+						};
 
-		if (!loadingCourses) handleFilterMaxHeight();
+						if (!loadingCourses) handleFilterMaxHeight();
 
-		window.addEventListener("resize", handleFilterMaxHeight);
-		return () => {
-			window.removeEventListener("resize", handleFilterMaxHeight);
-		};
-	}, [loadingCourses]);
+						window.addEventListener("resize", handleFilterMaxHeight);
+						return () => {
+							window.removeEventListener("resize", handleFilterMaxHeight);
+						};
+					}, [loadingCourses]);
 
-	// отрисовываем курсы с пагинацией
+
+					const handleCourseClick = (course) => {
+						navigate(`/courses/${course.url}`, {
+							state: {
+								breadcrumbs: [
+									...crumbs,
+									{ path: `/courses/${course.url}`, name: course.name },
+								],
+							},
+						});
+					};
+
+					const handleBreadcrumbClick = (path) => {
+
+	};
+
+		// отрисовываем курсы с пагинацией
 	const renderCourses = () => {
 		if (loadingCourses) return <Loading />;
 
@@ -345,7 +366,7 @@ const Courses = () => {
 			<>
 				{selectedSubcategoryId ? (
 					<p className="courses-subcategory">
-						Курсы по категории {selectedSubcategoryName}
+						Курсы по ка тегории {selectedSubcategoryName}
 					</p>
 				) : (
 					""
@@ -355,7 +376,7 @@ const Courses = () => {
 						<Course foo={"Не найдено ни одно курса"} />
 					) : (
 						courses.map((course) => {
-							return <Course key={course.id} course={course} />;
+							return <Course key={course.id} course={course} handleCourseClick={handleCourseClick}/>;
 						})
 					)}
 				</ul>
@@ -374,7 +395,7 @@ const Courses = () => {
 		<section className="courses section">
 			<div className="container">
 				<div className="block-head">
-					<Breadcrumbs crumbs={crumbs} />
+					<Breadcrumbs crumbs={crumbs} onBreadcrumbClick={handleBreadcrumbClick} />
 					<h1 className="title">Онлайн-курсы</h1>
 					<p className="text">
 						Список всех онлайн-курсов с рейтингом, отзывами и детальным
@@ -424,16 +445,17 @@ const Courses = () => {
 					{renderCourses()}
 					<Subcategories
 						selectedCategoryId={selectedCategoryId}
+						selectedCategoryName={selectedCategoryName}
 						loadingCourses={loadingCourses}
 						handleSubcategoryClick={handleSubcategoryClick}
 						setSelectedCategoryName={setSelectedCategoryName}
 					/>
 
-					<Schools
+					{/* <Schools
 						selectedCategoryName={selectedCategoryName}
 						loadingCourses={loadingCourses}
 						schools={Array.isArray(schools) ? schools.slice(0, 2) : []}
-					/>
+					/> */}
 				</div>
 			</div>
 		</section>

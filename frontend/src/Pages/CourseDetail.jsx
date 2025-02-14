@@ -3,8 +3,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { apiUrl } from "../js/config.js";
+import { useLocation } from "react-router-dom";
+import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 
 const CourseDetail = () => {
+  const location = useLocation();
+  const breadcrumbs = location.state?.breadcrumbs || [];
+
   const { url } = useParams(); // Получаем параметр `url` из URL
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,6 +54,7 @@ const CourseDetail = () => {
 
   return (
     <div>
+       <Breadcrumbs crumbs={breadcrumbs} />
       <h1>{course.name}</h1>
       <p>{course.description}</p>
       <p>Цена: {course.price}</p>

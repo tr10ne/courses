@@ -1,15 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Course = ({ course, foo }) => {
+const Course = ({ course, foo, handleCourseClick}) => {
+
+const handlerClick = ()=>{handleCourseClick(course)}
+
 if(foo) return <div className="courses-item courses-item_foo">{foo}</div>
 
   return (
     <li className="courses-item ">
       <div className="courses-item__content">
-        <Link className="courses-item__title" to={`/courses/${course.url}`}>
-          {course.name}
-        </Link>
+        <h2 className="courses-item__title"  onClick={handlerClick}>
+                   {course.name}
+        </h2>
 
         <div className="courses-item__details">
           <div className="courses-item__rating">
@@ -46,9 +49,9 @@ if(foo) return <div className="courses-item courses-item_foo">{foo}</div>
         >
           На сайт курса
         </Link>
-        <Link className="courses-item__more-link" to={`/courses/${course.url}`}>
+        <span className="courses-item__more-link" onClick={handlerClick}>
           Подробнее
-        </Link>
+        </span>
       </div>
     </li>
   );

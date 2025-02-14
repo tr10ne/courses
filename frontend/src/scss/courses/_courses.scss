@@ -103,6 +103,13 @@
 	font-size: 18px;
 	font-weight: 700;
 	line-height: 24px;
+
+	cursor: pointer;
+	transition: 0.3s;
+
+	&:hover {
+		color: $color-accent;
+	}
 }
 
 .courses-item__rating {
@@ -160,6 +167,7 @@
 	font-weight: 700;
 	line-height: 24px;
 	border-radius: 100px;
+	cursor: pointer;
 
 	background-color: $color-accent;
 	color: $color-accent-inner;
