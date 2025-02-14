@@ -5,6 +5,7 @@ import SchoolItem from "../Components/Schools/SchoolItem";
 import Pagination from "../Components/Pagination";
 import CategoryFilter from "../Components/Schools/CategoryFilter";
 import { apiUrl } from "../js/config.js";
+import Loading from "../Components/Loading";
 
 const Schools = () => {
   const [schools, setSchools] = useState([]);
@@ -53,23 +54,21 @@ const Schools = () => {
         <div className="schools__head block-head">
           <Breadcrumbs crumbs={crumbs} />
           <h1 className="title">Онлайн-школы</h1>
-          <p className="text">Список онлайн-школ с рейтингами, отзывами и категориями.</p>
+          <p className="text">
+            Список онлайн-школ с рейтингами, отзывами и категориями.
+          </p>
         </div>
-
-        <div className="schools__aside">
-          <CategoryFilter
-            selectedCategories={selectedCategories}
-            onCategoryChange={handleCategoryChange}
-          />
-        </div>
-
+        <CategoryFilter
+          selectedCategories={selectedCategories}
+          onCategoryChange={handleCategoryChange}
+        />
         <div className="schools__body">
           {schools.length > 0 ? (
             schools.map((school) => (
               <SchoolItem key={school.id} school={school} />
             ))
           ) : (
-            <p>Загрузка...</p>
+            <Loading />
           )}
         </div>
 

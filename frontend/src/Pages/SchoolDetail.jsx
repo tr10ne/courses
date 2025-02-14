@@ -2,16 +2,33 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
-// import Pagination from "../Components/Pagination";
+import Pagination from "../Components/Pagination";
 import { apiUrl } from "../js/config.js";
+import CourseItem from "../Components/SchoolDetail/CourseItem";
+import SubcategoryFilter from "../Components/SchoolDetail/SubcategoryFilter";
+import Loading from "../Components/Loading";
 
 const SchoolDetail = () => {
   const { url } = useParams();
   const [school, setSchool] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]); // Полный список подкатегорий
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Состояние для управления параметрами запроса
+  const [queryParams, setQueryParams] = useState({
+    page: 1,
+    schoolurl: url,
+    selectedSubcategories: [], // Добавляем состояние для выбранных подкатегорий
+  });
+
+  // Загрузка данных школы
   useEffect(() => {
     axios
       .get(`${apiUrl}/api/schools/url/${url}`)
@@ -22,22 +39,81 @@ const SchoolDetail = () => {
         if (result) {
           setSchool(result);
         } else {
-          setError("Курс не найден");
+          setError("Школа не найдена");
         }
       })
       .catch((error) => {
-        console.error("Ошибка при загрузке курса:", error);
-        setError("Ошибка при загрузке данных курса");
+        console.error("Ошибка при загрузке школы:", error);
+        setError("Ошибка при загрузке данных школы");
       })
       .finally(() => {
         setLoading(false);
       });
   }, [url]);
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+  // Загрузка курсов для школы с пагинацией и фильтрами
+  useEffect(() => {
+    if (!school) return;
+
+    const subcategoriesQuery =
+      queryParams.selectedSubcategories.length > 0
+        ? `&selectedSubcategoryId=${queryParams.selectedSubcategories.join(
+            ","
+          )}`
+        : "";
+
+    axios
+      .get(
+        `${apiUrl}/api/courses?schoolurl=${url}&page=${queryParams.page}${subcategoriesQuery}`
+      )
+      .then((response) => {
+        const data = response.data;
+        const coursesData = data.courses || [];
+
+        // Если это первая загрузка, сохраняем полный список подкатегорий
+        if (allSubcategories.length === 0) {
+          const uniqueSubcategories = Array.from(
+            new Set(coursesData.map((course) => course.subcategory_name))
+          ).map((name) => ({
+            id: coursesData.find((course) => course.subcategory_name === name)
+              .subcategory_id,
+            name,
+          }));
+          setAllSubcategories(uniqueSubcategories); // Сохраняем полный список
+        }
+
+        setCourses(coursesData);
+        setPagination({
+          current_page: data.meta.current_page,
+          last_page: data.meta.last_page,
+        });
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке курсов:", error);
+      });
+  }, [
+    school,
+    queryParams.page,
+    queryParams.selectedSubcategories,
+    url,
+    allSubcategories.length,
+  ]);
+
+  // Обработчик изменения страницы
+  const handlePageChange = (newPage) => {
+    setQueryParams((prev) => ({ ...prev, page: newPage }));
   };
 
+  // Обработчик изменения выбранных подкатегорий
+  const handleSubcategoryChange = (selectedSubcategories) => {
+    setQueryParams((prev) => ({
+      ...prev,
+      selectedSubcategories,
+      page: 1, // Сброс страницы при изменении фильтров
+    }));
+  };
+
+  // Функция для получения первых двух предложений описания
   const getFirstTwoSentences = (text) => {
     const sentences = text.match(/[^.!?]+[.!?]+/g);
     if (sentences && sentences.length > 2) {
@@ -46,8 +122,12 @@ const SchoolDetail = () => {
     return text;
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   if (loading) {
-    return <div>Загрузка...</div>;
+    return <Loading />;
   }
 
   if (error) {
@@ -69,7 +149,7 @@ const SchoolDetail = () => {
   return (
     <div className="container">
       <section className="school-detail">
-        <div className="school-detail__head">
+        <div className="school-detail__head block-head">
           <Breadcrumbs crumbs={crumbs} />
           <h1>{school.name}</h1>
           <div className="school-detail__box">
@@ -115,21 +195,31 @@ const SchoolDetail = () => {
             </div>
           </div>
         </div>
-        <div className="school-detail__aside"></div>
+        <SubcategoryFilter
+          subcategories={allSubcategories} // Передаем полный список подкатегорий
+          selectedSubcategories={queryParams.selectedSubcategories}
+          onSubcategoryChange={handleSubcategoryChange}
+        />
         <div className="school-detail__body">
           <div className="courses-list">
             <div className="courses-list__head">
               <h2>Все курсы {school.name}</h2>
             </div>
-            {/* <div className="courses-list__item"></div> */}
+            {courses.length > 0 ? (
+              courses.map((courses) => (
+                <CourseItem key={courses.id} course={courses} />
+              ))
+            ) : (
+              <p>Нет курсов в данной школе</p>
+            )}
           </div>
         </div>
-        <div className="schools__footer">
-          {/* <Pagination
+        <div className="school-detail__footer">
+          <Pagination
             currentPage={pagination.current_page}
             lastPage={pagination.last_page}
             onPageChange={handlePageChange}
-          /> */}
+          />
         </div>
       </section>
     </div>

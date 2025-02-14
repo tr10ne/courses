@@ -10,7 +10,6 @@ use App\Http\Resources\SchoolResource;
 
 class CourseController extends Controller
 {
-
     public function index(Request $request)
     {
         // Получаем параметры из запроса
@@ -21,6 +20,7 @@ class CourseController extends Controller
         $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
         $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
         $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
+        $schoolUrl = $request->input('schoolurl', ''); // Фильтр по URL школы
 
         // Создаем запрос для выборки курсов
         $query = Course::with(['school' => function ($query) {
@@ -36,7 +36,7 @@ class CourseController extends Controller
             ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
         JOIN reviews ON reviews.id = review_course.review_id
         WHERE review_course.course_id = courses.id), 0) as avg_rating')
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId) {
+            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $schoolUrl) {
                 if ($selectedSubcategoryId) {
                     $query->where('subcategory_id', $selectedSubcategoryId);
                 }
@@ -46,6 +46,11 @@ class CourseController extends Controller
                 if (!$selectedSubcategoryId && $selectedCategoryId) {
                     $query->whereHas('subcategory.category', function ($query) use ($selectedCategoryId) {
                         $query->where('id', $selectedCategoryId);
+                    });
+                }
+                if ($schoolUrl) {
+                    $query->whereHas('school', function ($query) use ($schoolUrl) {
+                        $query->where('url', $schoolUrl);
                     });
                 }
             });
@@ -65,22 +70,18 @@ class CourseController extends Controller
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
         } else {
-            $maxPrice =  $maxTotalPrice;
+            $maxPrice = $maxTotalPrice;
         }
 
-        // $schoolNames = $query->get()->map(function ($item) {
-        //     return [
-        //         'id' => $item->school_id,
-        //         'name' => $item->school->name,
-        //     ];
-        // })->unique('id')->values();
-
+        // Получаем список школ
         $schools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
+        // Дополнительный фильтр по выбранным школам
         if ($selectedSchools) {
             $query->whereIn('school_id', explode(',', $selectedSchools));
         }
 
+        // Обработка случая, когда нет результатов
         if ($query->count() == 0) {
             $maxPrice = 0;
             $minPrice = 0;
@@ -88,9 +89,25 @@ class CourseController extends Controller
             $minTotalPrice = 0;
         }
 
-
         // Получаем курсы с пагинацией
         $courses = $query->paginate($limit);
+
+        // Преобразуем данные курсов, чтобы в school оставалось только название школы
+        $courses->getCollection()->transform(function ($course) {
+            $course->school = $course->school->name; // Оставляем только название школы
+            return $course;
+        });
+
+        // Сохраняем параметры фильтрации в пагинации
+        $courses->appends([
+            'filter' => $filter,
+            'selectedCategoryId' => $selectedCategoryId,
+            'selectedSubcategoryId' => $selectedSubcategoryId,
+            'maxPrice' => $maxPrice,
+            'minPrice' => $minPrice,
+            'selectedSchools' => $selectedSchools,
+            'schoolurl' => $schoolUrl, // Этот параметр особенно важен для вашей проблемы
+        ]);
 
         // Возвращаем курсы в виде ресурса
         return response()->json([
@@ -119,12 +136,10 @@ class CourseController extends Controller
     public function show($id)
     {
         $course = Course::find($id);
-
         // Если курс не найден, возвращаем ошибку
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
-
         // Возвращаем данные курса
         return response()->json($course);
     }
@@ -143,7 +158,6 @@ class CourseController extends Controller
             'link' => 'nullable|string', // Ссылка на курс (не обязательна)
             'link_more' => 'nullable|string', // Дополнительная ссылка на курс (не обязательна)
         ]);
-
         // Создаем новый курс с валидационными данными
         $course = Course::create($validatedData);
         // Возвращаем созданный курс в виде ресурса
@@ -155,7 +169,6 @@ class CourseController extends Controller
     {
         // Находим курс по ID, если не найдено - будет ошибка 404
         $course = Course::findOrFail($id);
-
         // Валидация данных запроса
         $validatedData = $request->validate([
             'subcategory_id' => 'sometimes|exists:subcategories,id', // Подкатегория может быть изменена
@@ -163,11 +176,10 @@ class CourseController extends Controller
             'name' => 'sometimes|string|max:255', // Название может быть изменено
             'description' => 'sometimes|nullable|string', // Описание может быть изменено
             'price' => 'sometimes|numeric|min:0', // Цена может быть изменена
-            'url' => 'sometimes|required|string|unique:courses,url' . $course->$id, // URL курса (уникальный)
+            'url' => 'sometimes|required|string|unique:courses,url,' . $id, // URL курса (уникальный)
             'link' => 'sometimes|nullable|string', // Ссылка на курс (не обязательна)
             'link_more' => 'sometimes|nullable|string', // Дополнительная ссылка на курс (не обязательна)
         ]);
-
         // Обновляем данные курса
         $course->update($validatedData);
         // Возвращаем обновленный курс в виде ресурса
@@ -182,7 +194,6 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
-
         // Удаляем курс
         $course->delete();
         // Возвращаем сообщение об успешном удалении
@@ -196,7 +207,6 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
-
         // Получаем подкатегорию курса и возвращаем её
         $subcategory = $course->subcategory;
         return response()->json($subcategory);
@@ -209,7 +219,6 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
-
         // Получаем школу курса и возвращаем её
         $school = $course->school;
         return response()->json($school);
@@ -222,11 +231,11 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
-
         // Получаем отзывы курса и возвращаем их
         $reviews = $course->reviews;
         return response()->json($reviews);
     }
+
     // Метод для получения курса по URL
     public function showByUrl($url)
     {

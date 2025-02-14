@@ -11,7 +11,7 @@ import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Pagination from "../Components/Pagination.jsx";
 import Subcategories from "../Components/Courses/Subcategories.jsx";
 import { scroller } from "react-scroll";
-import Schools from "../Components/Courses/Schools.jsx";
+// import Schools from "../Components/Courses/Schools.jsx";
 
 const Courses = () => {
 	const navigate = useNavigate();

@@ -1,19 +1,21 @@
 import React from "react";
 
 const Pagination = ({ currentPage, lastPage, onPageChange }) => {
+  // Если всего одна страница или меньше, не отображаем пагинацию
+  if (lastPage <= 1) {
+    return null;
+  }
+
   const generatePageNumbers = () => {
     if (lastPage <= 5) {
       return Array.from({ length: lastPage }, (_, i) => i + 1);
     }
-
     if (currentPage <= 3) {
       return [1, 2, 3, 4, "...", lastPage];
     }
-
     if (currentPage >= lastPage - 2) {
       return [1, "...", lastPage - 3, lastPage - 2, lastPage - 1, lastPage];
     }
-
     return [
       1,
       "...",
