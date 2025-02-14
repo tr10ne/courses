@@ -1,0 +1,84 @@
+@use "../index" as *;
+
+.course__cart{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    border: $border;
+    border-radius: 5px;
+    background-color: $color-bg1;
+    color: $color-text1;
+
+    &__header,
+    &__footer,
+    &_school{
+        padding:23px 33px;
+    }
+
+    &__header{
+        border-bottom: $border;
+    }
+
+    &_school{
+        padding: 23px;
+        gap: 20px ;
+    }
+}
+
+.course__price{
+    font-family: 'FS-Elliot-Pro-Heavy';
+    font-weight: 900;
+    font-size: 32px;
+    color: $color-accent;
+    text-align: center;
+}
+
+.course__school-title{
+    font-family: 'FS-Elliot-Pro-Bold',sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.course__school-name{
+    font-family: 'FS-Elliot-Pro-Bold',sans-serif;
+    font-weight: 700;
+    font-size: 23px;
+}
+
+.course__school-description{
+    max-height: 400px;
+    overflow: hidden;
+    font-family: 'FS-Elliot-Pro-Regular';
+font-weight: 400;
+}
+
+.course__school-details{
+    margin-top:-15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $color-bg1;
+    box-shadow: 0 -8px 21px 30px $color-bg1;
+}
+
+.course__school-raiting{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-family: 'FS-Elliot-Pro-Bold', sans-serif;
+    font-size: 18px;
+font-weight: 700;
+line-height: 12px;
+
+    & .star{
+        width: 16px;
+        height: 16px;
+    }
+
+}
+.course__school-reviews{
+    color: $color-accent;
+}

@@ -1,19 +1,39 @@
 // CourseDetail.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Loading from "../Components/Loading.jsx";
 import moment from "moment";
 import ReviewItem from "../Components/ReviewItem.jsx";
 import Course from "../Components/Courses/Course.jsx";
+import CourseInfo from "../Components/CourseDetail/CourseInfo.jsx";
+import SchoolInfo from "../Components/CourseDetail/SchoolInfo.jsx";
 
 const CourseDetail = () => {
 	const { url } = useParams(); // Получаем параметр `url` из URL
 	const [course, setCourse] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const headerRef = useRef(null);
+
+	useEffect(() => {
+		const handleResize = () => {
+			if (!course) return;
+			const headerHeight = headerRef.current.offsetHeight;
+			const sidebar = document.querySelector(".course__sidebar");
+			sidebar.style.top = `-${Math.floor(headerHeight / 2 + 40)}px`;
+		};
+
+		handleResize(); 
+
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, [course]);
 
 	// Запрос к API для получения курса по его `url`
 	useEffect(() => {
@@ -45,7 +65,17 @@ const CourseDetail = () => {
 
 		const randomIndex = Math.floor(Math.random() * course.reviews.length);
 
-		return <ReviewItem review={course.reviews[randomIndex]} />;
+		return (
+			<>
+				<ReviewItem review={course.reviews[randomIndex]} />
+				<Link
+					className="course__reviews-link"
+					// to={}
+				>
+					Все отзывы по курсу
+				</Link>
+			</>
+		);
 	};
 
 	const renderRelatedCourses = () => {
@@ -76,15 +106,17 @@ const CourseDetail = () => {
 
 	return (
 		<section className="course">
-			<div className="course__header">
-				<div className="course__header__inner container">
-					<Breadcrumbs crumbs={crumbs} />
+			<div className="course__header" ref={headerRef}>
+				<div className=" container">
+					<div className="course__header__inner">
+						<Breadcrumbs crumbs={crumbs} />
 
-					<h1 className="title">{course.name}</h1>
-					<p className="course__updated-at">
-						Последнее обновление{" "}
-						{moment(course.updated_at).format("DD.MM.YYYY")}
-					</p>
+						<h1 className="title">{course.name}</h1>
+						<p className="course__updated-at">
+							Последнее обновление{" "}
+							{moment(course.updated_at).format("DD.MM.YYYY")}
+						</p>
+					</div>
 				</div>
 			</div>
 
@@ -101,7 +133,8 @@ const CourseDetail = () => {
 					{renderRelatedCourses()}
 				</div>
 				<aside className="course__sidebar">
-					<p className="course__price">{course.price}</p>
+					<CourseInfo course={course} />
+					<SchoolInfo school={course.school} />
 				</aside>
 			</div>
 		</section>

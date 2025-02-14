@@ -207,12 +207,13 @@
 .star-rating {
 	display: flex;
 	gap: 5px;
-
-	& .star {
+	
+	.star {
 		width: 14px;
 		height: 14px;
 	}
 }
+
 
 /* ============================= */
 /* Media */
