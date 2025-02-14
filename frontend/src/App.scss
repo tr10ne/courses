@@ -6,6 +6,10 @@
 @use "./scss/common";
 @use "./scss/header";
 
+//Home
+@use "./scss/home/intro";
+
+//Schools
 @use "./scss/schools/schools";
 @use "./scss/schoolDetail/school-detail";
 
@@ -18,6 +22,10 @@
 @use "./scss/courses/subcategories";
 @use "./scss/courses/courses-schools";
 
-@use "./scss/home/intro";
+//Course
+@use "./scss/course-detail/course-detail";
+
+//Reviews
+@use "./scss/reviews/review-item.scss";
 
 @use "./scss/footer";

@@ -163,7 +163,7 @@ const Header = ({ pageRef }) => {
 				<nav ref={menuRef} className={`nav ${isMenuOpen ? "open" : ""}`}>
 					<ul className="menu">
 						<li className="menu__item">
-							<Link
+						<Link
 								className="menu__link"
 								ref={(el) => (menuItemsRef.current[0] = el)}
 								to="/courses"

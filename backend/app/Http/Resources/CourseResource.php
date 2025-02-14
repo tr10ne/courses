@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -10,7 +11,14 @@ class CourseResource extends JsonResource
     // Метод для преобразования данных ресурса в массив
     public function toArray(Request $request): array
     {
-        return [
+        // Проверяем имя текущего маршрута
+        $routeName = $request->route()->getName();
+
+        // Проверяем, является ли текущий маршрут детальной страницей
+        $isDetailPage = in_array($routeName, ['courses.show', 'courses.showByUrl'], true);
+
+
+        $data =  [
             'id' => $this->id,                  // Идентификатор курса
             'subcategory_id' => $this->subcategory_id, // Идентификатор подкатегории, к которой относится курс
             'subcategory_name' => $this->subcategory->name, // Идентификатор подкатегории, к которой относится курс
@@ -23,14 +31,63 @@ class CourseResource extends JsonResource
             'link_more' => $this->link_more,     // Дополнительная информация о курсе
             'created_at' => $this->created_at,   // Дата и время создания курса
             'updated_at' => $this->updated_at,   // Дата и время последнего обновления курса
-            'school' => $this->school,
+
             'category' => [
                 'id' => $this->subcategory->category->id,
                 'name' => $this->subcategory->category->name,
             ],
-            'reviews_count' => $this->reviews_count,
-            'average_rating' => round($this->avg_rating, 2),
-            // 'rating' => round($this->getAverageRating(), 2)
+            'reviews_count' => $this->getReviewsCount(),
+            'average_rating' => round($this->getAverageRating(), 2)
         ];
+
+        if ($isDetailPage) {
+            $data['reviews'] = $this->reviews->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'text' => $review->text,
+                    'rating' => $review->rating,
+                    'is_approved' => $review->is_approved,
+                    'user' => [
+                        'id' => $review->user->id,
+                        'name' => $review->user->name,
+                        'email' => $review->user->email,
+                    ],
+                    'created_at' => $review->created_at,
+                    'updated_at' => $review->updated_at,
+                ];
+            });
+
+            // Получаем 3 курса из той же подкатегории (исключая текущий курс)
+            $relatedCourses = Course::where('subcategory_id', $this->subcategory_id)
+                ->where('id', '!=', $this->id)
+                ->limit(3)
+                ->get();
+
+            // Добавляем связанные курсы в массив данных
+            $data['related_courses'] = $relatedCourses->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'name' => $course->name,
+                    'url' => $course->url,
+                    'price' => $course->price,
+                    'school' => $course->school,
+                    'average_rating' => round($this->getAverageRating(), 2),
+                    'reviews_count' => $this->getReviewsCount()
+                ];
+            });
+
+            $data['school'] = [
+                'id' => $this->school->id,
+                'name' => $this->school->name,
+                'description' => $this->school->description,
+                'url' => $this->school->url,
+                'link' => $this->school->link,
+                'link_to_school' => $this->school->link_to_school,
+                'rating' => $this->school->getAverageRating(), // Средний рейтинг школы
+                'reviews' => $this->school->getReviewsCount(),   // Количество отзывов о школе
+            ];
+        }
+
+        return $data;
     }
 }

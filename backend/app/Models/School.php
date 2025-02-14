@@ -56,4 +56,20 @@ class School extends Model
             'subcategory_id'                  // Внешний ключ на subcategory в courses
         ); // Убираем дубликаты подкатегорий
     }
+
+    // Метод для получения среднего рейтинга школы
+    public function getAverageRating(): float
+    {
+        if ($this->reviews()->count() === 0) {
+            return 0; // Если нет отзывов, возвращаем 0
+        }
+
+        return $this->reviews()->avg('rating') ?? 0; // Рассчитываем среднее значение рейтинга
+    }
+
+    // Метод для получения количества отзывов о школе
+    public function getReviewsCount(): int
+    {
+        return $this->reviews()->count();
+    }
 }

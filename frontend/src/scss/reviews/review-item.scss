@@ -1,0 +1,10 @@
+@use "../index" as *;
+
+.review{
+padding: 30px 42px;
+
+&_excelent{
+    background-color: yellow;
+}
+}
+

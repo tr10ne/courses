@@ -31,11 +31,6 @@ class CourseController extends Controller
                                 WHERE review_school.school_id = schools.id), 0) as avg_rating');
         }])
             ->with(['subcategory.category'])
-            ->withCount('reviews as reviews_count')
-            ->withAvg('reviews', 'rating')
-            ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
-        JOIN reviews ON reviews.id = review_course.review_id
-        WHERE review_course.course_id = courses.id), 0) as avg_rating')
             ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId) {
                 if ($selectedSubcategoryId) {
                     $query->where('subcategory_id', $selectedSubcategoryId);
@@ -67,13 +62,6 @@ class CourseController extends Controller
         } else {
             $maxPrice =  $maxTotalPrice;
         }
-
-        // $schoolNames = $query->get()->map(function ($item) {
-        //     return [
-        //         'id' => $item->school_id,
-        //         'name' => $item->school->name,
-        //     ];
-        // })->unique('id')->values();
 
         $schools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
@@ -231,7 +219,10 @@ class CourseController extends Controller
     public function showByUrl($url)
     {
         // Находим курс по URL, если не найдено - будет ошибка 404
-        $course = Course::where('url', $url)->firstOrFail();
+        $course = Course::with(['school', 'reviews.user'])
+            ->where('url', $url)
+            ->firstOrFail();
+
         // Возвращаем курс в виде ресурса
         return new CourseResource($course);
     }
