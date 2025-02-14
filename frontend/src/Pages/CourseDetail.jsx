@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { apiUrl } from "../js/config.js";
-import { useLocation } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Loading from "../Components/Loading.jsx";
 import moment from "moment";
@@ -42,17 +41,11 @@ const CourseDetail = () => {
 
 	//отрисовываем отзыв
 	const renderReview = () => {
-		if (course.reviews.length === 0) return;
+		if (course.reviews.length === 0) return <p>Нет отзывов о курсе</p>;
 
 		const randomIndex = Math.floor(Math.random() * course.reviews.length);
 
-		return (
-			<article className="course__block">
-				<h2 className="course__title">Отзывы о курсе</h2>
-
-				<ReviewItem review={course.reviews[randomIndex]} />
-			</article>
-		);
+		return <ReviewItem review={course.reviews[randomIndex]} />;
 	};
 
 	const renderRelatedCourses = () => {
@@ -60,8 +53,8 @@ const CourseDetail = () => {
 		return (
 			<article className="course__block">
 				<h2 className="course__title">Похожие курсы</h2>
-				{course.related_courses.map((course) => (
-					<Course course={course} />
+				{course.related_courses.map((relatedCourse) => (
+					<Course key={relatedCourse.id} course={relatedCourse} />
 				))}
 			</article>
 		);
@@ -88,7 +81,7 @@ const CourseDetail = () => {
 					<Breadcrumbs crumbs={crumbs} />
 
 					<h1 className="title">{course.name}</h1>
-					<p className="course__updated_at">
+					<p className="course__updated-at">
 						Последнее обновление{" "}
 						{moment(course.updated_at).format("DD.MM.YYYY")}
 					</p>
@@ -101,7 +94,10 @@ const CourseDetail = () => {
 						<h2 className="course__title">О курсе</h2>
 						<p className="course__description">{course.description}</p>
 					</article>
-					{renderReview()}
+					<article className="course__block">
+						<h2 className="course__title">Отзывы о курсе</h2>
+						{renderReview()}
+					</article>
 					{renderRelatedCourses()}
 				</div>
 				<aside className="course__sidebar">

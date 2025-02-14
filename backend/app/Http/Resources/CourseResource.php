@@ -71,8 +71,8 @@ class CourseResource extends JsonResource
                     'url' => $course->url,
                     'price' => $course->price,
                     'school' => $course->school,
-                    'average_rating' => round($this->getAverageRating(), 2),
-                    'reviews_count' => $this->getReviewsCount()
+                    'average_rating' => round($course->getAverageRating(), 2),
+                    'reviews_count' => $course->getReviewsCount()
                 ];
             });
 
