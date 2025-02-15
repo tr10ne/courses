@@ -7,7 +7,7 @@ import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Loading from "../Components/Loading.jsx";
 import moment from "moment";
 import ReviewItem from "../Components/ReviewItem.jsx";
-import Course from "../Components/Courses/Course.jsx";
+// import Course from "../Components/Courses/Course.jsx";
 import CourseInfo from "../Components/CourseDetail/CourseInfo.jsx";
 import SchoolInfo from "../Components/CourseDetail/SchoolInfo.jsx";
 

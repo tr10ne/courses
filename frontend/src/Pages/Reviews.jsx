@@ -51,7 +51,7 @@ const Reviews = () => {
                   <div dangerouslySetInnerHTML={{ __html: review.text }} />
                 </td>
                 <td>{review.rating}</td>
-                <td>{review.user}</td>
+                <td>{review.user.name}</td>
               </tr>
             ))}
         </tbody>
