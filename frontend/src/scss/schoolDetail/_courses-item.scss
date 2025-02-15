@@ -23,14 +23,15 @@
 .course-raiting {
   flex: 1 1 0;
   justify-items: center;
-  & .rating-star {
-    display: inline-flex;
-    gap: 8px;
-    align-items: center;
-    & svg {
-      width: 14px;
-      height: 14px;
-    }
+}
+
+.rating-star {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  & svg {
+    width: 14px;
+    height: 14px;
   }
 }
 

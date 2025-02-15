@@ -168,16 +168,16 @@
   justify-content: space-between;
 }
 
-.rating-star {
+.rating-stars {
   width: 14px;
   height: 14px;
 }
 
-.rating-star.filled {
+.rating-stars.filled {
   fill: #ffb800; /* Золотой цвет */
 }
 
-.rating-star.empty {
+.rating-stars.empty {
   fill: #d3def8; /* Серый цвет */
 }
 
