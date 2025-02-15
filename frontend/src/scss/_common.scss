@@ -207,10 +207,23 @@
 	display: flex;
 	gap: 5px;
 	
-	.star {
+	& .star {
 		width: 14px;
 		height: 14px;
 	}
+}
+
+.rating-stars {
+  width: 14px;
+  height: 14px;
+}
+
+.rating-stars.filled {
+  fill: #ffb800; /* Золотой цвет */
+}
+
+.rating-stars.empty {
+  fill: #d3def8; /* Серый цвет */
 }
 
 

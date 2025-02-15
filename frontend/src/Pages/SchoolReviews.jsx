@@ -14,6 +14,7 @@ const SchoolReviews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [crumbs, setCrumbs] = useState(false);
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -22,6 +23,16 @@ const SchoolReviews = () => {
     page: 1,
     schoolurl: url,
   });
+
+  useEffect(() => {
+    if (school)
+      setCrumbs([
+        { path: "/", name: "Главная" },
+        { path: "/schools", name: "Онлайн-школы" },
+        { path: `/schools/${school.url}`, name: school.name },
+        { path: "/reviews", name: "Отзывы" },
+      ]);
+  }, [school]);
 
   // Загрузка данных школы и отзывов
   useEffect(() => {
@@ -80,13 +91,6 @@ const SchoolReviews = () => {
   if (loading) return <Loading />;
   if (error) return <div>{error}</div>;
   if (!school) return <div>Школа не найдена</div>;
-
-  const crumbs = [
-    { path: "/", name: "Главная" },
-    { path: "/schools", name: "Онлайн-школы" },
-    { path: `/schools/${school.url}`, name: school.name },
-    { path: "/reviews", name: "Отзывы" },
-  ];
 
   const truncatedDescription = getFirstTwoSentences(school.description);
 
