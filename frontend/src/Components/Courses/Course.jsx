@@ -34,7 +34,7 @@ const Course = ({ course, foo }) => {
           </p>
 
           <p className="courses-item__school">
-            {course.school ? course.school : "Не указана"}
+            {course.school ? course.school.name : "Не указана"}
           </p>
         </div>
       </div>

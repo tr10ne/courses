@@ -10,40 +10,52 @@ use App\Http\Resources\SchoolResource;
 
 class CourseController extends Controller
 {
-
     public function index(Request $request)
-    {
-        // Получаем параметры из запроса
-        $limit = $request->input('limit', 10);    // Количество записей на страницу
-        $filter = $request->input('filter', '');   // Фильтр по названию курса
-        $selectedCategoryId = $request->input('selectedCategoryId', null); // Фильтр по выбранной категории
-        $selectedSubcategoryId = $request->input('selectedSubcategoryId', null);
-        $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
-        $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
-        $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
+{
+    // Получаем параметры из запроса
+    $limit = $request->input('limit', 10);    // Количество записей на страницу
+    $filter = $request->input('filter', '');   // Фильтр по названию курса
+    $selectedCategoryId = $request->input('selectedCategoryId', null); // Фильтр по выбранной категории
+    $selectedSubcategoryId = $request->input('selectedSubcategoryId', null);
+    $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
+    $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
+    $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
+    $schoolUrl = $request->input('schoolurl', ''); // Фильтр по URL школы
 
-        // Создаем запрос для выборки курсов
-        $query = Course::with(['school' => function ($query) {
-            $query->withCount('reviews as reviews_count')
-                ->withCasts(['avg_rating' => 'float'])
-                ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
-                                JOIN reviews ON reviews.id = review_school.review_id
-                                WHERE review_school.school_id = schools.id), 0) as avg_rating');
-        }])
-            ->with(['subcategory.category'])
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId) {
-                if ($selectedSubcategoryId) {
-                    $query->where('subcategory_id', $selectedSubcategoryId);
-                }
-                if ($filter) {
-                    $query->where('courses.name', 'like', '%' . $filter . '%');
-                }
-                if (!$selectedSubcategoryId && $selectedCategoryId) {
-                    $query->whereHas('subcategory.category', function ($query) use ($selectedCategoryId) {
-                        $query->where('id', $selectedCategoryId);
-                    });
-                }
-            });
+    // Создаем запрос для выборки курсов
+    $query = Course::with(['school' 
+    => function ($query) {
+        $query->withCount('reviews as reviews_count')
+            ->withCasts(['avg_rating' => 'float'])
+            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
+                            JOIN reviews ON reviews.id = review_school.review_id
+                            WHERE review_school.school_id = schools.id), 0) as avg_rating');
+    }])
+        ->with(['subcategory.category'])
+        ->withCount('reviews as reviews_count')
+        ->withAvg('reviews', 'rating')
+        ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
+    JOIN reviews ON reviews.id = review_course.review_id
+    WHERE review_course.course_id = courses.id), 0) as avg_rating')
+        ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $schoolUrl) {
+            if ($selectedSubcategoryId) {
+                $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
+                $query->whereIn('subcategory_id', $selectedSubcategoryIds); // Используем whereIn для фильтрации
+            }
+            if ($filter) {
+                $query->where('courses.name', 'like', '%' . $filter . '%');
+            }
+            if (!$selectedSubcategoryId && $selectedCategoryId) {
+                $query->whereHas('subcategory.category', function ($query) use ($selectedCategoryId) {
+                    $query->where('id', $selectedCategoryId);
+                });
+            }
+            if ($schoolUrl) {
+                $query->whereHas('school', function ($query) use ($schoolUrl) {
+                    $query->where('url', $schoolUrl);
+                });
+            }
+        });
 
         // Получаем минимальную и максимальную цену
         $minTotalPrice = $query->min('price');
@@ -60,15 +72,18 @@ class CourseController extends Controller
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
         } else {
-            $maxPrice =  $maxTotalPrice;
+            $maxPrice = $maxTotalPrice;
         }
 
+        // Получаем список школ
         $schools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
+        // Дополнительный фильтр по выбранным школам
         if ($selectedSchools) {
             $query->whereIn('school_id', explode(',', $selectedSchools));
         }
 
+        // Обработка случая, когда нет результатов
         if ($query->count() == 0) {
             $maxPrice = 0;
             $minPrice = 0;
@@ -76,9 +91,25 @@ class CourseController extends Controller
             $minTotalPrice = 0;
         }
 
-
         // Получаем курсы с пагинацией
         $courses = $query->paginate($limit);
+
+        // Преобразуем данные курсов, чтобы в school оставалось только название школы
+        $courses->getCollection()->transform(function ($course) {
+            $course->school = $course->school->name; // Оставляем только название школы
+            return $course;
+        });
+
+        // Сохраняем параметры фильтрации в пагинации
+        $courses->appends([
+            'filter' => $filter,
+            'selectedCategoryId' => $selectedCategoryId,
+            'selectedSubcategoryId' => $selectedSubcategoryId,
+            'maxPrice' => $maxPrice,
+            'minPrice' => $minPrice,
+            'selectedSchools' => $selectedSchools,
+            'schoolurl' => $schoolUrl, // Этот параметр особенно важен для вашей проблемы
+        ]);
 
         // Возвращаем курсы в виде ресурса
         return response()->json([
@@ -151,7 +182,7 @@ class CourseController extends Controller
             'name' => 'sometimes|string|max:255', // Название может быть изменено
             'description' => 'sometimes|nullable|string', // Описание может быть изменено
             'price' => 'sometimes|numeric|min:0', // Цена может быть изменена
-            'url' => 'sometimes|required|string|unique:courses,url' . $course->$id, // URL курса (уникальный)
+            'url' => 'sometimes|required|string|unique:courses,url,' . $id, // URL курса (уникальный)
             'link' => 'sometimes|nullable|string', // Ссылка на курс (не обязательна)
             'link_more' => 'sometimes|nullable|string', // Дополнительная ссылка на курс (не обязательна)
         ]);
@@ -215,6 +246,7 @@ class CourseController extends Controller
         $reviews = $course->reviews;
         return response()->json($reviews);
     }
+
     // Метод для получения курса по URL
     public function showByUrl($url)
     {
