@@ -1,25 +1,30 @@
 import React from "react";
 import Star from "../Star";
+import { Link } from "react-router-dom";
 
 const SchoolInfo = ({ school }) => {
-	return (
-		<div className="course__cart course__cart_school">
-			<h2 className="course__school-title">Информация о школе </h2>
-			<h3 className="course__school-name"> {school.name}</h3>
-			<div
-				className="course__school-description"
-				dangerouslySetInnerHTML={{ __html: school.description }}
-			></div>
+  return (
+    <div className="course__cart course__cart_school">
+      <h2 className="course__school-title">Информация о школе </h2>
+      <h3 className="course__school-name"> {school.name}</h3>
+      <div
+        className="course__school-description"
+        dangerouslySetInnerHTML={{ __html: school.description }}
+      ></div>
 
-			<div className="course__school-details">
-				<div className="course__school-raiting">
-					<Star filled={true} />
-					<span> {school.rating}</span>
-				</div>
-				<p className="course__school-reviews">отзывы о школе ({school.reviews})</p>
-			</div>
-		</div>
-	);
+      <div className="course__school-details">
+        <div className="course__school-raiting">
+          <Star filled={true} />
+          <span> {school.rating}</span>
+        </div>
+        <Link to={`/schools/${school.url}/reviews`}>
+          <p className="course__school-reviews">
+            отзывы о школе ({school.reviews})
+          </p>
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default SchoolInfo;

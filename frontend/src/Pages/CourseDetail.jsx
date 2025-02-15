@@ -78,17 +78,17 @@ const CourseDetail = () => {
 		);
 	};
 
-	const renderRelatedCourses = () => {
-		if (course.related_courses.length === 0) return;
-		return (
-			<article className="course__block">
-				<h2 className="course__title">Похожие курсы</h2>
-				{course.related_courses.map((relatedCourse) => (
-					<Course key={relatedCourse.id} course={relatedCourse} />
-				))}
-			</article>
-		);
-	};
+	// const renderRelatedCourses = () => {
+	// 	if (course.related_courses.length === 0) return;
+	// 	return (
+	// 		<article className="course__block">
+	// 			<h2 className="course__title">Похожие курсы</h2>
+	// 			{course.related_courses.map((relatedCourse) => (
+	// 				<Course key={relatedCourse.id} course={relatedCourse} />
+	// 			))}
+	// 		</article>
+	// 	);
+	// };
 
 	if (loading) {
 		return <Loading />;
@@ -130,7 +130,7 @@ const CourseDetail = () => {
 						<h2 className="course__title">Отзывы о курсе</h2>
 						{renderReview()}
 					</article>
-					{renderRelatedCourses()}
+					{/* {renderRelatedCourses()} */}
 				</div>
 				<aside className="course__sidebar">
 					<CourseInfo course={course} />
