@@ -12,7 +12,8 @@ const SchoolDetail = () => {
   const { url } = useParams();
   const [school, setSchool] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [allSubcategories, setAllSubcategories] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]); // Все подкатегории
+  const [filteredSubcategories, setFilteredSubcategories] = useState([]); // Отфильтрованные подкатегории
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -20,8 +21,9 @@ const SchoolDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 0]); // Диапазон цен
-  const [sliderValues, setSliderValues] = useState([0, 0]); // Текущие значения слайдера
+  const [priceRange, setPriceRange] = useState([0, 0]);
+  const [sliderValues, setSliderValues] = useState([0, 0]);
+
   const handleResetFilters = () => {
     setQueryParams((prev) => ({
       ...prev,
@@ -31,9 +33,9 @@ const SchoolDetail = () => {
       page: 1,
     }));
     setSliderValues([priceRange[0], priceRange[1]]);
+    setFilteredSubcategories(allSubcategories); // Сбрасываем фильтр подкатегорий
   };
 
-  // Состояние для управления параметрами запроса
   const [queryParams, setQueryParams] = useState({
     page: 1,
     schoolurl: url,
@@ -42,7 +44,7 @@ const SchoolDetail = () => {
     maxPrice: 0,
   });
 
-  // Загрузка данных школы
+  // Загрузка данных школы и всех подкатегорий
   useEffect(() => {
     axios
       .get(`${apiUrl}/api/schools/url/${url}`)
@@ -52,6 +54,45 @@ const SchoolDetail = () => {
           : null;
         if (result) {
           setSchool(result);
+
+          // Загружаем все курсы школы для извлечения подкатегорий
+          axios
+            .get(`${apiUrl}/api/courses?schoolurl=${url}&limit=all`)
+            .then((response) => {
+              const coursesData = response.data.courses || [];
+
+              // Извлекаем уникальные подкатегории
+              const uniqueSubcategories = Array.from(
+                new Set(coursesData.map((course) => course.subcategory_name))
+              ).map((name) => ({
+                id: coursesData.find(
+                  (course) => course.subcategory_name === name
+                ).subcategory_id,
+                name,
+              }));
+
+              setAllSubcategories(uniqueSubcategories);
+              setFilteredSubcategories(uniqueSubcategories); // Инициализируем отфильтрованные подкатегории
+
+              // Обновляем диапазон цен
+              if (
+                priceRange[1] === 0 &&
+                response.data.min_total_price &&
+                response.data.max_total_price
+              ) {
+                setPriceRange([
+                  response.data.min_total_price,
+                  response.data.max_total_price,
+                ]);
+                setSliderValues([
+                  response.data.min_total_price,
+                  response.data.max_total_price,
+                ]);
+              }
+            })
+            .catch((error) => {
+              console.error("Ошибка при загрузке курсов:", error);
+            });
         } else {
           setError("Школа не найдена");
         }
@@ -89,32 +130,26 @@ const SchoolDetail = () => {
         const data = response.data;
         const coursesData = data.courses || [];
 
-        // Если это первая загрузка, сохраняем полный список подкатегорий
-        if (allSubcategories.length === 0) {
-          const uniqueSubcategories = Array.from(
-            new Set(coursesData.map((course) => course.subcategory_name))
-          ).map((name) => ({
-            id: coursesData.find((course) => course.subcategory_name === name)
-              .subcategory_id,
-            name,
-          }));
-          setAllSubcategories(uniqueSubcategories);
-        }
-
         setCourses(coursesData);
         setPagination({
           current_page: data.meta.current_page,
           last_page: data.meta.last_page,
         });
 
-        // Обновляем диапазон цен, если это первая загрузка
-        if (
-          priceRange[1] === 0 &&
-          data.min_total_price &&
-          data.max_total_price
-        ) {
-          setPriceRange([data.min_total_price, data.max_total_price]);
-          setSliderValues([data.min_total_price, data.max_total_price]);
+        // Если пользователь изменил диапазон цен, обновляем отфильтрованные подкатегории
+        if (queryParams.minPrice > 0 || queryParams.maxPrice > 0) {
+          const filteredSubcategories = Array.from(
+            new Set(coursesData.map((course) => course.subcategory_name))
+          ).map((name) => ({
+            id: coursesData.find((course) => course.subcategory_name === name)
+              .subcategory_id,
+            name,
+          }));
+
+          setFilteredSubcategories(filteredSubcategories);
+        } else {
+          // Если диапазон цен сброшен, показываем все подкатегории
+          setFilteredSubcategories(allSubcategories);
         }
       })
       .catch((error) => {
@@ -259,7 +294,7 @@ const SchoolDetail = () => {
           </div>
         </div>
         <SubcategoryFilter
-          subcategories={allSubcategories}
+          subcategories={filteredSubcategories} // Используем отфильтрованные подкатегории
           selectedSubcategories={queryParams.selectedSubcategories}
           onSubcategoryChange={handleSubcategoryChange}
           sliderMin={priceRange[0]}
