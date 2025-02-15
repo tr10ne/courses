@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import { apiUrl } from "../js/config.js";
@@ -12,7 +12,7 @@ const SchoolDetail = () => {
   const { url } = useParams();
   const [school, setSchool] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [allSubcategories, setAllSubcategories] = useState([]); // Полный список подкатегорий
+  const [allSubcategories, setAllSubcategories] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -20,12 +20,26 @@ const SchoolDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [priceRange, setPriceRange] = useState([0, 0]); // Диапазон цен
+  const [sliderValues, setSliderValues] = useState([0, 0]); // Текущие значения слайдера
+  const handleResetFilters = () => {
+    setQueryParams((prev) => ({
+      ...prev,
+      selectedSubcategories: [],
+      minPrice: 0,
+      maxPrice: 0,
+      page: 1,
+    }));
+    setSliderValues([priceRange[0], priceRange[1]]);
+  };
 
   // Состояние для управления параметрами запроса
   const [queryParams, setQueryParams] = useState({
     page: 1,
     schoolurl: url,
-    selectedSubcategories: [], // Добавляем состояние для выбранных подкатегорий
+    selectedSubcategories: [],
+    minPrice: 0,
+    maxPrice: 0,
   });
 
   // Загрузка данных школы
@@ -62,9 +76,14 @@ const SchoolDetail = () => {
           )}`
         : "";
 
+    const priceQuery =
+      queryParams.minPrice > 0 || queryParams.maxPrice > 0
+        ? `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
+        : "";
+
     axios
       .get(
-        `${apiUrl}/api/courses?schoolurl=${url}&page=${queryParams.page}${subcategoriesQuery}`
+        `${apiUrl}/api/courses?schoolurl=${url}&page=${queryParams.page}${subcategoriesQuery}${priceQuery}`
       )
       .then((response) => {
         const data = response.data;
@@ -79,7 +98,7 @@ const SchoolDetail = () => {
               .subcategory_id,
             name,
           }));
-          setAllSubcategories(uniqueSubcategories); // Сохраняем полный список
+          setAllSubcategories(uniqueSubcategories);
         }
 
         setCourses(coursesData);
@@ -87,6 +106,16 @@ const SchoolDetail = () => {
           current_page: data.meta.current_page,
           last_page: data.meta.last_page,
         });
+
+        // Обновляем диапазон цен, если это первая загрузка
+        if (
+          priceRange[1] === 0 &&
+          data.min_total_price &&
+          data.max_total_price
+        ) {
+          setPriceRange([data.min_total_price, data.max_total_price]);
+          setSliderValues([data.min_total_price, data.max_total_price]);
+        }
       })
       .catch((error) => {
         console.error("Ошибка при загрузке курсов:", error);
@@ -95,8 +124,11 @@ const SchoolDetail = () => {
     school,
     queryParams.page,
     queryParams.selectedSubcategories,
+    queryParams.minPrice,
+    queryParams.maxPrice,
     url,
     allSubcategories.length,
+    priceRange,
   ]);
 
   // Обработчик изменения страницы
@@ -109,7 +141,36 @@ const SchoolDetail = () => {
     setQueryParams((prev) => ({
       ...prev,
       selectedSubcategories,
-      page: 1, // Сброс страницы при изменении фильтров
+      page: 1,
+    }));
+  };
+
+  // Обработчик изменения слайдера
+  const handleSliderChange = (values) => {
+    setSliderValues(values);
+  };
+
+  // Обработчик завершения изменения слайдера
+  const handleSliderAfterChange = (values) => {
+    setQueryParams((prev) => ({
+      ...prev,
+      minPrice: values[0],
+      maxPrice: values[1],
+      page: 1,
+    }));
+  };
+
+  // Обработчик ручного ввода
+  const handleManualInputChange = (index, value) => {
+    const newValues = [...sliderValues];
+    newValues[index] = Number(value);
+    setSliderValues(newValues);
+
+    setQueryParams((prev) => ({
+      ...prev,
+      minPrice: newValues[0],
+      maxPrice: newValues[1],
+      page: 1,
     }));
   };
 
@@ -188,17 +249,26 @@ const SchoolDetail = () => {
                 </p>
               </div>
               <button className="school-detail__btn">
-                <p className="school-reviewcount school-reviewcount_detail">
-                  <span>{school.reviews}</span> отзывов о школе
-                </p>
+                <Link to={`/schools/${school.url}/reviews`}>
+                  <p className="school-reviewcount school-reviewcount_detail">
+                    <span>{school.reviews}</span> отзывов о школе
+                  </p>
+                </Link>
               </button>
             </div>
           </div>
         </div>
         <SubcategoryFilter
-          subcategories={allSubcategories} // Передаем полный список подкатегорий
+          subcategories={allSubcategories}
           selectedSubcategories={queryParams.selectedSubcategories}
           onSubcategoryChange={handleSubcategoryChange}
+          sliderMin={priceRange[0]}
+          sliderMax={priceRange[1]}
+          sliderValues={sliderValues}
+          handleSliderChange={handleSliderChange}
+          handleSliderAfterChange={handleSliderAfterChange}
+          handleManualInputChange={handleManualInputChange}
+          onReset={handleResetFilters}
         />
         <div className="school-detail__body">
           <div className="courses-list">
@@ -206,8 +276,8 @@ const SchoolDetail = () => {
               <h2>Все курсы {school.name}</h2>
             </div>
             {courses.length > 0 ? (
-              courses.map((courses) => (
-                <CourseItem key={courses.id} course={courses} />
+              courses.map((course) => (
+                <CourseItem key={course.id} course={course} />
               ))
             ) : (
               <p>Нет курсов в данной школе</p>

@@ -18,7 +18,6 @@
     display: flex;
     justify-content: space-between;
     gap: 80px;
-    margin-top: 7px;
   }
   &__details {
     display: flex;
@@ -82,8 +81,42 @@
   padding: 21px;
   border: $border;
   border-radius: 5px;
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid $color-text1_3;
+    top: 60px;
+    left: 0px;
+  }
+  &__head {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    &__title {
+      font-size: 18px;
+      line-height: 22px;
+      font-weight: 700;
+      font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    }
+  }
+  &__reset {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+}
+
+.subcategory-pricefilter {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
   &__title {
-    font-size: 18px;
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 700;
     font-family: "FS-Elliot-Pro-Bold", sans-serif;
   }
 }
@@ -91,7 +124,13 @@
 .subcategory-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 25px;
+  &__title {
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 700;
+    font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  }
 }
 
 .subcategory-item {

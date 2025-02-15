@@ -1,17 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Course = ({ course, foo, handleCourseClick}) => {
+const Course = ({ course, foo, handleCourseClick }) => {
+  const handlerClick = () => {
+    handleCourseClick(course);
+  };
 
-const handlerClick = ()=>{handleCourseClick(course)}
-
-if(foo) return <div className="courses-item courses-item_foo">{foo}</div>
+  if (foo) return <div className="courses-item courses-item_foo">{foo}</div>;
 
   return (
     <li className="courses-item ">
       <div className="courses-item__content">
-        <h2 className="courses-item__title"  onClick={handlerClick}>
-                   {course.name}
+        <h2 className="courses-item__title" onClick={handlerClick}>
+          {course.name}
         </h2>
 
         <div className="courses-item__details">
@@ -37,7 +38,7 @@ if(foo) return <div className="courses-item courses-item_foo">{foo}</div>
           </p>
 
           <p className="courses-item__school">
-            {course.school ? course.school.name : "Не указана"}
+            {course.school ? course.school : "Не указана"}
           </p>
         </div>
       </div>

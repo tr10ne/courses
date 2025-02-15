@@ -1,0 +1,252 @@
+@use "../index" as *;
+
+.school-reviews {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  column-gap: 19px;
+  row-gap: 12px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  &__head {
+    & h1 {
+      grid-column: span 2;
+      font-size: 36px;
+      font-family: "Lisboa-Heavy-Regular", sans-serif;
+    }
+  }
+  &__box {
+    display: flex;
+    justify-content: space-between;
+    gap: 80px;
+  }
+  &__bug {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+  }
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    flex: 2 1 0;
+  }
+  &__sort {
+    flex: 3 1 0;
+    align-self: flex-end;
+  }
+  &__leave {
+    flex: 3 1 0;
+    text-align: end;
+    align-self: flex-end;
+  }
+  &__about {
+    display: flex;
+    flex-direction: column;
+    & div p {
+      font-family: "FS-Elliot-Pro-Regular", sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+    }
+  }
+  &__link {
+    margin-top: 7px;
+    color: $color-accent;
+    cursor: pointer;
+  }
+  &__btn {
+    padding: 14px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    background-color: $color-accent;
+    color: $color-text3;
+    min-width: 191px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 24px;
+    font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    &:hover {
+      border: 1px solid $color-accent;
+      background-color: transparent;
+      color: $color-accent;
+    }
+  }
+  &__footer {
+    grid-column: 2;
+    display: flex;
+  }
+  &__body {
+    &__box {
+      grid-column: span 2;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+    }
+  }
+}
+
+.school-rating {
+  &__description {
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 400;
+    font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  }
+}
+
+.review-rating {
+  &__stars {
+    display: flex;
+    gap: 5px;
+    & picture {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  &__item {
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 260px;
+    border: $border;
+    border-radius: 5px;
+    &:nth-child(odd) {
+      background-color: $color-bg_review; /* Цвет для нечетных элементов */
+    }
+    &:nth-child(even) {
+      background-color: $color-bg1; /* Цвет для четных элементов */
+    }
+  }
+  & h2 {
+    font-size: 18px;
+    font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    margin-left: 30px;
+  }
+}
+
+.review-text {
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  &__detail {
+    &__link {
+      cursor: pointer;
+      color: $color-accent;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: "FS-Elliot-Pro-Bold", sans-serif;
+      line-height: 22px;
+    }
+  }
+}
+
+.review-date,
+.review-autor {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 17px;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  color: $color-text_review;
+}
+
+.item-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item-foot {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rating-star {
+  width: 14px;
+  height: 14px;
+}
+
+.rating-star.filled {
+  fill: #ffb800; /* Золотой цвет */
+}
+
+.rating-star.empty {
+  fill: #d3def8; /* Серый цвет */
+}
+
+// .subcategory-filter {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 25px;
+//   padding: 21px;
+//   border: $border;
+//   border-radius: 5px;
+//   position: relative;
+//   &::after {
+//     content: "";
+//     position: absolute;
+//     width: 100%;
+//     height: 1px;
+//     border-bottom: 1px solid $color-text1_3;
+//     top: 60px;
+//     left: 0px;
+//   }
+//   &__head {
+//     margin-bottom: 15px;
+//     display: flex;
+//     justify-content: space-between;
+//     &__title {
+//       font-size: 18px;
+//       line-height: 22px;
+//       font-weight: 700;
+//       font-family: "FS-Elliot-Pro-Bold", sans-serif;
+//     }
+//   }
+//   &__reset {
+//     display: flex;
+//     align-items: center;
+//     cursor: pointer;
+//   }
+// }
+
+// .subcategory-pricefilter {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 25px;
+//   &__title {
+//     font-size: 14px;
+//     line-height: 17px;
+//     font-weight: 700;
+//     font-family: "FS-Elliot-Pro-Bold", sans-serif;
+//   }
+// }
+
+// .subcategory-list {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 25px;
+//   &__title {
+//     font-size: 14px;
+//     line-height: 17px;
+//     font-weight: 700;
+//     font-family: "FS-Elliot-Pro-Bold", sans-serif;
+//   }
+// }
+
+// .subcategory-item {
+//   display: flex;
+//   flex-direction: row-reverse;
+//   align-items: center;
+//   justify-content: space-between;
+//   font-family: "FS-Elliot-Pro-Regular", sans-serif;
+//   font-size: 14px;
+//   font-weight: 400;
+//   line-height: 15px;
+// }

@@ -11,49 +11,51 @@ use App\Http\Resources\SchoolResource;
 class CourseController extends Controller
 {
     public function index(Request $request)
-    {
-        // Получаем параметры из запроса
-        $limit = $request->input('limit', 10);    // Количество записей на страницу
-        $filter = $request->input('filter', '');   // Фильтр по названию курса
-        $selectedCategoryId = $request->input('selectedCategoryId', null); // Фильтр по выбранной категории
-        $selectedSubcategoryId = $request->input('selectedSubcategoryId', null);
-        $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
-        $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
-        $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
-        $schoolUrl = $request->input('schoolurl', ''); // Фильтр по URL школы
+{
+    // Получаем параметры из запроса
+    $limit = $request->input('limit', 10);    // Количество записей на страницу
+    $filter = $request->input('filter', '');   // Фильтр по названию курса
+    $selectedCategoryId = $request->input('selectedCategoryId', null); // Фильтр по выбранной категории
+    $selectedSubcategoryId = $request->input('selectedSubcategoryId', null);
+    $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
+    $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
+    $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
+    $schoolUrl = $request->input('schoolurl', ''); // Фильтр по URL школы
 
-        // Создаем запрос для выборки курсов
-        $query = Course::with(['school' => function ($query) {
-            $query->withCount('reviews as reviews_count')
-                ->withCasts(['avg_rating' => 'float'])
-                ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
-                                JOIN reviews ON reviews.id = review_school.review_id
-                                WHERE review_school.school_id = schools.id), 0) as avg_rating');
-        }])
-            ->with(['subcategory.category'])
-            ->withCount('reviews as reviews_count')
-            ->withAvg('reviews', 'rating')
-            ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
-        JOIN reviews ON reviews.id = review_course.review_id
-        WHERE review_course.course_id = courses.id), 0) as avg_rating')
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $schoolUrl) {
-                if ($selectedSubcategoryId) {
-                    $query->where('subcategory_id', $selectedSubcategoryId);
-                }
-                if ($filter) {
-                    $query->where('courses.name', 'like', '%' . $filter . '%');
-                }
-                if (!$selectedSubcategoryId && $selectedCategoryId) {
-                    $query->whereHas('subcategory.category', function ($query) use ($selectedCategoryId) {
-                        $query->where('id', $selectedCategoryId);
-                    });
-                }
-                if ($schoolUrl) {
-                    $query->whereHas('school', function ($query) use ($schoolUrl) {
-                        $query->where('url', $schoolUrl);
-                    });
-                }
-            });
+    // Создаем запрос для выборки курсов
+    $query = Course::with(['school' 
+    => function ($query) {
+        $query->withCount('reviews as reviews_count')
+            ->withCasts(['avg_rating' => 'float'])
+            ->selectRaw('schools.*, COALESCE((SELECT AVG(rating) FROM review_school
+                            JOIN reviews ON reviews.id = review_school.review_id
+                            WHERE review_school.school_id = schools.id), 0) as avg_rating');
+    }])
+        ->with(['subcategory.category'])
+        ->withCount('reviews as reviews_count')
+        ->withAvg('reviews', 'rating')
+        ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
+    JOIN reviews ON reviews.id = review_course.review_id
+    WHERE review_course.course_id = courses.id), 0) as avg_rating')
+        ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $schoolUrl) {
+            if ($selectedSubcategoryId) {
+                $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
+                $query->whereIn('subcategory_id', $selectedSubcategoryIds); // Используем whereIn для фильтрации
+            }
+            if ($filter) {
+                $query->where('courses.name', 'like', '%' . $filter . '%');
+            }
+            if (!$selectedSubcategoryId && $selectedCategoryId) {
+                $query->whereHas('subcategory.category', function ($query) use ($selectedCategoryId) {
+                    $query->where('id', $selectedCategoryId);
+                });
+            }
+            if ($schoolUrl) {
+                $query->whereHas('school', function ($query) use ($schoolUrl) {
+                    $query->where('url', $schoolUrl);
+                });
+            }
+        });
 
         // Получаем минимальную и максимальную цену
         $minTotalPrice = $query->min('price');
