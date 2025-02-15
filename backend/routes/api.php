@@ -23,7 +23,7 @@ Route::apiResource('roles', RoleController::class);
 Route::apiResource('users', UserController::class);
 
 // Получение данных по URL
-Route::get('/courses/url/{url}', [CourseController::class, 'showByUrl']);
+Route::get('/courses/url/{url}', [CourseController::class, 'showByUrl'])->name('courses.showByUrl');
 Route::get('/schools/url/{url}', [SchoolController::class, 'showByUrl'])->name('schools.showByUrl');
 Route::get('/categories/url/{url}', [CategoryController::class, 'showByUrl']);
 Route::get('/subcategories/url/{url}', [SubcategoryController::class, 'showByUrl']);

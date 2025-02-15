@@ -52,4 +52,9 @@ class Course extends Model
 
         return $this->reviews()->avg('rating') ?? 0; // Рассчитываем среднее значение рейтинга
     }
+
+    public function getReviewsCount(): int
+    {
+        return $this->reviews()->count();
+    }
 }

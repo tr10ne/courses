@@ -242,7 +242,10 @@ class CourseController extends Controller
     public function showByUrl($url)
     {
         // Находим курс по URL, если не найдено - будет ошибка 404
-        $course = Course::where('url', $url)->firstOrFail();
+        $course = Course::with(['school', 'reviews.user'])
+            ->where('url', $url)
+            ->firstOrFail();
+
         // Возвращаем курс в виде ресурса
         return new CourseResource($course);
     }

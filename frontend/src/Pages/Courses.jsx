@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
 import Categories from "../Components/Courses/Categories";
@@ -14,7 +14,6 @@ import { scroller } from "react-scroll";
 // import Schools from "../Components/Courses/Schools.jsx";
 
 const Courses = () => {
-	const navigate = useNavigate();
 	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
 	const [error, setError] = useState(null);
@@ -28,8 +27,6 @@ const Courses = () => {
 		{ path: "/", name: "Главная" },
 		{ path: "/courses", name: "Онлайн-курсы" },
 	];
-
-
 
 	//courses
 	const [courses, setCourses] = useState([]);
@@ -253,7 +250,7 @@ const Courses = () => {
 		}
 
 		setSelectedSubcategoryId(null);
-			setSelectedSubcategoryName(null);
+		setSelectedSubcategoryName(null);
 
 		setDefaultPagination();
 	};
@@ -316,45 +313,29 @@ const Courses = () => {
 	//делаем высоту для filter
 	useEffect(() => {
 		const handleFilterMaxHeight = () => {
-							const filter = sidebarRef.current.querySelector(
-								".courses-filter__content"
-							);
-							const INDENT = 20;
-							const windowHeight = window.innerHeight;
-							const headerHeight =
-								document.documentElement.style.getPropertyValue("--header-height");
-							const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
-							const filterTop = filter.getBoundingClientRect().top;
+			const filter = sidebarRef.current.querySelector(
+				".courses-filter__content"
+			);
+			const INDENT = 20;
+			const windowHeight = window.innerHeight;
+			const headerHeight =
+				document.documentElement.style.getPropertyValue("--header-height");
+			const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
+			const filterTop = filter.getBoundingClientRect().top;
 
-							const filterMaxHeight =
-								windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
+			const filterMaxHeight =
+				windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
 
-							filter.style.maxHeight = filterMaxHeight + "px";
-						};
+			filter.style.maxHeight = filterMaxHeight + "px";
+		};
 
-						if (!loadingCourses) handleFilterMaxHeight();
+		if (!loadingCourses) handleFilterMaxHeight();
 
-						window.addEventListener("resize", handleFilterMaxHeight);
-						return () => {
-							window.removeEventListener("resize", handleFilterMaxHeight);
-						};
-					}, [loadingCourses]);
-
-
-					const handleCourseClick = (course) => {
-						navigate(`/courses/${course.url}`, {
-							state: {
-								breadcrumbs: [
-									...crumbs,
-									{ path: `/courses/${course.url}`, name: course.name },
-								],
-							},
-						});
-					};
-
-					const handleBreadcrumbClick = (path) => {
-
-	};
+		window.addEventListener("resize", handleFilterMaxHeight);
+		return () => {
+			window.removeEventListener("resize", handleFilterMaxHeight);
+		};
+	}, [loadingCourses]);
 
 		// отрисовываем курсы с пагинацией
 	const renderCourses = () => {
@@ -376,7 +357,13 @@ const Courses = () => {
 						<Course foo={"Не найдено ни одно курса"} />
 					) : (
 						courses.map((course) => {
-							return <Course key={course.id} course={course} handleCourseClick={handleCourseClick}/>;
+							return (
+								<Course
+									key={course.id}
+									course={course}
+									
+								/>
+							);
 						})
 					)}
 				</ul>
@@ -395,7 +382,7 @@ const Courses = () => {
 		<section className="courses section">
 			<div className="container">
 				<div className="block-head">
-					<Breadcrumbs crumbs={crumbs} onBreadcrumbClick={handleBreadcrumbClick} />
+					<Breadcrumbs crumbs={crumbs} />
 					<h1 className="title">Онлайн-курсы</h1>
 					<p className="text">
 						Список всех онлайн-курсов с рейтингом, отзывами и детальным
@@ -451,11 +438,11 @@ const Courses = () => {
 						setSelectedCategoryName={setSelectedCategoryName}
 					/>
 
-					{/* <Schools
+					<Schools
 						selectedCategoryName={selectedCategoryName}
 						loadingCourses={loadingCourses}
 						schools={Array.isArray(schools) ? schools.slice(0, 2) : []}
-					/> */}
+					/>
 				</div>
 			</div>
 		</section>
