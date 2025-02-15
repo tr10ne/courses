@@ -46,87 +46,87 @@ const SchoolDetail = () => {
 
   // Загрузка данных школы и всех подкатегорий
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/api/schools/url/${url}`)
-      .then((response) => {
-        const result = response.data
-          ? response.data.data || response.data
-          : null;
-        if (result) {
-          setSchool(result);
+    const fetchSchoolAndSubcategories = async () => {
+      try {
+        // Загружаем данные школы
+        const schoolResponse = await axios.get(
+          `${apiUrl}/api/schools/url/${url}`
+        );
+        const schoolData = schoolResponse.data?.data || schoolResponse.data;
 
-          // Загружаем все курсы школы для извлечения подкатегорий
-          axios
-            .get(`${apiUrl}/api/courses?schoolurl=${url}&limit=all`)
-            .then((response) => {
-              const coursesData = response.data.courses || [];
-
-              // Извлекаем уникальные подкатегории
-              const uniqueSubcategories = Array.from(
-                new Set(coursesData.map((course) => course.subcategory_name))
-              ).map((name) => ({
-                id: coursesData.find(
-                  (course) => course.subcategory_name === name
-                ).subcategory_id,
-                name,
-              }));
-
-              setAllSubcategories(uniqueSubcategories);
-              setFilteredSubcategories(uniqueSubcategories); // Инициализируем отфильтрованные подкатегории
-
-              // Обновляем диапазон цен
-              if (
-                priceRange[1] === 0 &&
-                response.data.min_total_price &&
-                response.data.max_total_price
-              ) {
-                setPriceRange([
-                  response.data.min_total_price,
-                  response.data.max_total_price,
-                ]);
-                setSliderValues([
-                  response.data.min_total_price,
-                  response.data.max_total_price,
-                ]);
-              }
-            })
-            .catch((error) => {
-              console.error("Ошибка при загрузке курсов:", error);
-            });
-        } else {
+        if (!schoolData) {
           setError("Школа не найдена");
+          return;
         }
-      })
-      .catch((error) => {
-        console.error("Ошибка при загрузке школы:", error);
+
+        setSchool(schoolData);
+
+        // Загружаем все курсы школы для извлечения подкатегорий
+        const coursesResponse = await axios.get(
+          `${apiUrl}/api/courses?schoolurl=${url}&limit=all`
+        );
+        const coursesData = coursesResponse.data.courses || [];
+
+        // Извлекаем уникальные подкатегории
+        const uniqueSubcategories = Array.from(
+          new Set(coursesData.map((course) => course.subcategory_name))
+        ).map((name) => ({
+          id: coursesData.find((course) => course.subcategory_name === name)
+            .subcategory_id,
+          name,
+        }));
+
+        setAllSubcategories(uniqueSubcategories);
+        setFilteredSubcategories(uniqueSubcategories); // Инициализируем отфильтрованные подкатегории
+
+        // Обновляем диапазон цен
+        if (
+          priceRange[1] === 0 &&
+          coursesResponse.data.min_total_price &&
+          coursesResponse.data.max_total_price
+        ) {
+          setPriceRange([
+            coursesResponse.data.min_total_price,
+            coursesResponse.data.max_total_price,
+          ]);
+          setSliderValues([
+            coursesResponse.data.min_total_price,
+            coursesResponse.data.max_total_price,
+          ]);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
         setError("Ошибка при загрузке данных школы");
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchSchoolAndSubcategories();
   }, [url]);
 
   // Загрузка курсов для школы с пагинацией и фильтрами
   useEffect(() => {
     if (!school) return;
 
-    const subcategoriesQuery =
-      queryParams.selectedSubcategories.length > 0
-        ? `&selectedSubcategoryId=${queryParams.selectedSubcategories.join(
-            ","
-          )}`
-        : "";
+    const fetchCourses = async () => {
+      const subcategoriesQuery =
+        queryParams.selectedSubcategories.length > 0
+          ? `&selectedSubcategoryId=${queryParams.selectedSubcategories.join(
+              ","
+            )}`
+          : "";
 
-    const priceQuery =
-      queryParams.minPrice > 0 || queryParams.maxPrice > 0
-        ? `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
-        : "";
+      const priceQuery =
+        queryParams.minPrice > 0 || queryParams.maxPrice > 0
+          ? `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
+          : "";
 
-    axios
-      .get(
-        `${apiUrl}/api/courses?schoolurl=${url}&page=${queryParams.page}${subcategoriesQuery}${priceQuery}`
-      )
-      .then((response) => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/courses?schoolurl=${url}&page=${queryParams.page}${subcategoriesQuery}${priceQuery}`
+        );
+
         const data = response.data;
         const coursesData = data.courses || [];
 
@@ -135,26 +135,12 @@ const SchoolDetail = () => {
           current_page: data.meta.current_page,
           last_page: data.meta.last_page,
         });
-
-        // Если пользователь изменил диапазон цен, обновляем отфильтрованные подкатегории
-        if (queryParams.minPrice > 0 || queryParams.maxPrice > 0) {
-          const filteredSubcategories = Array.from(
-            new Set(coursesData.map((course) => course.subcategory_name))
-          ).map((name) => ({
-            id: coursesData.find((course) => course.subcategory_name === name)
-              .subcategory_id,
-            name,
-          }));
-
-          setFilteredSubcategories(filteredSubcategories);
-        } else {
-          // Если диапазон цен сброшен, показываем все подкатегории
-          setFilteredSubcategories(allSubcategories);
-        }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Ошибка при загрузке курсов:", error);
-      });
+      }
+    };
+
+    fetchCourses();
   }, [
     school,
     queryParams.page,
@@ -162,8 +148,47 @@ const SchoolDetail = () => {
     queryParams.minPrice,
     queryParams.maxPrice,
     url,
-    allSubcategories.length,
-    priceRange,
+  ]);
+
+  // Загрузка подкатегорий при изменении цены
+  useEffect(() => {
+    if (!school) return;
+
+    const fetchFilteredSubcategories = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/courses?schoolurl=${url}&limit=all&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
+        );
+
+        const coursesData = response.data.courses || [];
+
+        // Извлекаем уникальные подкатегории
+        const uniqueSubcategories = Array.from(
+          new Set(coursesData.map((course) => course.subcategory_name))
+        ).map((name) => ({
+          id: coursesData.find((course) => course.subcategory_name === name)
+            .subcategory_id,
+          name,
+        }));
+
+        setFilteredSubcategories(uniqueSubcategories);
+      } catch (error) {
+        console.error("Ошибка при загрузке подкатегорий:", error);
+      }
+    };
+
+    if (queryParams.minPrice > 0 || queryParams.maxPrice > 0) {
+      fetchFilteredSubcategories();
+    } else {
+      // Если диапазон цен сброшен, показываем все подкатегории
+      setFilteredSubcategories(allSubcategories);
+    }
+  }, [
+    queryParams.minPrice,
+    queryParams.maxPrice,
+    url,
+    school,
+    allSubcategories,
   ]);
 
   // Обработчик изменения страницы
@@ -315,7 +340,7 @@ const SchoolDetail = () => {
                 <CourseItem key={course.id} course={course} />
               ))
             ) : (
-              <p>Нет курсов в данной школе</p>
+              <p>Курсы не найдены</p>
             )}
           </div>
         </div>
