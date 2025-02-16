@@ -67,7 +67,7 @@ class CourseController extends Controller
         if ($minPrice != '') {
             $query->where('courses.price', '>=', $minPrice);
         }
-
+        
         // Фильтр по максимальной цене
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
