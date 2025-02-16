@@ -205,12 +205,7 @@ const SchoolDetail = () => {
       }
     };
 
-    if (queryParams.minPrice > 0 || queryParams.maxPrice > 0) {
-      fetchFilteredSubcategories();
-    } else {
-      // Если диапазон цен сброшен, показываем все подкатегории
-      setFilteredSubcategories(allSubcategories);
-    }
+    fetchFilteredSubcategories();
   }, [
     queryParams.minPrice,
     queryParams.maxPrice,
