@@ -161,6 +161,23 @@ const SchoolDetail = () => {
     url,
   ]);
 
+  useEffect(() => {
+    const calculateHeight = () => {
+      const bodyElement = document.querySelector(".school-detail__body");
+      const filterElement = document.querySelector(".subcategory-filter");
+
+      if (bodyElement && filterElement) {
+        const bodyHeight = bodyElement.offsetHeight;
+        filterElement.style.maxHeight = `${bodyHeight}px`;
+      }
+    };
+
+    // Вызываем функцию только после загрузки курсов
+    if (courses.length > 0) {
+      calculateHeight();
+    }
+  }, [courses]); // Зависимость от courses
+
   // Загрузка подкатегорий при изменении цены
   useEffect(() => {
     if (!school) return;
