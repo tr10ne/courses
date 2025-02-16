@@ -31,11 +31,6 @@ class CourseController extends Controller
                                 WHERE review_school.school_id = schools.id), 0) as avg_rating');
         }])
             ->with(['subcategory.category'])
-            ->withCount('reviews as reviews_count')
-            ->withAvg('reviews', 'rating')
-            ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
-        JOIN reviews ON reviews.id = review_course.review_id
-        WHERE review_course.course_id = courses.id), 0) as avg_rating')
             ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $schoolUrl) {
                 if ($selectedSubcategoryId) {
                     $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
@@ -63,14 +58,16 @@ class CourseController extends Controller
         // Фильтр по минимальной цене
         if ($minPrice != '') {
             $query->where('courses.price', '>=', $minPrice);
-        } else {
+        }
+        else {
             $minPrice = $minTotalPrice;
         }
     
         // Фильтр по максимальной цене
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
-        } else {
+        }
+        else {
             $maxPrice = $maxTotalPrice;
         }
     

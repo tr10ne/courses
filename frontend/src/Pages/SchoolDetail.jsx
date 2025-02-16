@@ -23,6 +23,7 @@ const SchoolDetail = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [sliderValues, setSliderValues] = useState([0, 0]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
 
   const handleResetFilters = () => {
     setQueryParams((prev) => ({
@@ -40,8 +41,8 @@ const SchoolDetail = () => {
     page: 1,
     schoolurl: url,
     selectedSubcategories: [],
-    minPrice: 0,
-    maxPrice: 0,
+    minPrice: "",
+    maxPrice: "",
   });
 
   const RefTarget = useRef(null);
@@ -127,12 +128,19 @@ const SchoolDetail = () => {
     if (!school) return;
 
     const fetchCourses = async () => {
+      setCoursesLoading(true); // Устанавливаем состояние загрузки курсов в true
+
       const subcategoriesQuery =
         queryParams.selectedSubcategories.length > 0
           ? `&selectedSubcategoryId=${queryParams.selectedSubcategories.join(
               ","
             )}`
           : "";
+
+      // const priceQuery =
+      //   queryParams.minPrice > 0 || queryParams.maxPrice > 0
+      //     ? `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
+      //     : "";
 
       const priceQuery = `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`;
 
@@ -151,6 +159,8 @@ const SchoolDetail = () => {
         });
       } catch (error) {
         console.error("Ошибка при загрузке курсов:", error);
+      } finally {
+        setCoursesLoading(false); // Устанавливаем состояние загрузки курсов в false
       }
     };
 
@@ -370,12 +380,14 @@ const SchoolDetail = () => {
             <div className="courses-list__head">
               <h2>Все курсы {school.name}</h2>
             </div>
-            {courses.length > 0 ? (
+            {coursesLoading ? (
+              <Loading /> // Показываем индикатор загрузки курсов
+            ) : courses.length > 0 ? (
               courses.map((course) => (
                 <CourseItem key={course.id} course={course} />
               ))
             ) : (
-              <p>Курсы не найдены</p>
+              <p>Курсы не найдены</p> // Показываем сообщение только после завершения загрузки
             )}
           </div>
         </div>

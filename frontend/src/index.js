@@ -38,9 +38,18 @@ if (container) {
           <Route path="schools" element={<Schools />} />
           <Route path="reviews" element={<Reviews />} />
           <Route path="users" element={<Users />} />
-          <Route path="courses/:url" element={<CourseDetail />} />
+          {/* <Route path="courses/:url" element={<CourseDetail />} /> */}
           <Route path="schools/:url" element={<SchoolDetail />} />
           <Route path="schools/:url/reviews" element={<SchoolReviews />} />
+          <Route path="/courses/:categoryUrl" element={<Courses />} />
+          <Route
+            path="/courses/:categoryUrl/:subcategoryUrl"
+            element={<Courses />}
+          />
+          <Route
+            path="/courses/:categoryUrl/:subcategoryUrl/:courseUrl"
+            element={<CourseDetail />}
+          />
         </Route>
       </Routes>
     </Router>
