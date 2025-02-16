@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
@@ -22,6 +22,23 @@ const SchoolReviews = () => {
     page: 1,
     schoolurl: url,
   });
+
+  const RefTarget = useRef(null);
+
+  const scrollTo = (ref) => {
+    const headerHeight = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--header-height"
+      ),
+      15
+    );
+    const targetPosition = ref.current.offsetTop - headerHeight;
+
+    window.scrollTo({
+      top: targetPosition,
+      behavior: "smooth",
+    });
+  };
 
   // Загрузка данных школы и отзывов
   useEffect(() => {
@@ -66,6 +83,8 @@ const SchoolReviews = () => {
   // Обработчик изменения страницы
   const handlePageChange = (newPage) => {
     setQueryParams((prev) => ({ ...prev, page: newPage }));
+
+    scrollTo(RefTarget);
   };
 
   // Функция для получения первых двух предложений описания
@@ -112,7 +131,7 @@ const SchoolReviews = () => {
               </button>
             </div>
           </div>
-          <div className="school-reviews__bug">
+          <div className="school-reviews__bug" ref={RefTarget}>
             <div className="school-reviews__details">
               <div className="school-rating school-rating_detail">
                 <svg viewBox="0 0 14 13.3563" fill="none">

@@ -13,6 +13,9 @@
     flex-direction: column;
     gap: 12px;
   }
+  &__aside {
+    position: relative;
+  }
   &__footer {
     grid-column: 2;
     display: flex;
@@ -109,6 +112,8 @@
 }
 
 .category-filter {
+  position: sticky;
+  top: 83px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -144,6 +149,9 @@
   border-radius: 0px;
   cursor: pointer;
   position: relative;
+  &_detail {
+    margin-right: 0px;
+  }
 }
 
 .custom-checkbox:checked {

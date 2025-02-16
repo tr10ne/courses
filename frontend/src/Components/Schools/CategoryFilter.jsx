@@ -47,7 +47,7 @@ const CategoryFilter = ({ selectedCategories, onCategoryChange }) => {
   }
 
   return (
-    <aside className="category-filter">
+    <div className="category-filter">
       <p className="category-filter__title">Категория школы</p>
       <div className="category-list">
         {categories.length > 0 ? (
@@ -68,7 +68,7 @@ const CategoryFilter = ({ selectedCategories, onCategoryChange }) => {
           <div>Категории не найдены</div>
         )}
       </div>
-    </aside>
+    </div>
   );
 };
 

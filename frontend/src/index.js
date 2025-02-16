@@ -15,6 +15,7 @@ import Users from "./Pages/Users"; // Импортируем компонент 
 import CourseDetail from "./Pages/CourseDetail"; // Импортируем компонент CourseDetail
 import SchoolDetail from "./Pages/SchoolDetail"; // Импортируем компонент SchoolDetail
 import SchoolReviews from "./Pages/SchoolReviews";
+import ScrollToTop from "./Components/ScrollToTop";
 
 const container = document.getElementById("root");
 
@@ -22,6 +23,7 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route
           path="/"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
@@ -43,6 +43,23 @@ const SchoolDetail = () => {
     minPrice: 0,
     maxPrice: 0,
   });
+
+  const RefTarget = useRef(null);
+
+  const scrollTo = (ref) => {
+    const headerHeight = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--header-height"
+      ),
+      15
+    );
+    const targetPosition = ref.current.offsetTop - headerHeight;
+
+    window.scrollTo({
+      top: targetPosition,
+      behavior: "smooth",
+    });
+  };
 
   // Загрузка данных школы и всех подкатегорий
   useEffect(() => {
@@ -150,6 +167,23 @@ const SchoolDetail = () => {
     url,
   ]);
 
+  useEffect(() => {
+    const calculateHeight = () => {
+      const bodyElement = document.querySelector(".school-detail__body");
+      const filterElement = document.querySelector(".subcategory-filter");
+
+      if (bodyElement && filterElement) {
+        const bodyHeight = bodyElement.offsetHeight;
+        filterElement.style.maxHeight = `${bodyHeight}px`;
+      }
+    };
+
+    // Вызываем функцию только после загрузки курсов
+    if (courses.length > 0) {
+      calculateHeight();
+    }
+  }, [courses]); // Зависимость от courses
+
   // Загрузка подкатегорий при изменении цены
   useEffect(() => {
     if (!school) return;
@@ -194,6 +228,8 @@ const SchoolDetail = () => {
   // Обработчик изменения страницы
   const handlePageChange = (newPage) => {
     setQueryParams((prev) => ({ ...prev, page: newPage }));
+
+    scrollTo(RefTarget);
   };
 
   // Обработчик изменения выбранных подкатегорий
@@ -318,19 +354,21 @@ const SchoolDetail = () => {
             </div>
           </div>
         </div>
-        <SubcategoryFilter
-          subcategories={filteredSubcategories} // Используем отфильтрованные подкатегории
-          selectedSubcategories={queryParams.selectedSubcategories}
-          onSubcategoryChange={handleSubcategoryChange}
-          sliderMin={priceRange[0]}
-          sliderMax={priceRange[1]}
-          sliderValues={sliderValues}
-          handleSliderChange={handleSliderChange}
-          handleSliderAfterChange={handleSliderAfterChange}
-          handleManualInputChange={handleManualInputChange}
-          onReset={handleResetFilters}
-        />
-        <div className="school-detail__body">
+        <aside className="school-detail__aside">
+          <SubcategoryFilter
+            subcategories={filteredSubcategories} // Используем отфильтрованные подкатегории
+            selectedSubcategories={queryParams.selectedSubcategories}
+            onSubcategoryChange={handleSubcategoryChange}
+            sliderMin={priceRange[0]}
+            sliderMax={priceRange[1]}
+            sliderValues={sliderValues}
+            handleSliderChange={handleSliderChange}
+            handleSliderAfterChange={handleSliderAfterChange}
+            handleManualInputChange={handleManualInputChange}
+            onReset={handleResetFilters}
+          />
+        </aside>
+        <div className="school-detail__body" ref={RefTarget}>
           <div className="courses-list">
             <div className="courses-list__head">
               <h2>Все курсы {school.name}</h2>

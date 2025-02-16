@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import SchoolItem from "../Components/Schools/SchoolItem";
@@ -15,6 +15,23 @@ const Schools = () => {
   });
   const [selectedCategories, setSelectedCategories] = useState([]);
   const perPage = 10;
+
+  const RefTarget = useRef(null);
+
+  const scrollTo = (ref) => {
+    const headerHeight = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--header-height"
+      ),
+      15
+    );
+    const targetPosition = ref.current.offsetTop - headerHeight;
+
+    window.scrollTo({
+      top: targetPosition,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     const categoriesQuery =
@@ -37,6 +54,8 @@ const Schools = () => {
 
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, current_page: newPage }));
+
+    scrollTo(RefTarget);
   };
 
   const handleCategoryChange = (categories) => {
@@ -58,11 +77,13 @@ const Schools = () => {
             Список онлайн-школ с рейтингами, отзывами и категориями.
           </p>
         </div>
-        <CategoryFilter
-          selectedCategories={selectedCategories}
-          onCategoryChange={handleCategoryChange}
-        />
-        <div className="schools__body">
+        <aside className="schools__aside">
+          <CategoryFilter
+            selectedCategories={selectedCategories}
+            onCategoryChange={handleCategoryChange}
+          />
+        </aside>
+        <div className="schools__body" ref={RefTarget}>
           {schools.length > 0 ? (
             schools.map((school) => (
               <SchoolItem key={school.id} school={school} />
