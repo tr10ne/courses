@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
 import Categories from "../Components/Courses/Categories";
-import Course from "../Components/Courses/Course";
+import CourseItem from "../Components/CourseItem.jsx";
 import Filter from "../Components/Courses/Filter";
 import Loading from "../Components/Loading";
 import { apiUrl } from "../js/config.js";
@@ -354,10 +354,10 @@ const Courses = () => {
         )}
         <ul className="courses-list">
           {!courses || courses.length === 0 ? (
-            <Course foo={"Не найдено ни одно курса"} />
+            <CourseItem foo={"Не найдено ни одно курса"} />
           ) : (
             courses.map((course) => {
-              return <Course key={course.id} course={course} />;
+              return <CourseItem key={course.id} course={course} />;
             })
           )}
         </ul>
