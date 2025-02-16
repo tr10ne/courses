@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Element, scroller } from "react-scroll";
 import PriceFilter from "../Courses/PriceFilter";
+import Loading from "../Loading"; // Импортируем компонент Loading
 
 const SubcategoryFilter = ({
   subcategories,
@@ -13,6 +13,7 @@ const SubcategoryFilter = ({
   handleSliderAfterChange,
   handleManualInputChange,
   onReset,
+  loading, // Добавляем пропс для состояния загрузки
 }) => {
   const [showAllSubcategories, setShowAllSubcategories] = useState(false); // Управление отображением подкатегорий
 
@@ -79,7 +80,9 @@ const SubcategoryFilter = ({
         </div>
         <div className="subcategory-list">
           <p className="subcategory-list__title">Категория</p>
-          {displayedSubcategories.length > 0 ? (
+          {loading ? ( // Если идет загрузка, показываем индикатор
+            <Loading />
+          ) : displayedSubcategories.length > 0 ? ( // Если загрузка завершена и есть подкатегории
             displayedSubcategories.map((subcategory) => (
               <div key={subcategory.id} className="subcategory-item">
                 <label>
@@ -94,16 +97,17 @@ const SubcategoryFilter = ({
               </div>
             ))
           ) : (
-            <div>Подкатегории не найдены</div>
+            <div>Подкатегории не найдены</div> // Если подкатегорий нет
           )}
-          {subcategories.length > 7 && (
-            <button
-              onClick={handleShowAllSubcategories}
-              className="show-all-button"
-            >
-              {showAllSubcategories ? "Скрыть" : "Показать все"}
-            </button>
-          )}
+          {!loading &&
+            subcategories.length > 7 && ( // Кнопка "Показать все" только после загрузки
+              <button
+                onClick={handleShowAllSubcategories}
+                className="show-all-button"
+              >
+                {showAllSubcategories ? "Скрыть" : "Показать все"}
+              </button>
+            )}
         </div>
       </div>
     </div>

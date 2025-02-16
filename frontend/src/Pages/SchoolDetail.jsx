@@ -24,12 +24,13 @@ const SchoolDetail = () => {
     current_page: 1,
     last_page: 1,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Общий индикатор загрузки
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [sliderValues, setSliderValues] = useState([0, 0]);
-  const [coursesLoading, setCoursesLoading] = useState(true);
+  const [coursesLoading, setCoursesLoading] = useState(true); // Индикатор загрузки курсов
+  const [subcategoriesLoading, setSubcategoriesLoading] = useState(false); // Индикатор загрузки подкатегорий
 
   const [queryParams, setQueryParams] = useState({
     page: 1,
@@ -40,7 +41,6 @@ const SchoolDetail = () => {
   });
 
   const RefTarget = useRef(null);
-  const isFirstRender = useRef(true);
 
   const scrollTo = useCallback((ref) => {
     const headerHeight = parseInt(
@@ -57,11 +57,11 @@ const SchoolDetail = () => {
     });
   }, []);
 
-  // Загрузка данных школы и всех подкатегорий
+  // Загрузка данных школы, подкатегорий и диапазона цен при первой загрузке
   useEffect(() => {
-    const fetchSchoolAndSubcategories = async () => {
+    const fetchInitialData = async () => {
       try {
-        // Загружаем все курсы школы для извлечения подкатегорий
+        // Загружаем данные школы и все курсы для подкатегорий и диапазона цен
         const [schoolResponse, coursesResponse] = await Promise.all([
           axios.get(`${apiUrl}/api/schools/url/${url}`),
           axios.get(`${apiUrl}/api/courses?schoolurl=${url}&limit=all`),
@@ -92,7 +92,6 @@ const SchoolDetail = () => {
 
         // Обновляем диапазон цен
         if (
-          priceRange[1] === 0 &&
           coursesResponse.data.min_total_price &&
           coursesResponse.data.max_total_price
         ) {
@@ -106,25 +105,17 @@ const SchoolDetail = () => {
           ]);
         }
       } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
         setError("Ошибка при загрузке данных школы");
       } finally {
-        setLoading(false);
+        setLoading(false); // Общий индикатор загрузки выключается
       }
     };
 
-    fetchSchoolAndSubcategories();
-  }, [url, priceRange]);
+    fetchInitialData();
+  }, [url]);
 
-  // Загрузка курсов для школы с пагинацией и фильтрами
+  // Загрузка курсов с учетом пагинации и фильтров
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    if (!school) return;
-
     const fetchCourses = async () => {
       setCoursesLoading(true); // Устанавливаем состояние загрузки курсов в true
 
@@ -149,7 +140,7 @@ const SchoolDetail = () => {
           last_page: data.meta.last_page,
         });
       } catch (error) {
-        console.error("Ошибка при загрузке курсов:", error);
+        setError("Ошибка при загрузке курсов");
       } finally {
         setCoursesLoading(false); // Устанавливаем состояние загрузки курсов в false
       }
@@ -157,7 +148,6 @@ const SchoolDetail = () => {
 
     fetchCourses();
   }, [
-    school,
     queryParams.page,
     queryParams.selectedSubcategories,
     queryParams.minPrice,
@@ -187,6 +177,8 @@ const SchoolDetail = () => {
     if (!school) return;
 
     const fetchFilteredSubcategories = async () => {
+      setSubcategoriesLoading(true);
+
       try {
         const response = await axios.get(
           `${apiUrl}/api/courses?schoolurl=${url}&limit=all&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
@@ -205,7 +197,9 @@ const SchoolDetail = () => {
 
         setFilteredSubcategories(uniqueSubcategories);
       } catch (error) {
-        console.error("Ошибка при загрузке подкатегорий:", error);
+        setError("Ошибка при загрузке подкатегорий");
+      } finally {
+        setSubcategoriesLoading(false);
       }
     };
 
@@ -273,6 +267,7 @@ const SchoolDetail = () => {
     },
     [scrollTo]
   );
+
   // Функция для получения первых двух предложений описания
   const getFirstTwoSentences = useCallback((text) => {
     const sentences = text.match(/[^.!?]+[.!?]+/g);
@@ -301,7 +296,7 @@ const SchoolDetail = () => {
   );
 
   if (loading) {
-    return <Loading />;
+    return <Loading />; // Показываем индикатор загрузки, пока данные загружаются
   }
 
   if (error) {
@@ -369,6 +364,7 @@ const SchoolDetail = () => {
             handleSliderAfterChange={handleSliderAfterChange}
             handleManualInputChange={handleManualInputChange}
             onReset={handleResetFilters}
+            loading={subcategoriesLoading}
           />
         </aside>
         <div className="school-detail__body" ref={RefTarget}>
