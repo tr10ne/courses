@@ -40,6 +40,7 @@ const SchoolDetail = () => {
   });
 
   const RefTarget = useRef(null);
+  const isFirstRender = useRef(true);
 
   const scrollTo = useCallback((ref) => {
     const headerHeight = parseInt(
@@ -117,6 +118,11 @@ const SchoolDetail = () => {
 
   // Загрузка курсов для школы с пагинацией и фильтрами
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (!school) return;
 
     const fetchCourses = async () => {
@@ -137,9 +143,7 @@ const SchoolDetail = () => {
         );
 
         const data = response.data;
-        const coursesData = data.courses || [];
-
-        setCourses(coursesData);
+        setCourses(data.courses || []);
         setPagination({
           current_page: data.meta.current_page,
           last_page: data.meta.last_page,
@@ -206,13 +210,7 @@ const SchoolDetail = () => {
     };
 
     fetchFilteredSubcategories();
-  }, [
-    queryParams.minPrice,
-    queryParams.maxPrice,
-    url,
-    school,
-    allSubcategories,
-  ]);
+  }, [queryParams.minPrice, queryParams.maxPrice, url, school]);
 
   // Обработчик изменения страницы
   const handleResetFilters = useCallback(() => {
