@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Course = ({ course, foo }) => {
+const CourseItem = ({ course, foo }) => {
   if (foo) return <div className="courses-item courses-item_foo">{foo}</div>;
 
   return (
     <li className="courses-item ">
       <div className="courses-item__content">
-        <Link className="courses-item__title" to={"/courses/" + course.url}>
+        <Link
+          className="courses-item__title"
+          to={`/courses/${course.category.url}/${course.subcategory.url}/${course.url}`}
+        >
           {course.name}
         </Link>
 
@@ -46,7 +49,11 @@ const Course = ({ course, foo }) => {
         >
           На сайт курса
         </Link>
-        <Link className="courses-item__more-link" to={"/courses/" + course.url}>
+
+        <Link
+          className="courses-item__more-link"
+          to={`/courses/${course.category.url}/${course.subcategory.url}/${course.url}`}
+        >
           Подробнее
         </Link>
       </div>
@@ -54,4 +61,4 @@ const Course = ({ course, foo }) => {
   );
 };
 
-export default Course;
+export default CourseItem;

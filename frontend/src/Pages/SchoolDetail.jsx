@@ -29,8 +29,8 @@ const SchoolDetail = () => {
     setQueryParams((prev) => ({
       ...prev,
       selectedSubcategories: [],
-      minPrice: 0,
-      maxPrice: 0,
+      minPrice: "",
+      maxPrice: "",
       page: 1,
     }));
     setSliderValues([priceRange[0], priceRange[1]]);
