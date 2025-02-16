@@ -14,7 +14,11 @@ const CourseItem = ({ course }) => {
     <div className="courses-list__item">
       <div className="course-name">
         <p className="course-name__title">
-          <Link to={`/courses/${course.url}`}>{course.name}</Link>
+          <Link
+            to={`/courses/${course.category.url}/${course.subcategory.url}/${course.url}`}
+          >
+            {course.name}
+          </Link>
         </p>
         <p className="subcategoty-name">{course.subcategory_name}</p>
       </div>
@@ -41,10 +45,16 @@ const CourseItem = ({ course }) => {
       </div>
       <div className="course-link">
         <button className="course-link__btn">
-          <Link to={`${course.link}`}>На сайт курса</Link>
+          <Link target="_blank" to={`${course.link}`}>
+            На сайт курса
+          </Link>
         </button>
         <button className="course-link__btn course-link__btn_more">
-          <Link to={`/courses/${course.url}`}>Подробнее</Link>
+          <Link
+            to={`/courses/${course.category.url}/${course.subcategory.url}/${course.url}`}
+          >
+            Подробнее
+          </Link>
         </button>
       </div>
     </div>
