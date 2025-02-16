@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
 import Categories from "../Components/Courses/Categories";

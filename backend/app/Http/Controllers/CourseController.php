@@ -31,7 +31,7 @@ class CourseController extends Controller
                                 WHERE review_school.school_id = schools.id), 0) as avg_rating');
         }])
             ->with(['subcategory.category'])
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId,$categoryUrl, $schoolUrl) {
+            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $categoryUrl, $schoolUrl) {
                 if ($selectedSubcategoryId) {
                     $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
                     $query->whereIn('subcategory_id', $selectedSubcategoryIds); // Используем whereIn для фильтрации

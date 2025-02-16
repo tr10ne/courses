@@ -1,10 +1,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Outlet,
 } from "react-router-dom";
 import App from "./App"; // Импортируем App как Layout
 import Home from "./Pages/Home";

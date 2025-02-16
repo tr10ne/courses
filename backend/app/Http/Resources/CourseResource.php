@@ -21,7 +21,7 @@ class CourseResource extends JsonResource
         $data =  [
             'id' => $this->id,                  // Идентификатор курса
             'subcategory_id' => $this->subcategory_id, // Идентификатор подкатегории, к которой относится курс
-            'subcategory_name' => $this->subcategory->name, // Идентификатор подкатегории, к которой относится курс
+            // 'subcategory_name' => $this->subcategory->name, // Идентификатор подкатегории, к которой относится курс
             'school_id' => $this->school_id,     // Идентификатор школы, которая предоставляет курс
             'name' => $this->name,               // Название курса
             'description' => $this->description, // Описание курса
