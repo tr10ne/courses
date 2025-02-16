@@ -17,6 +17,27 @@ const CourseDetail = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const headerRef = useRef(null);
+	const [crumbs, setCrumbs] = useState([]);
+
+	useEffect(() => {
+		if (!course) return;
+		setCrumbs([
+			{ path: "/", name: "Главная" },
+			{ path: "/courses", name: "Онлайн-курсы" },
+			{
+				path: `/courses/${course.category.url}`,
+				name: course.category.name,
+			},
+			{
+				path: `/courses/${course.category.url}/${course.subcategory.url}`,
+				name: course.subcategory.name,
+			},
+			{
+				path: `/courses/${course.category.url}/${course.subcategory.url}/${course.url}`,
+				name: course.name,
+			},
+		]);
+	}, [course]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -39,7 +60,9 @@ const CourseDetail = () => {
 	useEffect(() => {
 		if (!courseUrl) return;
 		axios
-			.get(`${apiUrl}/api/courses/${categoryUrl}/${subcategoryUrl}/${courseUrl}`)
+			.get(
+				`${apiUrl}/api/courses/${categoryUrl}/${subcategoryUrl}/${courseUrl}`
+			)
 			.then((response) => {
 				const result = response.data
 					? response.data.data || response.data
@@ -104,6 +127,7 @@ const CourseDetail = () => {
 			<div className="course__header" ref={headerRef}>
 				<div className=" container">
 					<div className="course__header__inner">
+						<Breadcrumbs crumbs={crumbs} />
 						<h1 className="title">{course.name}</h1>
 						<p className="course__updated-at">
 							Последнее обновление{" "}
