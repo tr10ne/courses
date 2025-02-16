@@ -7,16 +7,37 @@ import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Loading from "../Components/Loading.jsx";
 import moment from "moment";
 import ReviewItem from "../Components/ReviewItem.jsx";
-import Course from "../Components/Courses/Course.jsx";
+import CourseItem from "../Components/CourseItem.jsx";
 import CourseInfo from "../Components/CourseDetail/CourseInfo.jsx";
 import SchoolInfo from "../Components/CourseDetail/SchoolInfo.jsx";
 
 const CourseDetail = () => {
-	const { url } = useParams(); // Получаем параметр `url` из URL
+	const { categoryUrl, subcategoryUrl, courseUrl } = useParams();
 	const [course, setCourse] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const headerRef = useRef(null);
+	const [crumbs, setCrumbs] = useState([]);
+
+	useEffect(() => {
+		if (!course) return;
+		setCrumbs([
+			{ path: "/", name: "Главная" },
+			{ path: "/courses", name: "Онлайн-курсы" },
+			{
+				path: `/courses/${course.category.url}`,
+				name: course.category.name,
+			},
+			{
+				path: `/courses/${course.category.url}/${course.subcategory.url}`,
+				name: course.subcategory.name,
+			},
+			{
+				path: `/courses/${course.category.url}/${course.subcategory.url}/${course.url}`,
+				name: course.name,
+			},
+		]);
+	}, [course]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -26,7 +47,7 @@ const CourseDetail = () => {
 			sidebar.style.top = `-${Math.floor(headerHeight / 2 + 40)}px`;
 		};
 
-		handleResize(); 
+		handleResize();
 
 		window.addEventListener("resize", handleResize);
 
@@ -37,13 +58,15 @@ const CourseDetail = () => {
 
 	// Запрос к API для получения курса по его `url`
 	useEffect(() => {
+		if (!courseUrl) return;
 		axios
-			.get(`${apiUrl}/api/courses/url/${url}`)
+			.get(
+				`${apiUrl}/api/courses/${categoryUrl}/${subcategoryUrl}/${courseUrl}`
+			)
 			.then((response) => {
 				const result = response.data
 					? response.data.data || response.data
 					: null;
-
 				if (result) {
 					setCourse(result);
 				} else {
@@ -57,7 +80,7 @@ const CourseDetail = () => {
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [url]);
+	}, [courseUrl]);
 
 	//отрисовываем отзыв
 	const renderReview = () => {
@@ -79,12 +102,13 @@ const CourseDetail = () => {
 	};
 
 	const renderRelatedCourses = () => {
+		if (!course) return;
 		if (course.related_courses.length === 0) return;
 		return (
 			<article className="course__block">
 				<h2 className="course__title">Похожие курсы</h2>
 				{course.related_courses.map((relatedCourse) => (
-					<Course key={relatedCourse.id} course={relatedCourse} />
+					<CourseItem key={relatedCourse.id} course={relatedCourse} />
 				))}
 			</article>
 		);
@@ -98,19 +122,12 @@ const CourseDetail = () => {
 		return <div>{error}</div>;
 	}
 
-	const crumbs = [
-		{ path: "/", name: "Главная" },
-		{ path: "/courses", name: "Онлайн-курсы" },
-		{ path: `/${course.url}`, name: course.name },
-	];
-
 	return (
 		<section className="course">
 			<div className="course__header" ref={headerRef}>
 				<div className=" container">
 					<div className="course__header__inner">
 						<Breadcrumbs crumbs={crumbs} />
-
 						<h1 className="title">{course.name}</h1>
 						<p className="course__updated-at">
 							Последнее обновление{" "}

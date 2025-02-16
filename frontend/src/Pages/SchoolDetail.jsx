@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import { apiUrl } from "../js/config.js";
-import CourseItem from "../Components/SchoolDetail/CourseItem";
+import CourseItem from "../Components/CourseItem";
 import SubcategoryFilter from "../Components/SchoolDetail/SubcategoryFilter";
 import Loading from "../Components/Loading";
 
