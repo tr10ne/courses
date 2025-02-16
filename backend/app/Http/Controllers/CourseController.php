@@ -10,7 +10,7 @@ use App\Http\Resources\SchoolResource;
 
 class CourseController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request,  $categoryUrl = null, $subcategoryUrl = null)
     {
         // Получаем параметры из запроса
         $limit = $request->input('limit', 10);    // Количество записей на страницу
@@ -31,12 +31,7 @@ class CourseController extends Controller
                                 WHERE review_school.school_id = schools.id), 0) as avg_rating');
         }])
             ->with(['subcategory.category'])
-            ->withCount('reviews as reviews_count')
-            ->withAvg('reviews', 'rating')
-            ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
-        JOIN reviews ON reviews.id = review_course.review_id
-        WHERE review_course.course_id = courses.id), 0) as avg_rating')
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $schoolUrl) {
+            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId,$categoryUrl, $schoolUrl) {
                 if ($selectedSubcategoryId) {
                     $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
                     $query->whereIn('subcategory_id', $selectedSubcategoryIds); // Используем whereIn для фильтрации
@@ -49,6 +44,14 @@ class CourseController extends Controller
                         $query->where('id', $selectedCategoryId);
                     });
                 }
+
+                if ($categoryUrl) {
+                    $query->whereHas('subcategory.category', function ($query) use ($categoryUrl) {
+                        $query->where('url', $categoryUrl);
+                    });
+
+                }
+
                 if ($schoolUrl) {
                     $query->whereHas('school', function ($query) use ($schoolUrl) {
                         $query->where('url', $schoolUrl);
@@ -63,15 +66,11 @@ class CourseController extends Controller
         // Фильтр по минимальной цене
         if ($minPrice != '') {
             $query->where('courses.price', '>=', $minPrice);
-        } else {
-            $minPrice = $minTotalPrice;
         }
 
         // Фильтр по максимальной цене
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
-        } else {
-            $maxPrice = $maxTotalPrice;
         }
 
         // Получаем список школ
@@ -84,8 +83,6 @@ class CourseController extends Controller
 
         // Обработка случая, когда нет результатов
         if ($query->count() == 0) {
-            $maxPrice = 0;
-            $minPrice = 0;
             $maxTotalPrice = 0;
             $minTotalPrice = 0;
         }
@@ -223,7 +220,7 @@ class CourseController extends Controller
     // Метод для получения отзывов, связанных с курсом
     public function getReviews($id)
     {
-                $course = Course::find($id);
+        $course = Course::find($id);
         if (!$course) {
             return response()->json(['message' => 'Course not found'], 404);
         }
@@ -233,7 +230,7 @@ class CourseController extends Controller
     }
 
     // Метод для получения курса по URL
-    public function showByUrl($categoryUrl=0, $subcategoryUrl=0, $url)
+    public function showByUrl($categoryUrl = 0, $subcategoryUrl = 0, $url)
     {
         // Начинаем запрос с жадной загрузкой связанных моделей
         $query = Course::with(['school', 'reviews.user', 'subcategory.category'])
