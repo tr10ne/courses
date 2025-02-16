@@ -137,11 +137,6 @@ const SchoolDetail = () => {
             )}`
           : "";
 
-      // const priceQuery =
-      //   queryParams.minPrice > 0 || queryParams.maxPrice > 0
-      //     ? `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
-      //     : "";
-
       const priceQuery = `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`;
 
       try {
