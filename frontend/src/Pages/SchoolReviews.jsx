@@ -137,7 +137,7 @@ const SchoolReviews = () => {
           </div>
           <div className="school-reviews__bug" ref={RefTarget}>
             <div className="school-reviews__details">
-              <AvgRatingStar className="detail" value={school.rating} />
+              <AvgRatingStar className="avg" value={school.rating} />
               <p className="school-rating__description">
                 {school.reviews} отзыв от пользователей
               </p>

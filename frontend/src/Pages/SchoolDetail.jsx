@@ -331,8 +331,8 @@ const SchoolDetail = () => {
                 </span>
               )}
             </div>
-            <div className="school-detail__details">
-              <AvgRatingStar className="detail" value={school.rating} />
+            <div className="school-detail__rating">
+              <AvgRatingStar className="avg" value={school.rating} />
               <Link
                 className="school-detail__btn"
                 to={`/schools/${school.url}/reviews`}
