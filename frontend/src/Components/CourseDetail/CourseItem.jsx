@@ -23,7 +23,7 @@ const CourseItem = ({ course, foo }) => {
           </Link>
         </p>
         <p className="expansion-name">
-          <span>{course.subcategory_name}</span>
+          <span>{course.subcategory_name || course.subcategory?.name}</span>
         </p>
         <p className="expansion-name expansion-name__schools">
           {course.school.name}
