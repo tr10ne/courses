@@ -361,13 +361,14 @@ const SchoolDetail = () => {
                   {school.rating}
                 </p>
               </div>
-              <button className="school-detail__btn">
-                <Link to={`/schools/${school.url}/reviews`}>
-                  <p className="school-reviewcount school-reviewcount_detail">
-                    <span>{school.reviews}</span> отзывов о школе
-                  </p>
-                </Link>
-              </button>
+              <Link
+                className="school-detail__btn"
+                to={`/schools/${school.url}/reviews`}
+              >
+                <p className="school-reviewcount school-reviewcount_detail">
+                  <span>{school.reviews}</span> отзывов о школе
+                </p>
+              </Link>
             </div>
           </div>
         </div>

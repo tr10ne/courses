@@ -58,19 +58,20 @@
   justify-items: center;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   .course-link__btn {
-    padding: 12px 34px;
+    text-align: center;
+    padding: 5px 25px;
     background-color: $color-accent;
     color: $color-text3;
     border-radius: 100px;
     border: 1px solid transparent;
     font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    line-height: 24px;
     &_more {
       color: $color-text1;
       background-color: transparent;
       border: 1px solid $color-bg3;
-      transition: color 0.3s ease;
     }
     &:hover {
       color: $color-accent;

@@ -13,7 +13,7 @@ const SchoolReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const isExpanded = false;
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -126,9 +126,12 @@ const SchoolReviews = () => {
               />
             </div>
             <div className="school-reviews__details">
-              <button className="school-reviews__btn">
-                <Link to={`/schools/${school.url}`}>Курсы {school.name}</Link>
-              </button>
+              <Link
+                className="school-reviews__btn"
+                to={`/schools/${school.url}`}
+              >
+                Курсы {school.name}
+              </Link>
             </div>
           </div>
           <div className="school-reviews__bug" ref={RefTarget}>

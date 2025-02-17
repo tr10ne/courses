@@ -44,18 +44,19 @@ const CourseItem = ({ course }) => {
         <p className="course-price__value">{formatPrice(course.price)}</p>
       </div>
       <div className="course-link">
-        <button className="course-link__btn">
-          <Link target="_blank" to={`${course.link}`}>
-            На сайт курса
-          </Link>
-        </button>
-        <button className="course-link__btn course-link__btn_more">
-          <Link
-            to={`/courses/${course.category.url}/${course.subcategory.url}/${course.url}`}
-          >
-            Подробнее
-          </Link>
-        </button>
+        <Link
+          className="course-link__btn"
+          target="_blank"
+          to={`${course.link}`}
+        >
+          На сайт курса
+        </Link>
+        <Link
+          className="course-link__btn course-link__btn_more"
+          to={`/courses/${course.category.url}/${course.subcategory.url}/${course.url}`}
+        >
+          Подробнее
+        </Link>
       </div>
     </div>
   );

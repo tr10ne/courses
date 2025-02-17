@@ -33,9 +33,9 @@ const SchoolItem = ({ school }) => {
         </div>
       </div>
       <div className="school-item__link">
-        <button className="link-btn">
-          <Link to={`/schools/${school.url}`}>Подробнее</Link>
-        </button>
+        <Link className="link-btn" to={`/schools/${school.url}`}>
+          Подробнее
+        </Link>
       </div>
     </div>
   );
