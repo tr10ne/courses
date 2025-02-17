@@ -12,7 +12,7 @@
 //Schools
 @use "./scss/schools/schools";
 @use "./scss/schoolDetail/school-detail";
-@use "./scss/schoolDetail/courses-item";
+// @use "./scss/schoolDetail/courses-item";
 
 @use "./scss/schoolReviews/school-reviews";
 
@@ -24,6 +24,7 @@
 @use "./scss/courses/price-filter-slider";
 @use "./scss/courses/subcategories";
 @use "./scss/courses/courses-schools";
+@use "./scss/courses/courses-item";
 
 //Course
 @use "./scss/course-detail/course-detail";

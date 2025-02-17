@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
 import Categories from "../Components/Courses/Categories";
-import CourseItem from "../Components/CourseItem.jsx";
+import CourseItem from "../Components/CourseDetail/CourseItem.jsx";
 import Filter from "../Components/Courses/Filter";
 import Loading from "../Components/Loading";
 import { apiUrl } from "../js/config.js";

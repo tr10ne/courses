@@ -1,0 +1,75 @@
+@use "../index" as *;
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  &__item {
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 260px;
+    border: $border;
+    border-radius: 5px;
+    &_exelent {
+      background-color: $color-bg_review;
+    }
+  }
+  & h2 {
+    font-size: 18px;
+    font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    margin-left: 30px;
+  }
+}
+
+.review-text {
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  &__detail {
+    &__link {
+      cursor: pointer;
+      color: $color-accent;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: "FS-Elliot-Pro-Bold", sans-serif;
+      line-height: 22px;
+      position: relative;
+      &::after {
+        content: "";
+        width: 0;
+        height: 1px;
+        background-color: $color-accent;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        transition: 0.3s;
+      }
+      &:hover::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.review-date,
+.review-autor {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 17px;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  color: $color-text_review;
+}
+
+.item-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.item-foot {
+  display: flex;
+  justify-content: space-between;
+}

@@ -6,8 +6,8 @@ import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Loading from "../Components/Loading.jsx";
 import moment from "moment";
-import ReviewItem from "../Components/ReviewItem.jsx";
-import CourseItem from "../Components/CourseItem.jsx";
+import ReviewItem from "../Components/Reviews/ReviewItem.jsx";
+import CourseItem from "../Components/CourseDetail/CourseItem.jsx";
 import CourseInfo from "../Components/CourseDetail/CourseInfo.jsx";
 import SchoolInfo from "../Components/CourseDetail/SchoolInfo.jsx";
 

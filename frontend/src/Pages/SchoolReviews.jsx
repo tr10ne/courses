@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import Loading from "../Components/Loading";
-import ReviewItem from "../Components/SchoolReviews/ReviewItem";
+import ReviewItem from "../Components/Reviews/ReviewItem";
 import { apiUrl } from "../js/config.js";
 import AvgRatingStar from "../Components/AvgRatingStar";
 

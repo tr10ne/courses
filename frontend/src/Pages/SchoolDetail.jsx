@@ -11,7 +11,7 @@ import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import { apiUrl } from "../js/config.js";
-import CourseItem from "../Components/SchoolDetail/CourseItem";
+import CourseItem from "../Components/CourseDetail/CourseItem";
 import SubcategoryFilter from "../Components/SchoolDetail/SubcategoryFilter";
 import AvgRatingStar from "../Components/AvgRatingStar";
 import Loading from "../Components/Loading";
@@ -332,15 +332,17 @@ const SchoolDetail = () => {
               )}
             </div>
             <div className="school-detail__rating">
-              <AvgRatingStar className="avg" value={school.rating} />
-              <Link
-                className="school-detail__btn"
-                to={`/schools/${school.url}/reviews`}
-              >
-                <p className="school-reviewcount school-reviewcount_detail">
-                  <span>{school.reviews}</span> отзывов о школе
-                </p>
-              </Link>
+              <div className="school-detail__rating__box">
+                <AvgRatingStar className="avg" value={school.rating} />
+                <Link
+                  className="school-detail__btn"
+                  to={`/schools/${school.url}/reviews`}
+                >
+                  <p className="school-reviewcount school-reviewcount_detail">
+                    <span>{school.reviews}</span> отзывов о школе
+                  </p>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
