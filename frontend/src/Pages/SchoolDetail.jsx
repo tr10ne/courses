@@ -4,6 +4,7 @@ import React, {
   useRef,
   useCallback,
   useMemo,
+  useLayoutEffect,
 } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
@@ -155,7 +156,24 @@ const SchoolDetail = () => {
     url,
   ]);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const calculateHeight = () => {
+  //     const bodyElement = document.querySelector(".school-detail__body");
+  //     const filterElement = document.querySelector(".subcategory-filter");
+
+  //     if (bodyElement && filterElement) {
+  //       const bodyHeight = bodyElement.offsetHeight;
+  //       filterElement.style.maxHeight = `${bodyHeight}px`;
+  //     }
+  //   };
+
+  //   // Вызываем функцию только после загрузки курсов
+  //   if (courses.length > 0) {
+  //     calculateHeight();
+  //   }
+  // }, [courses]); // Зависимость от courses
+
+  useLayoutEffect(() => {
     const calculateHeight = () => {
       const bodyElement = document.querySelector(".school-detail__body");
       const filterElement = document.querySelector(".subcategory-filter");
@@ -166,11 +184,11 @@ const SchoolDetail = () => {
       }
     };
 
-    // Вызываем функцию только после загрузки курсов
-    if (courses.length > 0) {
+    // Вызываем функцию только после завершения загрузки курсов
+    if (!coursesLoading && courses.length > 0) {
       calculateHeight();
     }
-  }, [courses]); // Зависимость от courses
+  }, [courses, coursesLoading]); // Зависимость от courses и coursesLoading
 
   // Загрузка подкатегорий при изменении цены
   useEffect(() => {
