@@ -48,7 +48,7 @@ const SchoolDetail = () => {
       getComputedStyle(document.documentElement).getPropertyValue(
         "--header-height"
       ),
-      15
+      12
     );
     const targetPosition = ref.current.offsetTop - headerHeight;
 
@@ -173,22 +173,23 @@ const SchoolDetail = () => {
   //   }
   // }, [courses]); // Зависимость от courses
 
+  const bodyRef = useRef(null);
+  const [isFilterReady, setIsFilterReady] = useState(false);
+
   useLayoutEffect(() => {
     const calculateHeight = () => {
-      const bodyElement = document.querySelector(".school-detail__body");
       const filterElement = document.querySelector(".subcategory-filter");
 
-      if (bodyElement && filterElement) {
-        const bodyHeight = bodyElement.offsetHeight;
+      if (bodyRef.current && filterElement) {
+        const bodyHeight = bodyRef.current.offsetHeight;
         filterElement.style.maxHeight = `${bodyHeight}px`;
       }
     };
 
-    // Вызываем функцию только после завершения загрузки курсов
-    if (!coursesLoading && courses.length > 0) {
+    if (isFilterReady) {
       calculateHeight();
     }
-  }, [courses, coursesLoading]); // Зависимость от courses и coursesLoading
+  }, [courses, isFilterReady]);
 
   // Загрузка подкатегорий при изменении цены
   useEffect(() => {
@@ -372,6 +373,7 @@ const SchoolDetail = () => {
         </div>
         <aside className="school-detail__aside">
           <SubcategoryFilter
+            onReady={() => setIsFilterReady(true)}
             subcategories={filteredSubcategories} // Используем отфильтрованные подкатегории
             selectedSubcategories={queryParams.selectedSubcategories}
             onSubcategoryChange={handleSubcategoryChange}
@@ -385,7 +387,13 @@ const SchoolDetail = () => {
             loading={subcategoriesLoading}
           />
         </aside>
-        <div className="school-detail__body" ref={RefTarget}>
+        <div
+          className="school-detail__body"
+          ref={(node) => {
+            RefTarget.current = node;
+            bodyRef.current = node;
+          }}
+        >
           <div className="courses-list">
             <div className="courses-list__head">
               <h2>Все курсы {school.name}</h2>

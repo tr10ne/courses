@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PriceFilter from "../Courses/PriceFilter";
 import Loading from "../Loading"; // Импортируем компонент Loading
 
 const SubcategoryFilter = ({
+  onReady,
   subcategories,
   selectedSubcategories,
   onSubcategoryChange,
@@ -37,6 +38,10 @@ const SubcategoryFilter = ({
   const displayedSubcategories = showAllSubcategories
     ? subcategories
     : subcategories.slice(0, 7);
+
+  useEffect(() => {
+    onReady(); // Уведомляем родительский компонент о готовности
+  }, [onReady]);
 
   return (
     <div className="subcategory-filter">
