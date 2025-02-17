@@ -213,6 +213,17 @@
   }
 }
 
+.review-rating {
+  &__stars {
+    display: flex;
+    gap: 5px;
+    & picture {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
 .rating-stars {
   width: 14px;
   height: 14px;

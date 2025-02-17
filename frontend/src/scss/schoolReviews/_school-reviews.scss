@@ -56,12 +56,12 @@
   }
   &__btn {
     text-align: center;
-    padding: 14px;
+    padding: 11px;
     border-radius: 100px;
     border: 1px solid transparent;
     background-color: $color-accent;
     color: $color-text3;
-    max-width: 191px;
+    width: 191px;
     font-size: 14px;
     font-weight: 700;
     line-height: 24px;
@@ -78,6 +78,7 @@
   &__footer {
     grid-column: 2;
     display: flex;
+    margin-top: 20px;
   }
   &__body {
     &__box {
@@ -95,16 +96,5 @@
     line-height: 24px;
     font-weight: 400;
     font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  }
-}
-
-.review-rating {
-  &__stars {
-    display: flex;
-    gap: 5px;
-    & picture {
-      width: 14px;
-      height: 14px;
-    }
   }
 }
