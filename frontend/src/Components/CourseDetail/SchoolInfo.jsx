@@ -1,5 +1,5 @@
 import React from "react";
-import Star from "../Star";
+import AvgRatingStar from "../AvgRatingStar";
 import { Link } from "react-router-dom";
 
 const SchoolInfo = ({ school }) => {
@@ -13,10 +13,7 @@ const SchoolInfo = ({ school }) => {
       ></div>
 
       <div className="course__school-details">
-        <div className="course__school-raiting">
-          <Star filled={true} />
-          <span> {school.rating}</span>
-        </div>
+        <AvgRatingStar className="info" value={school.rating} />
         <Link to={`/schools/${school.url}/reviews`}>
           <p className="course__school-reviews">
             отзывы о школе ({school.reviews})

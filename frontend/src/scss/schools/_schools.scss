@@ -59,31 +59,6 @@
   }
 }
 
-.school-rating {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  & svg {
-    width: 14px;
-    height: 14px;
-  }
-  &_detail {
-    & svg {
-      width: 26px;
-      height: 26px;
-    }
-  }
-}
-
-.rating-value {
-  font-size: 18px;
-  font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  &_detail {
-    font-size: 30px;
-    font-family: "FS-Elliot-Pro-Heavy", sans-serif;
-  }
-}
-
 .school-name {
   font-size: 18px;
   font-family: "FS-Elliot-Pro-Bold", sans-serif;

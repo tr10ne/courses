@@ -204,13 +204,13 @@
 }
 
 .star-rating {
-	display: flex;
-	gap: 5px;
-	
-	& .star {
-		width: 14px;
-		height: 14px;
-	}
+  display: flex;
+  gap: 5px;
+
+  & .star {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .rating-stars {
@@ -226,6 +226,46 @@
   fill: #d3def8; /* Серый цвет */
 }
 
+.rating {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+  & svg {
+    width: 14px;
+    height: 14px;
+  }
+  &_detail {
+    & svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
+  &_info {
+    & svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.rating-value {
+  font-size: 18px;
+  font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  font-weight: 700;
+  line-height: 27px;
+  &_detail {
+    font-size: 30px;
+    font-family: "FS-Elliot-Pro-Heavy", sans-serif;
+    font-weight: 900;
+    line-height: 27px;
+  }
+  &_info {
+    font-size: 18px;
+    font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    font-weight: 700;
+    line-height: 27px;
+  }
+}
 
 /* ============================= */
 /* Media */
