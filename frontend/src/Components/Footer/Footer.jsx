@@ -33,14 +33,14 @@ const Footer = () => {
             isOpen={openListId === "reviews"}
             onToggle={() => handleToggleList("reviews")}
           />
-          <CoursesList
+          {/* <CoursesList
             isOpen={openListId === "courses"}
             onToggle={() => handleToggleList("courses")}
           />
           <DifficultyLevelList
             isOpen={openListId === "difficulty"}
             onToggle={() => handleToggleList("difficulty")}
-          />
+          /> */}
         </div>
         <div className="item item_2">
           <Logo />

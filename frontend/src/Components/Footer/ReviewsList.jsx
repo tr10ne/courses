@@ -2,11 +2,14 @@ import React from "react";
 import CollapsibleList from "./CollapsibleList";
 
 const reviews = [
-  { to: "#", label: "Отзывы о Skillbox" },
-  { to: "#", label: "Отзывы о Geekbrains" },
-  { to: "#", label: "Отзывы о Нетология" },
-  { to: "#", label: "Отзывы о Skillfactory" },
-  { to: "#", label: "Отзывы о Convertmonster" },
+  { to: "/schools/skillbox/reviews", label: "Отзывы о Skillbox" },
+  { to: "/schools/geekbrains/reviews", label: "Отзывы о Geekbrains" },
+  { to: "/schools/netologiya/reviews", label: "Отзывы о Нетология" },
+  { to: "/schools/skillfactory/reviews", label: "Отзывы о Skillfactory" },
+  {
+    to: "/schools/agentstvo-convert-monster/reviews",
+    label: "Отзывы о Convertmonster",
+  },
 ];
 
 const ReviewsList = ({ isOpen, onToggle }) => {

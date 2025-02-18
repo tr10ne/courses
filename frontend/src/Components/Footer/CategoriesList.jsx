@@ -2,11 +2,11 @@ import React from "react";
 import CollapsibleList from "./CollapsibleList";
 
 const categories = [
-  { to: "#", label: "Программирование" },
-  { to: "#", label: "Маркетинг" },
-  { to: "#", label: "Дизайн" },
-  { to: "#", label: "Управление" },
-  { to: "#", label: "Контент маркетинг" },
+  { to: "/courses/programmirovanie", label: "Программирование" },
+  { to: "/courses/marketing", label: "Маркетинг" },
+  { to: "/courses/dizajn-i-sozdanie-kontenta", label: "Дизайн" },
+  { to: "/courses/upravlenie", label: "Управление" },
+  { to: "/courses/marketing", label: "Контент маркетинг" },
 ];
 
 const CategoriesList = ({ isOpen, onToggle }) => {
