@@ -32,7 +32,6 @@
 
 .item-value {
   font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  font-size: 12px;
   font-weight: 700;
   color: $color-text3;
   font-size: 12px;
@@ -43,11 +42,14 @@
 
 .progress-bar {
   min-width: 210px;
-  max-height: 22px;
+  height: 22px;
   background-color: $color-bg_reviews-score;
   overflow: hidden;
   position: relative;
   z-index: 1;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
 }
 
 .progress {
