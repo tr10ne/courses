@@ -70,7 +70,7 @@
   min-height: 255px;
   &_1 {
     grid-column: span 4;
-    justify-content: space-between;
+    justify-content: space-evenly;
     flex-wrap: wrap;
     gap: 20px;
     position: relative;

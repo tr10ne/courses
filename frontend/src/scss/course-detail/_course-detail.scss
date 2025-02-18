@@ -1,93 +1,88 @@
 @use "../index" as *;
 
 .course {
-	padding-bottom: 30px;
-	& .title {
-		color: $color-text2;
-	}
+  padding-bottom: 30px;
+  & .title {
+    color: $color-text2;
+  }
 }
 .course__header {
-	margin-bottom: 40px;
-	padding-top: 30px;
-	padding-bottom: 30px;
-	background-color: $color-bg2;
+  margin-bottom: 40px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  background-color: $color-bg2;
 
-	&__inner {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		justify-content: flex-start;
-		max-width: calc(100% - 368px);
-	}
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+    max-width: calc(100% - 368px);
+  }
 }
 
-.course__main{
-	display: grid;
-	grid-template-columns: 1fr 304px;
-	gap: 64px;
+.course__main {
+  display: grid;
+  grid-template-columns: 1fr 304px;
+  gap: 64px;
 }
 
 .course__updated-at {
-	color: $color-text2_2;
-	font-family: "FS-Elliot-Pro-Regular", sans-serif;
-	font-weight: 400;
-	font-size: 12px;
-	line-height: 15px;
+  color: $color-text2_2;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
 }
 
 .course__content {
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .course__block {
-	display: flex;
-	flex-direction: column;
-	gap: 21px;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
 }
 
 .course__title {
-	font-family: "Lisboa-Heavy-Regular", sans-serif;
-	font-size: 28px;
-	font-weight: 400;
-	line-height: 36px;
+  font-family: "Lisboa-Heavy-Regular", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 36px;
 }
 
-.course__sidebar{
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
+.course__sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
+.course__reviews-link {
+  align-self: center;
+  padding: 13px 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 24px;
+  border-radius: 100px;
+  cursor: pointer;
 
-.course__reviews-link{
-	align-self: center;
-		padding: 13px 33px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 12px;
-	font-weight: 700;
-	line-height: 24px;
-	border-radius: 100px;
-	cursor: pointer;
+  background-color: $color-bg1;
+  color: $color-text1_2;
+  border: 1px solid $color-text1_2;
 
-	background-color: $color-bg1;
-	color: $color-text1_2;
-	border: 1px solid $color-text1_2;
+  transition: 0.3s;
 
-	transition: 0.3s;
-
-	&:hover,
-	&:focus {
-		background-color: $color-accent;
-		color: $color-accent-inner;
-		border: 1px solid $color-accent;
-	}
-}
-
-.course__more-link{
-display: block;
+  &:hover,
+  &:focus {
+    background-color: $color-accent;
+    color: $color-accent-inner;
+    border: 1px solid $color-accent;
+  }
 }

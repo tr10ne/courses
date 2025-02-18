@@ -2,11 +2,11 @@ import React from "react";
 import CollapsibleList from "./CollapsibleList";
 
 const schools = [
-  { to: "#", label: "Skillbox" },
-  { to: "#", label: "Geekbrains" },
-  { to: "#", label: "Нетология" },
-  { to: "#", label: "Skillfactory" },
-  { to: "#", label: "Convertmonster" },
+  { to: "/schools/skillbox", label: "Skillbox" },
+  { to: "/schools/geekbrains", label: "Geekbrains" },
+  { to: "/schools/netologiya", label: "Нетология" },
+  { to: "/schools/skillfactory", label: "Skillfactory" },
+  { to: "/schools/agentstvo-convert-monster", label: "Convertmonster" },
 ];
 
 const SchoolsList = ({ isOpen, onToggle }) => {
