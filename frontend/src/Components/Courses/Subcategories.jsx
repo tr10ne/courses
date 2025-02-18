@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../js/config";
+import Subcategory from "./Subcategory";
 
 const Subcategories = ({
-	selectedCategoryId,
-	selectedCategoryName,
+	selectedCategory,
 	loadingCourses,
 	handleSubcategoryClick,
+	setSelectedSubcategory,
+	paramSubcategoryUrl,
 }) => {
 	const [subcategories, setSubcategories] = useState([]);
 
 	//запрос к БД для получения категории и подкатегорий с ней связанных
 	useEffect(() => {
-		if (!selectedCategoryId) return;
+		if (!selectedCategory) return;
 
 		axios
-			.get(`${apiUrl}/api/categories/${selectedCategoryId}`)
+			.get(`${apiUrl}/api/categories/${selectedCategory.id}`)
 			.then((response) => {
-				// setSelectedCategory(response.data.category);
 				setSubcategories(response.data.subcategories);
-
 			})
 			.catch((error) => {
 				console.error("Ошибка при загрузке категории:", error);
 			});
-		}, [selectedCategoryId]);
+	}, [selectedCategory]);
 
-
-
-	if (selectedCategoryId &&  !loadingCourses)
-	return (
-		<div className="courses__subcategories">
-			<h2 className="courses__subcategories__title">{`Категории курсов по направлению ${selectedCategoryName}`}</h2>
-			<ul className="courses__subcategories__list">
-				{subcategories.map((subcategory) => {
-					return (
-						<li
-							className="courses__subcategories__item"
-							key={subcategory.id}
-							onClick={() => handleSubcategoryClick(subcategory)}
-						>
-							{subcategory.name}
-						</li>
-					);
-				})}
-			</ul>
-		</div>
-	);
+	if (subcategories && !loadingCourses)
+		return (
+			<div className="courses__subcategories">
+				<h2 className="courses__subcategories__title">{`Категории курсов по направлению ${selectedCategory.name}`}</h2>
+				<ul className="courses__subcategories__list">
+					{subcategories.map((subcategory) => {
+						return (
+							<li key={subcategory.id}>
+								<Subcategory
+									subcategory={subcategory}
+									handleSubcategoryClick={handleSubcategoryClick}
+									paramSubcategoryUrl={paramSubcategoryUrl}
+									setSelectedSubcategory={setSelectedSubcategory}
+									categoryUrl={selectedCategory.url}
+								/>
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		);
 };
 
 export default Subcategories;

@@ -5,9 +5,10 @@ import Category from "./Category";
 import { apiUrl } from "../../js/config";
 
 const Categories = ({
-	selectedCategoryId,
+	paramCategoryUrl,
 	handleCategoryChange,
 	disabledCategories,
+	setSelectedCategory,
 }) => {
 	const [loadingCategories, setLoadingCategories] = useState(true);
 	const [categories, setCategories] = useState([]);
@@ -39,7 +40,7 @@ const Categories = ({
 	}, []);
 
 	return (
-		<div className="categories-filter" name='categories'>
+		<div className="categories-filter" name="categories">
 			<div
 				className={`categories-filter__inner container ${
 					disabledCategories ? "disabled" : ""
@@ -52,8 +53,9 @@ const Categories = ({
 						<Category
 							key={category.id}
 							category={category}
-							selectedCategoryId={selectedCategoryId}
 							handleCategoryChange={handleCategoryChange}
+							setSelectedCategory={setSelectedCategory}
+							paramCategoryUrl={paramCategoryUrl}
 						/>
 					))
 				)}

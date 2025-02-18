@@ -31,7 +31,7 @@ class CourseController extends Controller
                                 WHERE review_school.school_id = schools.id), 0) as avg_rating');
         }])
             ->with(['subcategory.category'])
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $categoryUrl, $schoolUrl) {
+            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $categoryUrl,$subcategoryUrl, $schoolUrl) {
                 if ($selectedSubcategoryId) {
                     $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
                     $query->whereIn('subcategory_id', $selectedSubcategoryIds); // Используем whereIn для фильтрации
@@ -50,6 +50,11 @@ class CourseController extends Controller
                         $query->where('url', $categoryUrl);
                     });
 
+                    if ($subcategoryUrl) {
+                        $query->whereHas('subcategory', function ($query) use ($subcategoryUrl) {
+                            $query->where('url', $subcategoryUrl);
+                        });
+                    }
                 }
 
                 if ($schoolUrl) {
@@ -67,7 +72,7 @@ class CourseController extends Controller
         if ($minPrice != '') {
             $query->where('courses.price', '>=', $minPrice);
         }
-        
+
         // Фильтр по максимальной цене
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
