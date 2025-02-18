@@ -11,7 +11,7 @@ const CourseInfo = ({ course }) => {
             <div className="course__cart__footer">
 
 			<Link
-				className="courses-item__more-link  course__more-link"
+				className="courses-item__more-link  course__more-link "
 				target="_blank"
 				to={course.link}
 			>

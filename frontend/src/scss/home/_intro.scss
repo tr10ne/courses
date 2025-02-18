@@ -1,7 +1,55 @@
 @use '../index' as *;
 
 .intro{
-    padding: 50px 0;
     background-color: $color-bg2;
     color: $color-text2;
+    margin-bottom: 47px;
+
+    &__inner{
+min-height: clamp(23.063rem, 15.92rem + 14.88vw, 29.313rem);
+display: flex;
+align-items: center;
+
+overflow: hidden;
+position: relative;
+    }
+
 }
+
+.intro__content{
+position: relative;
+padding-top: 50px;
+padding-bottom: 50px;
+max-width: clamp(22rem, 10.357rem + 24.26vw, 32.188rem);
+z-index: 1;
+}
+
+.intro__title{
+    color: $color-text1;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+
+    font-family: 'Lisboa-Heavy-Regular', sans-serif;
+font-size: 36px;
+font-weight: 400;
+line-height: 47px;
+}
+
+.intro__text{
+    font-family: 'FS-Elliot-Pro-Regular';
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30px;
+}
+
+.intro__svg{
+
+    width: clamp(31.25rem, 13.179rem + 37.65vw, 47.063rem);
+    position: absolute;
+    right: clamp(-6.688rem, -13.795rem + 14.81vw, -0.469rem);
+    bottom: -32px;
+    z-index: 0;
+}
+
+
