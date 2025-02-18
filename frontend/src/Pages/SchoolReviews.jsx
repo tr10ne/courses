@@ -4,16 +4,23 @@ import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import Loading from "../Components/Loading";
-import ReviewItem from "../Components/SchoolReviews/ReviewItem";
+import ReviewItem from "../Components/Reviews/ReviewItem";
 import { apiUrl } from "../js/config.js";
+import AvgRatingStar from "../Components/AvgRatingStar";
+import ReviewsScore from "../Components/SchoolReviews/ReviewsScore";
+import ReviewsOtherSchools from "../Components/SchoolReviews/ReviewsOtherSchools";
+import CustomSelect from "../Components/SchoolReviews/CustomSelect";
+import ReviewForm from "../Components/Reviews/ReviewForm";
 
 const SchoolReviews = () => {
   const { url } = useParams();
   const [school, setSchool] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState([]);
+  const [nearbySchools, setNearbySchools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const isExpanded = false;
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -22,8 +29,13 @@ const SchoolReviews = () => {
     page: 1,
     schoolurl: url,
   });
+  const [sortBy, setSortBy] = useState({
+    field: "date", // Поле для сортировки (date или rating)
+    order: "desc", // Порядок сортировки (asc или desc)
+  });
 
   const RefTarget = useRef(null);
+  const reviewFormRef = useRef(null);
 
   const scrollTo = (ref) => {
     const headerHeight = parseInt(
@@ -56,11 +68,13 @@ const SchoolReviews = () => {
         }
         setSchool(schoolData);
 
-        // Загрузка отзывов о школе с учетом пагинации
+        // Загрузка отзывов о школе с учетом пагинации и сортировки
         const reviewsResponse = await axios.get(`${apiUrl}/api/reviews`, {
           params: {
             school_id: schoolData.id,
             page: queryParams.page,
+            sort_by: sortBy.field, // Поле для сортировки
+            sort_order: sortBy.order, // Порядок сортировки
           },
         });
         if (reviewsResponse.data) {
@@ -78,7 +92,144 @@ const SchoolReviews = () => {
       }
     };
     fetchSchoolAndReviews();
-  }, [url, queryParams.page]);
+  }, [url, queryParams.page, sortBy]); // Добавляем sortBy в зависимости
+
+  // Загрузка всех отзывов без пагинации
+  useEffect(() => {
+    const fetchAllReviews = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/reviews`, {
+          params: {
+            school_id: school.id,
+            limit: "all", // Получаем все отзывы
+          },
+        });
+        if (response.data) {
+          const allReviews = response.data.data || response.data;
+          setAllReviews(allReviews);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке всех отзывов:", error);
+      }
+    };
+
+    if (school) {
+      fetchAllReviews();
+    }
+  }, [school]);
+
+  // Загрузка всех школ и выбор 3 школ выше и 3 ниже текущей
+  useEffect(() => {
+    const fetchAllSchools = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/schools`, {
+          params: {
+            limit: "all", // Получаем все школы
+          },
+        });
+
+        if (response.data) {
+          const allSchools = response.data.data || response.data;
+
+          if (!school || !allSchools.length) {
+            setNearbySchools([]); // Если нет текущей школы или данных, очищаем список
+            return;
+          }
+
+          // Находим индекс текущей школы
+          const currentSchoolIndex = allSchools.findIndex(
+            (s) => s.id === school.id
+          );
+
+          if (currentSchoolIndex === -1) {
+            setNearbySchools([]); // Если текущая школа не найдена, очищаем список
+            return;
+          }
+
+          const nearbySchools = [];
+
+          // Добавляем школы перед текущей, пропуская те, у которых reviewsCount === 0
+          for (
+            let i = currentSchoolIndex - 1;
+            i >= 0 && nearbySchools.length < 3;
+            i--
+          ) {
+            if (allSchools[i].reviews > 0) {
+              nearbySchools.unshift(allSchools[i]);
+            }
+          }
+
+          // Добавляем школы после текущей, пропуская те, у которых reviewsCount === 0
+          for (
+            let i = currentSchoolIndex + 1;
+            i < allSchools.length && nearbySchools.length < 6;
+            i++
+          ) {
+            if (allSchools[i].reviews > 0) {
+              nearbySchools.push(allSchools[i]);
+            }
+          }
+
+          // Если школ меньше 6, дополняем с противоположной стороны, игнорируя schools с reviewsCount === 0
+          while (nearbySchools.length < 6) {
+            if (nearbySchools.length < 3) {
+              // Добавляем с начала списка
+              for (
+                let i = 0;
+                i < allSchools.length && nearbySchools.length < 3;
+                i++
+              ) {
+                if (
+                  allSchools[i].id !== school.id &&
+                  allSchools[i].reviews > 0 &&
+                  !nearbySchools.includes(allSchools[i])
+                ) {
+                  nearbySchools.unshift(allSchools[i]);
+                }
+              }
+            } else {
+              // Добавляем с конца списка
+              for (
+                let i = allSchools.length - 1;
+                i >= 0 && nearbySchools.length < 6;
+                i--
+              ) {
+                if (
+                  allSchools[i].id !== school.id &&
+                  allSchools[i].reviews > 0 &&
+                  !nearbySchools.includes(allSchools[i])
+                ) {
+                  nearbySchools.push(allSchools[i]);
+                }
+              }
+            }
+          }
+
+          // Ограничиваем результат 6 школами
+          setNearbySchools(nearbySchools.slice(0, 6));
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке всех школ:", error);
+      }
+    };
+
+    if (school) {
+      fetchAllSchools();
+    }
+  }, [school]);
+
+  // Подсчет количества отзывов с каждой оценкой
+  const countReviewsByRating = (reviews) => {
+    return reviews.reduce(
+      (acc, review) => {
+        acc[review.rating] = (acc[review.rating] || 0) + 1;
+        return acc;
+      },
+      { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    );
+  };
+
+  const reviewsByRating = countReviewsByRating(allReviews);
 
   // Обработчик изменения страницы
   const handlePageChange = (newPage) => {
@@ -109,6 +260,12 @@ const SchoolReviews = () => {
 
   const truncatedDescription = getFirstTwoSentences(school.description);
 
+  // Обработчик изменения сортировки
+  const handleSortChange = (field, order) => {
+    setSortBy({ field, order });
+    setQueryParams((prev) => ({ ...prev, page: 1 })); // Сбрасываем страницу на первую
+  };
+
   return (
     <div className="container">
       <section className="school-reviews">
@@ -125,40 +282,61 @@ const SchoolReviews = () => {
                 }}
               />
             </div>
-            <div className="school-reviews__details">
-              <button className="school-reviews__btn">
-                <Link to={`/schools/${school.url}`}>Курсы {school.name}</Link>
-              </button>
+            <div className="school-reviews__btn">
+              <Link
+                className="school-reviews__link"
+                to={`/schools/${school.url}`}
+              >
+                Курсы {school.name}
+              </Link>
             </div>
           </div>
-          <div className="school-reviews__bug" ref={RefTarget}>
+          <div className="school-reviews__bag" ref={RefTarget}>
             <div className="school-reviews__details">
-              <div className="school-rating school-rating_detail">
-                <svg viewBox="0 0 14 13.3563" fill="none">
-                  <path
-                    d="M6.61 0.23C6.68 0.09 6.83 0 6.99 0C7.16 0 7.31 0.09 7.38 0.23L9.06 3.63C9.22 3.95 9.52 4.18 9.87 4.23L13.63 4.77C13.79 4.8 13.92 4.91 13.97 5.07C14.02 5.22 13.98 5.39 13.87 5.51L11.15 8.15C10.89 8.4 10.78 8.76 10.84 9.11L11.48 12.85C11.51 13.01 11.44 13.17 11.31 13.27C11.18 13.37 11 13.38 10.85 13.3L7.5 11.54C7.18 11.37 6.81 11.37 6.49 11.54L3.13 13.3C2.99 13.38 2.81 13.37 2.68 13.27C2.55 13.17 2.48 13.01 2.51 12.85L3.15 9.11C3.21 8.76 3.1 8.4 2.84 8.15L0.12 5.51C0.01 5.39 -0.03 5.22 0.02 5.07C0.07 4.91 0.2 4.8 0.36 4.77L4.12 4.23C4.47 4.18 4.77 3.95 4.93 3.63L6.61 0.23Z"
-                    fill="#FFB800"
-                    fillOpacity="1.000000"
-                    fillRule="nonzero"
-                  />
-                </svg>
-                <p className="rating-value rating-value_detail">
-                  {school.rating}
-                </p>
-              </div>
+              <AvgRatingStar className="avg" value={school.rating} />
               <p className="school-rating__description">
                 {school.reviews} отзыв от пользователей
               </p>
             </div>
             <div className="school-reviews__sort">
-              <span>Сортировка: по дате</span>
+              <p>Сортировка: </p>
+              <CustomSelect
+                options={[
+                  { value: "date_desc", label: "Сначала новые" },
+                  { value: "date_asc", label: "Сначала старые" },
+                  { value: "rating_desc", label: "Сначала положительные" },
+                  { value: "rating_asc", label: "Сначала отрицательные" },
+                ]}
+                value={`${sortBy.field}_${sortBy.order}`}
+                onChange={(value) => {
+                  const [field, order] = value.split("_");
+                  handleSortChange(field, order);
+                }}
+              />
             </div>
             <div className="school-reviews__leave">
-              <span className="school-reviews__link">Оставить отзыв</span>
+              <span
+                className="school-reviews__toform"
+                onClick={() => {
+                  reviewFormRef.current.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Оставить отзыв
+              </span>
             </div>
           </div>
         </div>
-        <div className="school-reviews__sidebar"></div>
+        <aside className="school-reviews__sidebar">
+          <ReviewsScore
+            totalReviews={allReviews.length}
+            rating5={reviewsByRating[5]}
+            rating4={reviewsByRating[4]}
+            rating3={reviewsByRating[3]}
+            rating2={reviewsByRating[2]}
+            rating1={reviewsByRating[1]}
+          />
+          <ReviewsOtherSchools schools={nearbySchools} />
+        </aside>
         <div className="school-reviews__body">
           <div className="review-list">
             {reviews.map((review) => (
@@ -173,6 +351,7 @@ const SchoolReviews = () => {
             onPageChange={handlePageChange}
           />
         </div>
+        <ReviewForm about={school.name} ref={reviewFormRef} />
       </section>
     </div>
   );

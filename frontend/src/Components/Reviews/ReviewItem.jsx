@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ReviewRating from "./ReviewRating";
+import RatingStars from "../RatingStars";
 
 const ReviewItem = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -18,12 +18,16 @@ const ReviewItem = ({ review }) => {
   };
 
   const truncatedDescription = getFirstTwoSentences(review.text);
+  const itemClass =
+    review.rating === 5
+      ? "review-list__item review-list__item_exelent"
+      : "review-list__item";
 
   return (
-    <div className="review-list__item">
+    <div className={itemClass}>
       <div className="item-head">
         <div className="review-raiting">
-          <ReviewRating rating={review.rating} />
+          <RatingStars rating={review.rating} />
         </div>
         <div className="review-date">
           {new Date(review.created_at).toLocaleDateString()}

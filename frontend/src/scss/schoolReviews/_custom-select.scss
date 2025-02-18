@@ -1,0 +1,44 @@
+@use "../index" as *;
+
+.custom-select {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.custom-select__header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.custom-select__arrow {
+  position: absolute;
+  right: -20px;
+  transition: transform 0.2s;
+}
+
+.custom-select__arrow.open {
+  transform: rotate(180deg);
+}
+
+.custom-select__options {
+  position: absolute;
+  top: 160%;
+  left: -5px;
+  background: #fff;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.custom-select__option {
+  white-space: nowrap; // Запрещаем перенос текста
+}
+
+.custom-select__option:hover {
+  color: $color-accent;
+}

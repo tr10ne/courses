@@ -1,8 +1,9 @@
 @use "../index" as *;
+@use "./custom-select";
 
 .school-reviews {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 2fr;
   column-gap: 19px;
   row-gap: 12px;
   padding-top: 30px;
@@ -19,23 +20,35 @@
     justify-content: space-between;
     gap: 80px;
   }
-  &__bug {
+  &__bag {
     margin-top: 25px;
     display: flex;
     justify-content: space-between;
+    gap: 35px;
   }
   &__details {
     display: flex;
     flex-direction: column;
     gap: 13px;
-    flex: 2 1 0;
+    flex: 1 1 0;
   }
   &__sort {
-    flex: 3 1 0;
+    flex: 1 1 0;
     align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "FS-Elliot-Pro-Regular", sans-serif;
+    font-size: 14px;
+    line-height: 17px;
+    color: $color-text1;
+    & p {
+      font-weight: 400;
+      color: $color-text_review;
+    }
   }
   &__leave {
-    flex: 3 1 0;
+    flex: 1 1 0;
     text-align: end;
     align-self: flex-end;
   }
@@ -49,22 +62,27 @@
       line-height: 24px;
     }
   }
-  &__link {
+  &__toform {
     margin-top: 7px;
     color: $color-accent;
     cursor: pointer;
   }
-  &__btn {
-    padding: 14px;
+  &__link {
+    display: block;
+    text-align: center;
+    padding: 11px;
     border-radius: 100px;
     border: 1px solid transparent;
     background-color: $color-accent;
     color: $color-text3;
-    min-width: 191px;
+    width: 191px;
     font-size: 14px;
     font-weight: 700;
     line-height: 24px;
     font-family: "FS-Elliot-Pro-Bold", sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     &:hover {
       border: 1px solid $color-accent;
       background-color: transparent;
@@ -74,6 +92,7 @@
   &__footer {
     grid-column: 2;
     display: flex;
+    margin-top: 20px;
   }
   &__body {
     &__box {
@@ -82,6 +101,14 @@
       align-items: end;
       justify-content: space-between;
     }
+  }
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  &__btn {
+    align-items: end;
   }
 }
 
@@ -92,78 +119,4 @@
     font-weight: 400;
     font-family: "FS-Elliot-Pro-Regular", sans-serif;
   }
-}
-
-.review-rating {
-  &__stars {
-    display: flex;
-    gap: 5px;
-    & picture {
-      width: 14px;
-      height: 14px;
-    }
-  }
-}
-
-.review-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  &__item {
-    padding: 30px 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 20px;
-    min-height: 260px;
-    border: $border;
-    border-radius: 5px;
-    &:nth-child(odd) {
-      background-color: $color-bg_review; /* Цвет для нечетных элементов */
-    }
-    &:nth-child(even) {
-      background-color: $color-bg1; /* Цвет для четных элементов */
-    }
-  }
-  & h2 {
-    font-size: 18px;
-    font-family: "FS-Elliot-Pro-Bold", sans-serif;
-    margin-left: 30px;
-  }
-}
-
-.review-text {
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 22px;
-  &__detail {
-    &__link {
-      cursor: pointer;
-      color: $color-accent;
-      font-size: 14px;
-      font-weight: 700;
-      font-family: "FS-Elliot-Pro-Bold", sans-serif;
-      line-height: 22px;
-    }
-  }
-}
-
-.review-date,
-.review-autor {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 17px;
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  color: $color-text_review;
-}
-
-.item-head {
-  display: flex;
-  justify-content: space-between;
-}
-
-.item-foot {
-  display: flex;
-  justify-content: space-between;
 }
