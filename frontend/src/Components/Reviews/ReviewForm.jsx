@@ -1,13 +1,17 @@
 import React, { useState, forwardRef } from "react";
+import Stars from "../Stars";
 
 const ReviewForm = forwardRef(({ about }, ref) => {
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Здесь логика отправки формы
   };
+
   return (
     <div ref={ref} className="feedback-form">
       <p className="feedback-form__title">Оставить отзыв</p>
@@ -16,14 +20,18 @@ const ReviewForm = forwardRef(({ about }, ref) => {
       </p>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <div className="star-rating">
+          <div className="star-rating" onMouseLeave={() => setHoverRating(0)}>
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
-                className={`star ${star <= rating ? "selected" : ""}`}
                 onClick={() => setRating(star)}
+                onMouseEnter={() => setHoverRating(star)}
+                style={{ cursor: "pointer" }}
               >
-                ★
+                <Stars
+                  className="form"
+                  filled={star <= (hoverRating || rating)}
+                />
               </span>
             ))}
           </div>

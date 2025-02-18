@@ -238,8 +238,12 @@
 }
 
 .rating-stars {
-	width: 14px;
-	height: 14px;
+  width: 14px;
+  height: 14px;
+  &_form {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 .rating-stars.filled {

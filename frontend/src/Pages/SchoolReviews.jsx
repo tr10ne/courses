@@ -318,7 +318,18 @@ const SchoolReviews = () => {
               <span
                 className="school-reviews__toform"
                 onClick={() => {
-                  reviewFormRef.current.scrollIntoView({ behavior: "smooth" });
+                  const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                  const targetElement = reviewFormRef.current;
+
+                  if (targetElement) {
+                    const elementPosition =
+                      targetElement.getBoundingClientRect().top +
+                      window.pageYOffset;
+                    window.scrollTo({
+                      top: elementPosition - offset, // Вычитаем отступ
+                      behavior: "smooth", // Плавная прокрутка
+                    });
+                  }
                 }}
               >
                 Оставить отзыв
@@ -327,15 +338,17 @@ const SchoolReviews = () => {
           </div>
         </div>
         <aside className="school-reviews__sidebar">
-          <ReviewsScore
-            totalReviews={allReviews.length}
-            rating5={reviewsByRating[5]}
-            rating4={reviewsByRating[4]}
-            rating3={reviewsByRating[3]}
-            rating2={reviewsByRating[2]}
-            rating1={reviewsByRating[1]}
-          />
-          <ReviewsOtherSchools schools={nearbySchools} />
+          <div className="sidebar-box">
+            <ReviewsScore
+              totalReviews={allReviews.length}
+              rating5={reviewsByRating[5]}
+              rating4={reviewsByRating[4]}
+              rating3={reviewsByRating[3]}
+              rating2={reviewsByRating[2]}
+              rating1={reviewsByRating[1]}
+            />
+            <ReviewsOtherSchools schools={nearbySchools} />
+          </div>
         </aside>
         <div className="school-reviews__body">
           <div className="review-list">

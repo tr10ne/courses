@@ -52,18 +52,22 @@
 }
 
 .courses-item__more-link {
-  text-align: center;
-  padding: 5px 25px;
-  background-color: $color-accent;
-  color: $color-text3;
-  border-radius: 100px;
-  border: 1px solid transparent;
-  font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  width: 100%;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 700;
   line-height: 24px;
+  border-radius: 100px;
+  cursor: pointer;
+
+  background-color: $color-accent;
+  color: $color-accent-inner;
+  border: 1px solid $color-accent;
+
   transition: 0.3s;
-  white-space: nowrap;
 
   &_course {
     color: $color-text1;
