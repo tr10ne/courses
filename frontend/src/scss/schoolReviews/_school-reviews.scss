@@ -92,9 +92,11 @@
   &__footer {
     grid-column: 2;
     display: flex;
-    margin-top: 20px;
   }
   &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
     &__box {
       grid-column: span 2;
       display: flex;
@@ -125,4 +127,15 @@
   gap: 20px;
   position: sticky;
   top: 90px;
+}
+
+.no-reviews-message {
+  padding: 20px;
+  border: $border;
+  border-radius: 5px;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  background-color: $color-bg_review;
 }

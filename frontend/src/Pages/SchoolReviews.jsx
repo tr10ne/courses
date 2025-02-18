@@ -351,20 +351,29 @@ const SchoolReviews = () => {
           </div>
         </aside>
         <div className="school-reviews__body">
-          <div className="review-list">
-            {reviews.map((review) => (
-              <ReviewItem key={review.id} review={review} />
-            ))}
-          </div>
+          {reviews.length === 0 ? (
+            <p className="no-reviews-message">
+              Пока здесь нет отзывов. Будьте первым - оставьте свой отзыв о{" "}
+              {school.name}!
+            </p>
+          ) : (
+            <>
+              <div className="review-list">
+                {reviews.map((review) => (
+                  <ReviewItem key={review.id} review={review} />
+                ))}
+              </div>
+              <div className="school-reviews__footer">
+                <Pagination
+                  currentPage={pagination.current_page}
+                  lastPage={pagination.last_page}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            </>
+          )}
+          <ReviewForm about={school.name} ref={reviewFormRef} />
         </div>
-        <div className="school-reviews__footer">
-          <Pagination
-            currentPage={pagination.current_page}
-            lastPage={pagination.last_page}
-            onPageChange={handlePageChange}
-          />
-        </div>
-        <ReviewForm about={school.name} ref={reviewFormRef} />
       </section>
     </div>
   );
