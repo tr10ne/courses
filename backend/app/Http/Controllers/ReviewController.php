@@ -8,7 +8,7 @@ use App\Http\Resources\ReviewResource;
 
 class ReviewController extends Controller
 {
-    // Метод для получения всех отзывов с пагинацией
+    // Метод для получения всех отзывов с пагинацией или без
     public function index(Request $request)
     {
         // Проверяем, передан ли параметр school_id
@@ -22,10 +22,28 @@ class ReviewController extends Controller
             });
         }
 
-        // Получаем отзывы с пагинацией (по 10 на страницу)
-        $reviews = $query->paginate(10);
+        // Проверяем, передан ли параметр limit
+        $limit = $request->query('limit', 10); // По умолчанию 10 на страницу
 
-        // Возвращаем коллекцию отзывов с использованием ресурса
+        // Параметры сортировки
+        $sortBy = $request->query('sort_by', 'date'); // По умолчанию сортируем по дате
+        $sortOrder = $request->query('sort_order', 'desc'); // По умолчанию по убыванию
+
+        // Применяем сортировку
+        if ($sortBy === 'date') {
+            $query->orderBy('created_at', $sortOrder);
+        } elseif ($sortBy === 'rating') {
+            $query->orderBy('rating', $sortOrder);
+        }
+
+        // Если limit равен 'all', возвращаем все отзывы без пагинации
+        if ($limit === 'all') {
+            $reviews = $query->get();
+            return ReviewResource::collection($reviews);
+        }
+
+        // Иначе возвращаем отзывы с пагинацией, используя limit
+        $reviews = $query->paginate($limit);
         return ReviewResource::collection($reviews);
     }
 

@@ -1,0 +1,68 @@
+@use "../index" as *;
+
+.reviews-score {
+  display: flex;
+  flex-direction: column;
+  border: $border;
+  border-radius: 5px;
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 12px 12px 20px;
+    border-bottom: $border;
+    cursor: default;
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover .item-score {
+      color: $color-accent;
+    }
+    &:hover .progress {
+      background-color: $color-accent;
+    }
+  }
+}
+
+.item-score {
+  font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.item-value {
+  font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: $color-text3;
+  font-size: 12px;
+  margin-left: 10px;
+  position: relative;
+  z-index: 3;
+}
+
+.progress-bar {
+  min-width: 210px;
+  max-height: 22px;
+  background-color: $color-bg_reviews-score;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.progress {
+  height: 100%;
+  background-color: $color-bg_reviews-score_fill;
+  transition: width 0.3s ease;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+}
+
+.reviews-score__item.highlighted .item-score {
+  color: $color-accent;
+}
+
+.reviews-score__item.highlighted .progress {
+  background-color: $color-accent;
+}

@@ -60,6 +60,17 @@
   display: none !important;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .disabled {
   pointer-events: none; /* Отключает взаимодействие */
   opacity: 0.6; /* Делает содержимое полупрозрачным, чтобы показать, что оно неактивно */
@@ -217,6 +228,7 @@
   &__stars {
     display: flex;
     gap: 5px;
+    align-items: center;
     & picture {
       width: 14px;
       height: 14px;

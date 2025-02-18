@@ -12,9 +12,10 @@
 //Schools
 @use "./scss/schools/schools";
 @use "./scss/schoolDetail/school-detail";
-// @use "./scss/schoolDetail/courses-item";
-
+@use "./scss/schoolReviews/reviews-score";
+@use "./scss/schoolReviews/reviews-other-schools";
 @use "./scss/schoolReviews/school-reviews";
+@use "./scss/reviews/review-form";
 
 //Courses
 @use "./scss/courses/courses";

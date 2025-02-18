@@ -1,8 +1,9 @@
 @use "../index" as *;
+@use "./custom-select";
 
 .school-reviews {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 2fr;
   column-gap: 19px;
   row-gap: 12px;
   padding-top: 30px;
@@ -19,23 +20,35 @@
     justify-content: space-between;
     gap: 80px;
   }
-  &__bug {
+  &__bag {
     margin-top: 25px;
     display: flex;
     justify-content: space-between;
+    gap: 35px;
   }
   &__details {
     display: flex;
     flex-direction: column;
     gap: 13px;
-    flex: 2 1 0;
+    flex: 1 1 0;
   }
   &__sort {
-    flex: 3 1 0;
+    flex: 1 1 0;
     align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "FS-Elliot-Pro-Regular", sans-serif;
+    font-size: 14px;
+    line-height: 17px;
+    color: $color-text1;
+    & p {
+      font-weight: 400;
+      color: $color-text_review;
+    }
   }
   &__leave {
-    flex: 3 1 0;
+    flex: 1 1 0;
     text-align: end;
     align-self: flex-end;
   }
@@ -49,12 +62,13 @@
       line-height: 24px;
     }
   }
-  &__link {
+  &__toform {
     margin-top: 7px;
     color: $color-accent;
     cursor: pointer;
   }
-  &__btn {
+  &__link {
+    display: block;
     text-align: center;
     padding: 11px;
     border-radius: 100px;
@@ -87,6 +101,14 @@
       align-items: end;
       justify-content: space-between;
     }
+  }
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  &__btn {
+    align-items: end;
   }
 }
 

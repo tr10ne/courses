@@ -11,7 +11,7 @@ class SchoolController extends Controller
     // Метод для получения всех школ
     public function index(Request $request)
     {
-        $perPage = $request->query('per_page', 10); // Количество элементов на странице (по умолчанию 10)
+        $limit = $request->query('limit', 10); // Количество элементов на странице (по умолчанию 10)
         $categories = $request->query('categories', []); // Получаем выбранные категории
 
         // Если категории переданы, преобразуем их в массив
@@ -34,7 +34,12 @@ class SchoolController extends Controller
             });
         }
 
-        $schools = $query->paginate($perPage);
+        if ($limit === 'all') {
+            $schools = $query->get();
+            return SchoolResource::collection($schools);
+        }
+
+        $schools = $query->paginate($limit);
 
         return SchoolResource::collection($schools)->response()->getData(true);
     }
