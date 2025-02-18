@@ -103,9 +103,7 @@
     }
   }
   &__sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: block;
   }
   &__btn {
     align-items: end;
@@ -119,4 +117,12 @@
     font-weight: 400;
     font-family: "FS-Elliot-Pro-Regular", sans-serif;
   }
+}
+
+.sidebar-box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 90px;
 }
