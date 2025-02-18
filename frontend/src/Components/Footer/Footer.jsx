@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import CategoriesList from "./CategoriesList";
 import SchoolsList from "./SchoolsList";
 import ReviewsList from "./ReviewsList";
-import CoursesList from "./CoursesList";
-import DifficultyLevelList from "./DifficultyLevelList";
+// import CoursesList from "./CoursesList";
+// import DifficultyLevelList from "./DifficultyLevelList";
 import SocialIconList from "./SocialIconList";
 import Logo from "../Logo";
 
