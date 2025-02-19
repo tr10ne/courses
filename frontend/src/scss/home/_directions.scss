@@ -1,0 +1,94 @@
+@use "../index" as *;
+
+.directions {
+	padding-top: 43px;
+	padding-bottom: 57px;
+
+	background-color: $color-bg2;
+	color: $color-text2;
+
+	& .container {
+		display: flex;
+		flex-direction: column;
+		gap: 43px;
+	}
+}
+
+.directions__content {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-rows: min-content;
+}
+
+//directions categories
+
+.directions__category-list {
+	list-style: none;
+}
+.directions__category-btn {
+	padding: 20px 80px 20px 31px;
+	width: 100%;
+	text-align: left;
+	transition: 0.3s;
+	outline: none;
+
+	&.active,
+	&:focus,
+	&:hover {
+		background-color: $color-bg1;
+		color: $color-accent;
+	}
+}
+
+.directions__category-list {
+	list-style: none;
+}
+
+//directions subategories
+
+.directions__subcategory-list {
+	display: flex;
+	flex-direction: column;
+	gap:5px 50px ;
+	flex-wrap: wrap;
+	height: 560px;
+	align-content: flex-start;
+	padding: 20px 42px;
+
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 36px;
+	background-color: $color-bg1;
+	color: $color-text2;
+
+	list-style: none;
+}
+
+.directions__subcategory-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 36px;
+    outline: none;
+    transition: .3s;
+
+    &:hover,
+    &:focus{
+color: $color-accent;
+
+& svg{
+    fill: $color-accent;
+}
+    }
+
+	& svg {
+		width: 5px;
+		height: 8px;
+        transition: .3s;
+
+        fill: $color-text1_2;
+	}
+
+
+}

@@ -10,7 +10,7 @@ const Categories = ({
 	disabledCategories,
 	setSelectedCategory,
 }) => {
-	const [loadingCategories, setLoadingCategories] = useState(true);
+	const [loading, setLoading] = useState(true);
 	const [categories, setCategories] = useState([]);
 
 	useEffect(() => {
@@ -30,13 +30,13 @@ const Categories = ({
 				} else {
 					console.error("Ожидался массив, но получено:", response.data);
 				}
+				setLoading(false);
 			})
 			.catch((error) => {
 				console.error("Ошибка при загрузке категорий:", error);
+				setLoading(false);
 			})
-			.finally(() => {
-				setLoadingCategories(false);
-			});
+
 	}, []);
 
 	return (
@@ -46,7 +46,7 @@ const Categories = ({
 					disabledCategories ? "disabled" : ""
 				}`}
 			>
-				{loadingCategories ? (
+				{loading ? (
 					<Loading />
 				) : (
 					categories.map((category) => (
