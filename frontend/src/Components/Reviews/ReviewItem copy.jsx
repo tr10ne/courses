@@ -5,6 +5,7 @@ import RatingStars from "../RatingStars";
 const ReviewItem = ({ review, isGeneralPage = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Функция для получения первых двух предложений описания
   const getFirstTwoSentences = (text) => {
     const sentences = text.match(/[^.!?]+[.!?]+/g);
     if (sentences && sentences.length > 5) {
@@ -18,15 +19,10 @@ const ReviewItem = ({ review, isGeneralPage = false }) => {
   };
 
   const truncatedDescription = getFirstTwoSentences(review.text);
-
   const itemClass =
     review.rating === 5
       ? "review-list__item review-list__item_exelent"
       : "review-list__item";
-
-  // Проверка наличия данных о курсе и школе
-  const hasCourse = review.courses && review.courses.length > 0;
-  const hasSchool = review.schools && review.schools.length > 0;
 
   return (
     <div
@@ -37,40 +33,14 @@ const ReviewItem = ({ review, isGeneralPage = false }) => {
       <div className="item-head">
         {isGeneralPage && (
           <div className="item-name">
-            Отзыв
-            {hasCourse && (
-              <>
-                {" о курсе "}
-                <Link
-                  className="item-name__link"
-                  to={`/courses/${review.courses[0]?.url || "#"}`}
-                >
-                  {review.courses[0]?.name || "Неизвестный курс"}
-                </Link>
-                {hasSchool && (
-                  <>
-                    {" от "}
-                    <Link
-                      className="item-name__link"
-                      to={`/schools/${review.schools[0]?.url || "#"}`}
-                    >
-                      {review.schools[0]?.name || "Неизвестная школа"}
-                    </Link>
-                  </>
-                )}
-              </>
-            )}
-            {hasSchool && !hasCourse && (
-              <>
-                {" о школе "}
-                <Link
-                  className="item-name__link"
-                  to={`/schools/${review.schools[0]?.url || "#"}`}
-                >
-                  {review.schools[0]?.name || "Неизвестная школа"}
-                </Link>
-              </>
-            )}
+            Отзыв о{" "}
+            <Link to={`/courses/${review.courses[0].url}`}>
+              {review.courses[0].name}
+            </Link>{" "}
+            от{" "}
+            <Link to={`/schools/${review.schools[0].url}`}>
+              {review.schools[0].name}
+            </Link>
           </div>
         )}
         <div className="review-raiting">

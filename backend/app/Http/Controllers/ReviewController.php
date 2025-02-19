@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use App\Http\Resources\ReviewResource;
+use App\Models\Course;
 
 class ReviewController extends Controller
 {
@@ -13,12 +14,33 @@ class ReviewController extends Controller
     {
         // Проверяем, передан ли параметр school_id
         $schoolId = $request->query('school_id');
+        $courseId = $request->query('course_id');
 
         // Если school_id передан, фильтруем отзывы по школе
-        $query = Review::with(['user', 'schools']);
+        $query = Review::with(['user', 'schools', 'courses']);
         if ($schoolId) {
             $query->whereHas('schools', function ($q) use ($schoolId) {
                 $q->where('schools.id', $schoolId);
+            });
+        }
+
+        if ($courseId) {
+            // Находим школу через курс
+            $course = Course::findOrFail($courseId);
+    
+            // Проверяем, существует ли школа для данного курса
+            if (!$course->school_id) {
+                return response()->json(['error' => 'The specified course does not belong to any school.'], 400);
+            }
+    
+            // Фильтрация по школе, связанной с курсом
+            $query->whereHas('schools', function ($q) use ($course) {
+                $q->where('schools.id', $course->school_id);
+            });
+    
+            // Также фильтруем по курсу (если это необходимо)
+            $query->whereHas('courses', function ($q) use ($courseId) {
+                $q->where('courses.id', $courseId);
             });
         }
 

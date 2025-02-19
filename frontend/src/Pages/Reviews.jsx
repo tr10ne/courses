@@ -125,8 +125,13 @@ const Reviews = () => {
         <div className="reviews__body">
           <div className="review-list">
             {reviews.map((review) => (
-              <ReviewItem key={review.id} review={review} />
+              <ReviewItem
+                key={review.id}
+                review={review}
+                isGeneralPage={true}
+              />
             ))}
+            {console.log(reviews)}
           </div>
           <div className="reviews__footer">
             <Pagination
