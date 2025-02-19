@@ -16,7 +16,7 @@ class CategoryResource extends JsonResource
             'url' => $this->url,          // URL категории
             'created_at' => $this->created_at, // Дата и время создания записи
             'updated_at' => $this->updated_at, // Дата и время последнего обновления записи
-           
+            'subcategories' => $this->subcategories, // Подкатегории
         ];
     }
 }
