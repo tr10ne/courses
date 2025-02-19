@@ -58,7 +58,8 @@ class ReviewResource extends JsonResource
                         'id' => $course->id,
                         'name' => $course->name,
                         'url' => $course->url,
-                        'category' => $course,
+                        'category_url' => $course->subcategory->category->url,
+                        'subcategory_url' => $course->subcategory->url,
                     ];
                 });
             }),

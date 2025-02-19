@@ -43,7 +43,9 @@ const ReviewItem = ({ review, isGeneralPage = false }) => {
                 {" о курсе "}
                 <Link
                   className="item-name__link"
-                  to={`/courses/${review.courses[0]?.url || "#"}`}
+                  to={`/courses/${review.courses[0].category_url}/${
+                    review.courses[0].subcategory_url
+                  }/${review.courses[0].url || "#"}`}
                 >
                   {review.courses[0]?.name || "Неизвестный курс"}
                 </Link>
