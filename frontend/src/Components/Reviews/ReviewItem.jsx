@@ -109,9 +109,9 @@ const ReviewItem = ({ review, isGeneralPage = false }) => {
         </div>
         <div className="review-autor">
           {review.user.name}
-          {" - "}
           {isGeneralPage && (
             <span className="review-date">
+              {" - "}
               {new Date(review.created_at).toLocaleDateString()}
             </span>
           )}
