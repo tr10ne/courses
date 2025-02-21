@@ -89,6 +89,10 @@
 		cursor: grab;
 	}
 
+		&_horizontal::-webkit-scrollbar{
+		height: 4px;
+	  }
+
 	&:hover::-webkit-scrollbar-thumb {
 		background-color: $color-accent;
 	}
@@ -96,6 +100,7 @@
 	&:active::-webkit-scrollbar-thumb {
 		cursor: grabbing;
 	}
+
 }
 
 .mask {

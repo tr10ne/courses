@@ -7,6 +7,7 @@ use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\SchoolResource;
+use PhpParser\Node\Stmt\Echo_;
 
 class CourseController extends Controller
 {
@@ -21,6 +22,8 @@ class CourseController extends Controller
         $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
         $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
         $schoolUrl = $request->input('schoolurl', ''); // Фильтр по URL школы
+        $sortPrice = $request->input('sort_price', null); // Сортировка по цене
+        $sortRating = $request->input('sort_rating', null); // Сортировка по рейтингу
 
         // Создаем запрос для выборки курсов
         $query = Course::with(['school' => function ($query) {
@@ -31,7 +34,10 @@ class CourseController extends Controller
                                 WHERE review_school.school_id = schools.id), 0) as avg_rating');
         }])
             ->with(['subcategory.category'])
-            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $categoryUrl,$subcategoryUrl, $schoolUrl) {
+            ->selectRaw('courses.*, COALESCE((SELECT AVG(rating) FROM review_course
+            JOIN reviews ON reviews.id = review_course.review_id
+            WHERE review_course.course_id = courses.id), 0) as avg_rating')
+            ->where(function ($query) use ($filter, $selectedCategoryId, $selectedSubcategoryId, $categoryUrl, $subcategoryUrl, $schoolUrl) {
                 if ($selectedSubcategoryId) {
                     $selectedSubcategoryIds = explode(',', $selectedSubcategoryId); // Разделяем строку на массив
                     $query->whereIn('subcategory_id', $selectedSubcategoryIds); // Используем whereIn для фильтрации
@@ -64,6 +70,16 @@ class CourseController extends Controller
                 }
             });
 
+
+            if ($sortPrice !== null) {
+                $query->orderBy('price', $sortPrice === 'true' ? 'asc' : 'desc');
+            }
+
+
+        if ($sortRating !== null) {
+            $query->orderBy('avg_rating', $sortRating === 'true'  ? 'asc' : 'desc');
+        }
+
         // Получаем минимальную и максимальную цену
         $minTotalPrice = $query->min('price');
         $maxTotalPrice = $query->max('price');
@@ -91,6 +107,8 @@ class CourseController extends Controller
             $maxTotalPrice = 0;
             $minTotalPrice = 0;
         }
+
+
 
         // Логика для управления limit
         if ($limit === 'all') {

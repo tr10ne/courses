@@ -42,7 +42,7 @@ class CourseResource extends JsonResource
                 'url' => $this->subcategory->url,
             ],
             'reviews_count' => $this->getReviewsCount(),
-            'average_rating' => round($this->getAverageRating(), 2),
+            'average_rating' => round($this->avg_rating, 2),
             'school' => [
                 'id' => $this->school->id,
                 'name' => $this->school->name,

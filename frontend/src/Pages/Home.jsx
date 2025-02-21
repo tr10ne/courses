@@ -3,10 +3,11 @@ import Intro from "../Components/Home/Intro";
 import About from "../Components/Home/About";
 import Directions from "../Components/Home/Directions";
 import axios from "axios";
-import { apiUrl } from "../js/config";
+import { apiUrl } from "../js/config.js";
+import PopularCourses from "../Components/Home/PopularCourses/PopularCourses";
 
 const Home = () => {
-	const [categories,setCategories] = useState(null)
+	const [categories,setCategories] = useState(null);
 
 	useEffect(() => {
 		axios
@@ -37,7 +38,7 @@ const Home = () => {
 			<Intro />
 			<About />
 			<Directions categories={categories} />
-			
+			<PopularCourses categories={categories}/>
 		</>
 	);
 };
