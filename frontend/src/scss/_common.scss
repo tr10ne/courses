@@ -300,5 +300,19 @@
 	}
 }
 
+.sort-arrows{
+	width: 6px;
+	height: 9px;
+
+	&__item{
+		fill: $color-text1_2;
+		transition: .2s;
+
+		&.active{
+			fill: $color-accent;
+		}
+	}
+}
+
 /* ============================= */
 /* Media */

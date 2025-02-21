@@ -7,7 +7,7 @@ const CourseItem = ({ course, foo }) => {
   if (foo) return <div className="courses-item courses-item_foo">{foo}</div>;
 
   return (
-    <li className="courses-item ">
+    <li className="courses-item courses-item_frame">
       <div className="courses-item__content">
         <p className="courses-item__title">
           <Link

@@ -12,6 +12,7 @@ import Pagination from "../Components/Pagination.jsx";
 import Subcategories from "../Components/Courses/Subcategories.jsx";
 import { scroller } from "react-scroll";
 import Schools from "../Components/Courses/Schools.jsx";
+import Arrows from "../Components/Courses/Arrows.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -27,6 +28,8 @@ const Courses = () => {
 	//courses
 	const [courses, setCourses] = useState([]);
 	const [loadingCourses, setLoadingCourses] = useState(true);
+	const [priceSort, setPriceSort] = useState(null);
+	const [ratingSort, setRatingSort] = useState(null);
 
 	//categories
 	const [selectedCategory, setSelectedCategory] = useState(null);
@@ -108,6 +111,8 @@ const Courses = () => {
 			minPrice: sliderValues[0], // Используем значения из ползунка
 			maxPrice: sliderValues[1],
 			selectedSchools: selectedSchools.join(","), // Передаем выбранные школы
+			sort_rating: ratingSort,
+			sort_price: priceSort,
 		};
 
 		let request = params.categoryUrl ?? "";
@@ -183,6 +188,8 @@ const Courses = () => {
 		location.search,
 		reloadSate,
 		selectedSchools,
+		ratingSort,
+		priceSort
 	]);
 
 	//чтобы избежать утечек памяти.
@@ -350,6 +357,15 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
+
+	const handleSortByRating = () => {
+		setRatingSort(ratingSort === null ? 'true' : ratingSort === 'true' ? 'false' : null);
+	};
+
+	const handleSortByPrice = () => {
+		setPriceSort(priceSort === null ? 'true' : priceSort === 'true' ? 'false' : null);
+	};
+
 	// отрисовываем курсы с пагинацией
 	const renderCourses = () => {
 		if (loadingCourses) return <Loading />;
@@ -435,6 +451,19 @@ const Courses = () => {
 					/>
 				</aside>
 				<div className="courses-content">
+					<div className="courses__titles courses-item_frame">
+						<span>Курс</span>
+						<span
+							className="courses__titles__item"
+							onClick={handleSortByRating}
+						>
+							Рейтинг <Arrows state={ratingSort}/>
+						</span>
+						<span className="courses__titles__item" onClick={handleSortByPrice}>
+							Цена <Arrows state={priceSort} />
+						</span>
+						<span>Ссылка на курс</span>
+					</div>
 					{renderCourses()}
 					{selectedCategory && (
 						<>
