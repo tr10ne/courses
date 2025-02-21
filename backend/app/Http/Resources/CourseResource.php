@@ -103,7 +103,7 @@ class CourseResource extends JsonResource
                 'url' => $this->school->url,
                 'link' => $this->school->link,
                 'link_to_school' => $this->school->link_to_school,
-                'rating' => $this->school->getAverageRating(), // Средний рейтинг школы
+                'rating' => round($this->school->getAverageRating(), 2), // Средний рейтинг школы
                 'reviews' => $this->school->getReviewsCount(),   // Количество отзывов о школе
             ];
         }
