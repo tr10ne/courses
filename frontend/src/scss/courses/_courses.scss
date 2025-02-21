@@ -30,8 +30,29 @@
 .courses-content {
 	display: flex;
 	flex-direction: column;
-	gap: 43px;
 	margin-bottom: 78px;
+
+	& .pagination{
+		margin-top: 43px;
+	}
+}
+
+.courses__titles{
+	margin-bottom: 26px;
+	padding-top: 5px;
+	justify-items: center;
+
+	font-size: 12px;
+	line-height: 15px;
+	color: $color-text1_2;
+}
+
+.courses__titles__item{
+	display: flex;
+	gap: 5px;
+	align-items: center;
+
+	cursor: pointer;
 }
 
 .courses-subcategory {
@@ -57,4 +78,6 @@
 	gap: 10px;
 
 	list-style: none;
+
+
 }

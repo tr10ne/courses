@@ -26,7 +26,7 @@ const PopularCourseList = ({ categoryId, page, setNextPage }) => {
 			limit: recordsPerPage,
 			page: page,
 			selectedCategoryId: categoryId,
-			sort_rating: false
+			sort_rating: false,
 		};
 
 		axios

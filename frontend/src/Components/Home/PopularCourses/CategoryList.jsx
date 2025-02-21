@@ -15,7 +15,7 @@ const CategoryList = ({
 
 			setLoading(false);
 		}
-	}, [categories]);
+	}, [categories, setActiveCategoryId, setLoading]);
 
 	if (loading) return;
 

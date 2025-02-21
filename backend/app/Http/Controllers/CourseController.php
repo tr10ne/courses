@@ -71,14 +71,14 @@ class CourseController extends Controller
             });
 
 
+
+
+            if ($sortRating !== null) {
+                $query->orderBy('avg_rating', $sortRating === 'true'  ? 'asc' : 'desc');
+            }
             if ($sortPrice !== null) {
                 $query->orderBy('price', $sortPrice === 'true' ? 'asc' : 'desc');
             }
-
-
-        if ($sortRating !== null) {
-            $query->orderBy('avg_rating', $sortRating === 'true'  ? 'asc' : 'desc');
-        }
 
         // Получаем минимальную и максимальную цену
         $minTotalPrice = $query->min('price');

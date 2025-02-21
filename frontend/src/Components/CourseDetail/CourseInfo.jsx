@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { formatPrice } from "../../js/formatPrice";
 
 const CourseInfo = ({ course }) => {
 	return (
 		<div className="course__cart ">
             <div className="course__cart__header">
-			<p className="course__price">{Math.floor(course.price)} ₽</p>
+			<p className="course__price">{formatPrice(course.price)}</p>
 
             </div>
             <div className="course__cart__footer">
