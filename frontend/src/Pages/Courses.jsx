@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef, use } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
@@ -12,7 +12,7 @@ import Pagination from "../Components/Pagination.jsx";
 import Subcategories from "../Components/Courses/Subcategories.jsx";
 import { scroller } from "react-scroll";
 import Schools from "../Components/Courses/Schools.jsx";
-import Arrows from "../Components/Courses/Arrows.jsx";
+import Arrows from "../Components/Arrows.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -189,7 +189,7 @@ const Courses = () => {
 		reloadSate,
 		selectedSchools,
 		ratingSort,
-		priceSort
+		priceSort,
 	]);
 
 	//чтобы избежать утечек памяти.
@@ -207,6 +207,8 @@ const Courses = () => {
 
 	useEffect(() => {
 		handleFilterReset();
+
+		//  eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [params]);
 
 	const handlePageChange = (newPage) => {
@@ -357,13 +359,16 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
-
 	const handleSortByRating = () => {
-		setRatingSort(ratingSort === null ? 'true' : ratingSort === 'true' ? 'false' : null);
+		setRatingSort(
+			ratingSort === null ? "true" : ratingSort === "true" ? "false" : null
+		);
 	};
 
 	const handleSortByPrice = () => {
-		setPriceSort(priceSort === null ? 'true' : priceSort === 'true' ? 'false' : null);
+		setPriceSort(
+			priceSort === null ? "true" : priceSort === "true" ? "false" : null
+		);
 	};
 
 	// отрисовываем курсы с пагинацией
@@ -457,7 +462,7 @@ const Courses = () => {
 							className="courses__titles__item"
 							onClick={handleSortByRating}
 						>
-							Рейтинг <Arrows state={ratingSort}/>
+							Рейтинг <Arrows state={ratingSort} />
 						</span>
 						<span className="courses__titles__item" onClick={handleSortByPrice}>
 							Цена <Arrows state={priceSort} />

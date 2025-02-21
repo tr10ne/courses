@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { debounce } from "lodash";
+import axios from "axios";
+import { apiUrl } from "../js/config";
+
 
 const Header = ({ pageRef }) => {
 	const [searchTerm, setSearchTerm] = useState("");
@@ -10,6 +13,7 @@ const Header = ({ pageRef }) => {
 	const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 	const lastScrollTopRef = useRef(0);
 	const menuItemsRef = useRef([]); // Ссылка для хранения элементов меню
+	const [user, setUser] = useState(null);
 
 	const headerRef = useRef(null);
 
@@ -149,6 +153,20 @@ const Header = ({ pageRef }) => {
 		});
 	}, [isMenuOpen]); // Зависимость от состояния меню, чтобы обновить обработчики при открытии/закрытии
 
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get(`${apiUrl}/api/user`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(response => {
+        setUser(response.data);
+      }).catch(error => {
+        console.error('Ошибка при загрузке данных пользователя:', error);
+      });
+    }
+  }, []);
 	return (
 		<header
 			ref={headerRef}
@@ -163,7 +181,7 @@ const Header = ({ pageRef }) => {
 				<nav ref={menuRef} className={`nav ${isMenuOpen ? "open" : ""}`}>
 					<ul className="menu">
 						<li className="menu__item">
-						<Link
+							<Link
 								className="menu__link"
 								ref={(el) => (menuItemsRef.current[0] = el)}
 								to="/courses"
@@ -192,6 +210,52 @@ const Header = ({ pageRef }) => {
 								Отзывы
 							</Link>
 						</li>
+
+						{user ? (
+              <>
+                <li className="menu__item">
+                  <Link
+                    className="menu__link"
+                    to="/profile"
+                    onClick={handleMenuItemClick}
+                  >
+                    {user.name}
+                  </Link>
+                </li>
+                <li className="menu__item">
+                  <button
+                    className="menu__link"
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      window.location.href = '/login';
+                    }}
+                  >
+                    Выйти
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="menu__item">
+                  <Link
+                    className="menu__link"
+                    to="/login"
+                    onClick={handleMenuItemClick}
+                  >
+                    Войти
+                  </Link>
+                </li>
+                <li className="menu__item">
+                  <Link
+                    className="menu__link"
+                    to="/register"
+                    onClick={handleMenuItemClick}
+                  >
+                    Зарегистрироваться
+                  </Link>
+                </li>
+              </>
+            )}
 					</ul>
 				</nav>
 				<div ref={searchRef} className={`search ${isSearchOpen ? "open" : ""}`}>

@@ -17,6 +17,12 @@ import SchoolDetail from "./Pages/SchoolDetail"; // Импортируем ко�
 import SchoolReviews from "./Pages/SchoolReviews";
 import ScrollToTop from "./Components/ScrollToTop";
 
+import Login from "./Components/Auth/Login";
+import Register from "./Components/Auth/Register";
+import ProfileEdit from "./Components/Auth/ProfileEdit";
+import PrivateRoute from "./Components/Auth/PrivateRoute";
+
+
 const container = document.getElementById("root");
 
 if (container) {
@@ -50,6 +56,32 @@ if (container) {
             path="/courses/:categoryUrl/:subcategoryUrl/:courseUrl"
             element={<CourseDetail />}
           />
+ {/* Публичные маршруты */}
+ <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Защищенные маршруты */}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfileEdit />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <Users />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Другие маршруты */}
+        <Route path="*" element={<div>404 Not Found</div>} /> {/* Страница 404 */}
+        {/* <PrivateRoute path="/dashboard" component={Dashboard} />
+<PrivateRoute path="/settings" component={Settings} /> */}
         </Route>
       </Routes>
     </Router>
