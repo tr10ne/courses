@@ -18,6 +18,8 @@ const CourseDetail = () => {
 	const [error, setError] = useState(null);
 	const headerRef = useRef(null);
 	const [crumbs, setCrumbs] = useState([]);
+	const [visibleReviews, setVisibleReviews] = useState(1);
+
 
 	useEffect(() => {
 		if (!course) return;
@@ -82,24 +84,29 @@ const CourseDetail = () => {
 			});
 	}, [courseUrl, categoryUrl, subcategoryUrl]);
 
-	//отрисовываем отзыв
+	//отрисовываем отзывы
 	const renderReview = () => {
 		if (course.reviews.length === 0) return <p>Нет отзывов о курсе</p>;
 
-		const randomIndex = Math.floor(Math.random() * course.reviews.length);
+		const reviewsToShow = course.reviews.slice(0, visibleReviews);
 
 		return (
 			<>
-				<ReviewItem review={course.reviews[randomIndex]} />
-				<Link
-					className="course__reviews-link"
-					// to={}
-				>
-					Все отзывы по курсу
-				</Link>
+				{reviewsToShow.map((review, index) => (
+					<ReviewItem key={index} review={review} />
+				))}
+				{visibleReviews < course.reviews.length && (
+					<button
+						className="course__reviews-link"
+						onClick={() => setVisibleReviews(visibleReviews + 3)}
+					>
+						Еще отзывы о курсе
+					</button>
+				)}
 			</>
 		);
 	};
+
 
 	const renderRelatedCourses = () => {
 		if (!course) return;

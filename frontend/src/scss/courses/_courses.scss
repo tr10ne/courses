@@ -31,6 +31,10 @@
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 78px;
+
+	& .pagination{
+		margin-top: 43px;
+	}
 }
 
 .courses__titles{
@@ -47,7 +51,7 @@
 	display: flex;
 	gap: 5px;
 	align-items: center;
-	
+
 	cursor: pointer;
 }
 
@@ -72,7 +76,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	margin-bottom: 43px;
 
 	list-style: none;
+
+
 }
