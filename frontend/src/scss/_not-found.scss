@@ -1,0 +1,120 @@
+@use "index" as *;
+
+.not-found {
+	padding-bottom: 51px;
+	padding-top: 90px;
+
+	background-color: $color-bg2;
+	color: $color-text1;
+
+	&__inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+.not-found__svg {
+	margin-bottom: 32px;
+	width: 70px;
+	height: 70px;
+	fill: $color-accent;
+}
+
+.not-found__title {
+	margin-bottom: 13px;
+
+	font-family: "Lisboa-Heavy-Regular", sans-serif;
+	font-size: 36px;
+	font-weight: 400;
+	line-height: 47px;
+}
+
+.not-found__text {
+	margin-bottom: 68px;
+
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 24px;
+}
+
+//=======================================
+//directions
+
+.not-found__directions {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+	gap: 27px;
+	grid-auto-rows: minmax(
+		100px,
+		auto
+	);
+    width: 100%;
+	align-items: start;
+}
+
+.direction-item {
+    padding: 36px 37px;
+
+
+	border-radius: 5px;
+	background-color: $color-bg1;
+	transition: height 1.3s ease; /* Плавное изменение высоты */
+    transition: grid-row-end 1.3s ease;
+}
+
+.direction-item__title {
+    margin-bottom: 18px;
+    font-size: 24px;
+line-height: 29px;
+}
+
+.direction-item__subcategory-list {
+	list-style: none;
+    margin-bottom: 30px;
+}
+
+.direction-item__subcategory-link {
+    font-family: 'FS-Elliot-Pro-Regular', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30px;
+    color: $color-text1;
+
+    &:hover{
+color: $color-accent;
+    }
+}
+
+.toggle-button {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    font-family: 'FS-Elliot-Pro-Regular', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 17px;
+    color: $color-text1_2;
+
+    transition: 0.3s;
+
+    &:hover {
+        color: $color-accent;
+
+        & .toggle-icon {
+            fill:  $color-accent;
+        }
+    }
+}
+
+.toggle-icon {
+    width: 10px;
+    height: 6px;
+
+    fill:  $color-text1_2;
+
+    transition: 0.3s;
+
+}
