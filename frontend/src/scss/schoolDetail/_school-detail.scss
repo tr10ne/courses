@@ -298,8 +298,13 @@
   .courses-item__title {
     grid-column: span 2;
   }
-  .expansion-name__schools {
-    justify-self: end;
+  .expansion-name {
+    & span {
+      white-space: nowrap;
+    }
+    &__schools {
+      justify-self: end;
+    }
   }
   .courses-item__details {
     justify-self: start;
