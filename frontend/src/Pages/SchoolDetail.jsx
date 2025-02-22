@@ -1,6 +1,6 @@
 import React, {
-  useEffect,
   useState,
+  useEffect,
   useRef,
   useCallback,
   useMemo,
@@ -13,7 +13,8 @@ import Pagination from "../Components/Pagination";
 import { apiUrl } from "../js/config.js";
 import CourseItem from "../Components/CourseDetail/CourseItem";
 import SubcategoryFilter from "../Components/SchoolDetail/SubcategoryFilter";
-
+import MobileFilterWrapper from "../Components/MobileFilterWrapper";
+import MobileFilterButton from "../Components/MobileFilterButton"; // Импортируем кнопку
 import AvgRatingStar from "../Components/AvgRatingStar";
 import Loading from "../Components/Loading";
 
@@ -22,19 +23,20 @@ const SchoolDetail = () => {
   const { url } = useParams();
   const [school, setSchool] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [allSubcategories, setAllSubcategories] = useState([]); // Все подкатегории
-  const [filteredSubcategories, setFilteredSubcategories] = useState([]); // Отфильтрованные подкатегории
+  const [allSubcategories, setAllSubcategories] = useState([]);
+  const [filteredSubcategories, setFilteredSubcategories] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
   });
-  const [loading, setLoading] = useState(true); // Общий индикатор загрузки
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [sliderValues, setSliderValues] = useState([0, 0]);
-  const [coursesLoading, setCoursesLoading] = useState(true); // Индикатор загрузки курсов
-  const [subcategoriesLoading, setSubcategoriesLoading] = useState(false); // Индикатор загрузки подкатегорий
+  const [coursesLoading, setCoursesLoading] = useState(true);
+  const [subcategoriesLoading, setSubcategoriesLoading] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); // Добавляем состояние для фильтра
 
   const [queryParams, setQueryParams] = useState({
     page: 1,
@@ -45,6 +47,7 @@ const SchoolDetail = () => {
   });
 
   const RefTarget = useRef(null);
+  const bodyRef = useRef(null);
 
   const scrollTo = useCallback((ref) => {
     const headerHeight = parseInt(
@@ -53,12 +56,14 @@ const SchoolDetail = () => {
       ),
       12
     );
-    const targetPosition = ref.current.offsetTop - headerHeight;
-
     window.scrollTo({
-      top: targetPosition,
+      top: ref.current.offsetTop - headerHeight,
       behavior: "smooth",
     });
+  }, []);
+
+  const toggleFilter = useCallback(() => {
+    setIsFilterOpen((prev) => !prev);
   }, []);
 
   // Загрузка данных школы, подкатегорий и диапазона цен при первой загрузке
@@ -162,7 +167,6 @@ const SchoolDetail = () => {
     url,
   ]);
 
-  const bodyRef = useRef(null);
   const [isFilterReady, setIsFilterReady] = useState(false);
 
   useLayoutEffect(() => {
@@ -303,17 +307,9 @@ const SchoolDetail = () => {
     [school, getFirstTwoSentences]
   );
 
-  if (loading) {
-    return <Loading />; // Показываем индикатор загрузки, пока данные загружаются
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!school) {
-    return <div>Школа не найдена</div>;
-  }
+  if (loading) return <Loading />;
+  if (error) return <div>{error}</div>;
+  if (!school) return <div>Школа не найдена</div>;
 
   return (
     <div className="container">
@@ -351,22 +347,27 @@ const SchoolDetail = () => {
             </div>
           </div>
         </div>
-        <aside className="school-detail__aside">
-          <SubcategoryFilter
-            onReady={() => setIsFilterReady(true)}
-            subcategories={filteredSubcategories} // Используем отфильтрованные подкатегории
-            selectedSubcategories={queryParams.selectedSubcategories}
-            onSubcategoryChange={handleSubcategoryChange}
-            sliderMin={priceRange[0]}
-            sliderMax={priceRange[1]}
-            sliderValues={sliderValues}
-            handleSliderChange={handleSliderChange}
-            handleSliderAfterChange={handleSliderAfterChange}
-            handleManualInputChange={handleManualInputChange}
-            onReset={handleResetFilters}
-            loading={subcategoriesLoading}
-          />
-        </aside>
+        <MobileFilterWrapper
+          isFilterOpen={isFilterOpen}
+          toggleFilter={toggleFilter}
+        >
+          <aside className="school-detail__aside">
+            <SubcategoryFilter
+              onReady={() => setIsFilterReady(true)}
+              subcategories={filteredSubcategories}
+              selectedSubcategories={queryParams.selectedSubcategories}
+              onSubcategoryChange={handleSubcategoryChange}
+              sliderMin={priceRange[0]}
+              sliderMax={priceRange[1]}
+              sliderValues={sliderValues}
+              handleSliderChange={handleSliderChange}
+              handleSliderAfterChange={handleSliderAfterChange}
+              handleManualInputChange={handleManualInputChange}
+              onReset={handleResetFilters}
+              loading={subcategoriesLoading}
+            />
+          </aside>
+        </MobileFilterWrapper>
         <div
           className="school-detail__body"
           ref={(node) => {
@@ -377,15 +378,16 @@ const SchoolDetail = () => {
           <div className="courses-list">
             <div className="courses-list__head">
               <h2>Все курсы {school.name}</h2>
+              <MobileFilterButton onClick={toggleFilter} />
             </div>
             {coursesLoading ? (
-              <Loading /> // Показываем индикатор загрузки курсов
+              <Loading />
             ) : courses.length > 0 ? (
               courses.map((course) => (
                 <CourseItem key={course.id} course={course} school={school} />
               ))
             ) : (
-              <p>Курсы не найдены</p> // Показываем сообщение только после завершения загрузки
+              <p>Курсы не найдены</p>
             )}
           </div>
         </div>

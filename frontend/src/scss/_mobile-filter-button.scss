@@ -1,0 +1,17 @@
+@use "./index" as *;
+
+.filters-button {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 25px;
+  border: $border;
+  border-radius: 100px;
+  color: $color-text1;
+  &__text {
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 700;
+    font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  }
+}
