@@ -21,7 +21,7 @@ import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import ProfileEdit from "./Components/Auth/ProfileEdit";
 import PrivateRoute from "./Components/Auth/PrivateRoute";
-import NotFound from "./Components/NotFound";
+import NotFound from "./Components/NotFound/NotFound";
 
 
 const container = document.getElementById("root");
