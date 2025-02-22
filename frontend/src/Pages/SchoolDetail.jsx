@@ -37,6 +37,7 @@ const SchoolDetail = () => {
   const [coursesLoading, setCoursesLoading] = useState(true);
   const [subcategoriesLoading, setSubcategoriesLoading] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false); // Добавляем состояние для фильтра
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Состояние для ширины окна
 
   const [queryParams, setQueryParams] = useState({
     page: 1,
@@ -48,6 +49,36 @@ const SchoolDetail = () => {
 
   const RefTarget = useRef(null);
   const bodyRef = useRef(null);
+
+  // Эффект для отслеживания изменения размера окна
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Эффект для управления высотой на десктопах
+  useEffect(() => {
+    const calculateHeight = () => {
+      if (windowWidth >= 1024 && bodyRef.current) {
+        const filterElement = document.querySelector(".subcategory-filter");
+        if (filterElement) {
+          const bodyHeight = bodyRef.current.offsetHeight;
+          filterElement.style.maxHeight = `${bodyHeight}px`;
+        }
+      }
+    };
+
+    calculateHeight();
+    window.addEventListener("resize", calculateHeight);
+
+    return () => {
+      window.removeEventListener("resize", calculateHeight);
+    };
+  }, [windowWidth, courses]);
 
   const scrollTo = useCallback((ref) => {
     const headerHeight = parseInt(
@@ -173,16 +204,30 @@ const SchoolDetail = () => {
     const calculateHeight = () => {
       const filterElement = document.querySelector(".subcategory-filter");
 
-      if (bodyRef.current && filterElement) {
-        const bodyHeight = bodyRef.current.offsetHeight;
-        filterElement.style.maxHeight = `${bodyHeight}px`;
+      if (filterElement) {
+        // Проверяем, мобильная ли версия (ширина < 1024px)
+        const isMobile = window.innerWidth < 1024;
+
+        if (isMobile) {
+          // Для мобильных устройств используем высоту экрана
+          filterElement.style.maxHeight = `${window.innerHeight}px`;
+        } else if (bodyRef.current) {
+          // Для десктопной версии используем высоту bodyRef
+          const bodyHeight = bodyRef.current.offsetHeight;
+          filterElement.style.maxHeight = `${bodyHeight}px`;
+        }
       }
     };
 
-    if (isFilterReady) {
-      calculateHeight();
-    }
-  }, [courses, isFilterReady]);
+    // Вызываем calculateHeight при монтировании и изменении размера окна
+    calculateHeight();
+    window.addEventListener("resize", calculateHeight);
+
+    // Очищаем обработчик при размонтировании
+    return () => {
+      window.removeEventListener("resize", calculateHeight);
+    };
+  }, [courses, isFilterReady]); // Зависимости: courses и isFilterReady
 
   // Загрузка подкатегорий при изменении цены
   useEffect(() => {
@@ -378,7 +423,9 @@ const SchoolDetail = () => {
           <div className="courses-list">
             <div className="courses-list__head">
               <h2>Все курсы {school.name}</h2>
-              <MobileFilterButton onClick={toggleFilter} />
+              {windowWidth <= 1024 && (
+                <MobileFilterButton onClick={toggleFilter} />
+              )}
             </div>
             {coursesLoading ? (
               <Loading />
