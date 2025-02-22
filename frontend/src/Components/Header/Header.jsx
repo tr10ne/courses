@@ -178,7 +178,7 @@ const Header = ({ pageRef }) => {
 	}, [isMenuOpen]); // Зависимость от состояния меню, чтобы обновить обработчики при открытии/закрытии
 
 	useEffect(() => {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("remember_token");
 		if (token) {
 			axios
 				.get(`${apiUrl}/api/user`, {
@@ -248,7 +248,7 @@ const Header = ({ pageRef }) => {
 					handleSearchChange={handleSearchChange}
 					searchTerm={searchTerm}
 				/>
-				
+
 <Auth
 					user={user}
 					isAuthDropdownOpen={isAuthDropdownOpen}

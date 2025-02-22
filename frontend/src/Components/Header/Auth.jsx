@@ -38,7 +38,7 @@ const Auth = ({
 							<button
 								className="auth-dropdown-item"
 								onClick={() => {
-									localStorage.removeItem("token");
+									localStorage.removeItem("remember_token");
 									window.location.href = "/login";
 								}}
 							>

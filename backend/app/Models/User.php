@@ -6,11 +6,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     // Использование фабрики для создания объектов модели и уведомлений
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     // Заполняемые поля для массового назначения
     protected $fillable = [

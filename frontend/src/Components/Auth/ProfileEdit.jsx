@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { apiUrl } from '../../js/config';
 
 const ProfileEdit = () => {
     const [name, setName] = useState('');
@@ -7,6 +8,34 @@ const ProfileEdit = () => {
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [avatar, setAvatar] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState('');
+    const [userId, setUserId] = useState(null);
+
+    // Загрузка данных текущего пользователя
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem('remember_token');
+                const response = await fetch(`${apiUrl}/api/user`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    setName(data.name || ''); // Если data.name === null, используем пустую строку
+                    setEmail(data.email || ''); // Если data.email === null, используем пустую строку
+                    setUserId(data.id);
+                    setAvatarPreview(data.avatar || ''); // Если data.avatar === null, используем пустую строку
+                } else {
+                    alert('Ошибка при загрузке данных пользователя');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -21,22 +50,38 @@ const ProfileEdit = () => {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('email', email);
-        formData.append('password', password);
-        formData.append('password_confirmation', passwordConfirmation);
+        if (password) {
+            formData.append('password', password);
+            formData.append('password_confirmation', passwordConfirmation);
+        }
         if (avatar) {
             formData.append('avatar', avatar);
         }
 
+        for (const [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
         try {
-            const response = await fetch('/profile/update', {
+            const token = localStorage.getItem('remember_token');
+            const response = await fetch(`${apiUrl}/api/users/${userId}`, {
                 method: 'PUT',
-                body: formData,
+                body: JSON.stringify(formData),
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
             const data = await response.json();
+        console.log(data.data.name);
             if (response.ok) {
                 alert('Профиль успешно обновлен');
+                // Обновляем состояние
+                setName(data.data.name || '');
+                setEmail(data.data.email || '');
+                setAvatarPreview(data.data.avatar || '');
             } else {
-                alert(data.message || 'Ошибка при обновлении профиля');
+                alert(data.data.message || 'Ошибка при обновлении профиля');
             }
         } catch (error) {
             console.error('Ошибка:', error);
@@ -50,10 +95,11 @@ const ProfileEdit = () => {
                 <div className="form-group">
                     <label htmlFor="name">Имя:</label>
                     <input
+                    autoComplete="username"
                         type="text"
                         className="form-control"
                         id="name"
-                        value={name}
+                        value={name || ''} // Если name === undefined, используем пустую строку
                         onChange={(e) => setName(e.target.value)}
                         required
                     />
@@ -61,10 +107,11 @@ const ProfileEdit = () => {
                 <div className="form-group">
                     <label htmlFor="email">Электронная почта:</label>
                     <input
+                     autoComplete="email"
                         type="email"
                         className="form-control"
                         id="email"
-                        value={email}
+                        value={email || ''} // Если email === undefined, используем пустую строку
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
@@ -75,19 +122,21 @@ const ProfileEdit = () => {
                         type="password"
                         className="form-control"
                         id="password"
-                        value={password}
+                        value={password || ''} // Если password === undefined, используем пустую строку
                         onChange={(e) => setPassword(e.target.value)}
                         minLength="8"
                         placeholder="Минимум 8 символов"
+                        autoComplete="new-password"
                     />
                 </div>
                 <div className="form-group">
                     <label htmlFor="password_confirmation">Подтверждение пароля:</label>
                     <input
                         type="password"
+                        autoComplete="new-password"
                         className="form-control"
                         id="password_confirmation"
-                        value={passwordConfirmation}
+                        value={passwordConfirmation || ''} // Если passwordConfirmation === undefined, используем пустую строку
                         onChange={(e) => setPasswordConfirmation(e.target.value)}
                         minLength="8"
                     />

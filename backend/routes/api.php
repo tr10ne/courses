@@ -10,9 +10,22 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+// Если вы хотите защитить маршруты, которые требуют аутентификации, используйте middleware auth:sanctum:
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    // Другие защищенные маршруты
 });
+
+
+Route::post('/login', [UserController::class, 'login']);
 
 // Получение данных по URL
 Route::prefix('courses')->group(function () {
@@ -27,6 +40,8 @@ Route::prefix('courses')->group(function () {
 Route::get('/schools/url/{url}', [SchoolController::class, 'showByUrl'])->name('schools.showByUrl');
 Route::get('/categories/url/{url}', [CategoryController::class, 'showByUrl']);
 Route::get('/subcategories/url/{url}', [SubcategoryController::class, 'showByUrl']);
+
+
 
 
 Route::apiResource('categories', CategoryController::class);
