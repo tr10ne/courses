@@ -6,6 +6,7 @@ const MobileFilterWrapper = ({
   mobileClass = "mobile-filter-active",
   isFilterOpen,
   toggleFilter,
+  onApplyFilters = () => {}, // Значение по умолчанию для onApplyFilters
 }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= breakpoint);
   const filterRef = useRef(null);
@@ -20,12 +21,11 @@ const MobileFilterWrapper = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [breakpoint]);
 
-  // Эффект для блокировки прокрутки при открытии фильтра
+  // Эффект для управления высотой на мобильных устройствах
   useEffect(() => {
     const calculateHeight = () => {
       if (isMobile && isFilterOpen && filterRef.current) {
-        filterRef.current.style.maxHeight = `${window.innerHeight}px`;
-        document.body.style.overflow = "hidden";
+        filterRef.current.style.maxHeight = `${window.innerHeight - 100}px`;
       }
     };
 
@@ -34,14 +34,12 @@ const MobileFilterWrapper = ({
 
     return () => {
       window.removeEventListener("resize", calculateHeight);
-      document.body.style.overflow = "auto";
     };
   }, [isMobile, isFilterOpen]);
 
   // Обработчик клика вне области фильтра
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Проверяем, что фильтр открыт и клик произошел вне его области
       if (
         isFilterOpen &&
         filterRef.current &&
@@ -51,23 +49,19 @@ const MobileFilterWrapper = ({
       }
     };
 
-    // Добавляем обработчик при открытии фильтра
     if (isFilterOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
-    // Очищаем обработчик при закрытии фильтра или размонтировании
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen, toggleFilter]);
 
-  // Если это не мобильное устройство, просто возвращаем children
+  // Если не мобильная версия, просто возвращаем children
   if (!isMobile) {
     return <>{children}</>;
   }
 
-  // Если это мобильное устройство и фильтр открыт, добавляем классы и обработчик
   return (
     <>
       {isFilterOpen &&
@@ -76,10 +70,12 @@ const MobileFilterWrapper = ({
             children.props.className || ""
           } mobile-filter-overlay`.trim(),
           children: React.cloneElement(children.props.children, {
-            ref: filterRef, // Передаем ref на внутренний элемент
+            ref: filterRef,
             className: `${
               children.props.children.props.className || ""
             } ${mobileClass}`.trim(),
+            onApplyFilters, // Передаем функцию применения фильтров
+            isMobile, // Передаем флаг мобильной версии
           }),
         })}
     </>

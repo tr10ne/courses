@@ -14,7 +14,7 @@ import { apiUrl } from "../js/config.js";
 import CourseItem from "../Components/CourseDetail/CourseItem";
 import SubcategoryFilter from "../Components/SchoolDetail/SubcategoryFilter";
 import MobileFilterWrapper from "../Components/MobileFilterWrapper";
-import MobileFilterButton from "../Components/MobileFilterButton"; // Импортируем кнопку
+import MobileFilterButton from "../Components/MobileFilterButton";
 import AvgRatingStar from "../Components/AvgRatingStar";
 import Loading from "../Components/Loading";
 
@@ -33,11 +33,12 @@ const SchoolDetail = () => {
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 0]);
-  const [sliderValues, setSliderValues] = useState([0, 0]);
+  const [sliderValues, setSliderValues] = useState(null);
   const [coursesLoading, setCoursesLoading] = useState(true);
   const [subcategoriesLoading, setSubcategoriesLoading] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Добавляем состояние для фильтра
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Состояние для ширины окна
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [initialData, setInitialData] = useState(null); // Храним все начальные данные вместе
 
   const [queryParams, setQueryParams] = useState({
     page: 1,
@@ -50,17 +51,14 @@ const SchoolDetail = () => {
   const RefTarget = useRef(null);
   const bodyRef = useRef(null);
 
-  // Эффект для отслеживания изменения размера окна
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Эффект для управления высотой на десктопах
   useEffect(() => {
     const calculateHeight = () => {
       if (windowWidth >= 1024 && bodyRef.current) {
@@ -71,13 +69,9 @@ const SchoolDetail = () => {
         }
       }
     };
-
     calculateHeight();
     window.addEventListener("resize", calculateHeight);
-
-    return () => {
-      window.removeEventListener("resize", calculateHeight);
-    };
+    return () => window.removeEventListener("resize", calculateHeight);
   }, [windowWidth, courses]);
 
   const scrollTo = useCallback((ref) => {
@@ -97,28 +91,21 @@ const SchoolDetail = () => {
     setIsFilterOpen((prev) => !prev);
   }, []);
 
-  // Загрузка данных школы, подкатегорий и диапазона цен при первой загрузке
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        // Загружаем данные школы и все курсы для подкатегорий и диапазона цен
         const [schoolResponse, coursesResponse] = await Promise.all([
           axios.get(`${apiUrl}/api/schools/url/${url}`),
           axios.get(`${apiUrl}/api/courses?schoolurl=${url}&limit=all`),
         ]);
 
         const schoolData = schoolResponse.data?.data || schoolResponse.data;
-
         if (!schoolData) {
           setError("Школа не найдена");
           return;
         }
 
-        setSchool(schoolData);
-
         const coursesData = coursesResponse.data.courses || [];
-
-        // Извлекаем уникальные подкатегории
         const uniqueSubcategories = Array.from(
           new Set(coursesData.map((course) => course.subcategory_name))
         ).map((name) => ({
@@ -127,55 +114,75 @@ const SchoolDetail = () => {
           name,
         }));
 
-        setAllSubcategories(uniqueSubcategories);
-        setFilteredSubcategories(uniqueSubcategories); // Инициализируем отфильтрованные подкатегории
-
-        // Обновляем диапазон цен
+        let minPrice = "";
+        let maxPrice = "";
+        let sliderVals = null;
         if (
           coursesResponse.data.min_total_price &&
           coursesResponse.data.max_total_price
         ) {
-          setPriceRange([
-            coursesResponse.data.min_total_price,
-            coursesResponse.data.max_total_price,
-          ]);
-          setSliderValues([
-            coursesResponse.data.min_total_price,
-            coursesResponse.data.max_total_price,
-          ]);
+          minPrice = coursesResponse.data.min_total_price;
+          maxPrice = coursesResponse.data.max_total_price;
+          sliderVals = [minPrice, maxPrice];
+          setPriceRange([minPrice, maxPrice]);
         }
+
+        // Обновляем все состояния разом через один setInitialData
+        setInitialData({
+          school: schoolData,
+          allSubcategories: uniqueSubcategories,
+          filteredSubcategories: uniqueSubcategories,
+          sliderValues: sliderVals,
+          queryParams: {
+            page: 1,
+            schoolurl: url,
+            selectedSubcategories: [],
+            minPrice,
+            maxPrice,
+          },
+        });
+
+        console.log("fetchInitialData completed:", {
+          sliderValues: sliderVals,
+          queryParams: { minPrice, maxPrice },
+        });
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          navigate("/404"); // Перенаправляем на страницу 404
+          navigate("/404");
         }
         setError("Ошибка при загрузке данных школы");
       } finally {
-        setLoading(false); // Общий индикатор загрузки выключается
+        setLoading(false);
       }
     };
-
     fetchInitialData();
   }, [url, navigate]);
 
-  // Загрузка курсов с учетом пагинации и фильтров
+  // Синхронизация состояний после установки initialData
+  useEffect(() => {
+    if (initialData) {
+      setSchool(initialData.school);
+      setAllSubcategories(initialData.allSubcategories);
+      setFilteredSubcategories(initialData.filteredSubcategories);
+      setSliderValues(initialData.sliderValues);
+      setQueryParams(initialData.queryParams);
+    }
+  }, [initialData]);
+
   useEffect(() => {
     const fetchCourses = async () => {
-      setCoursesLoading(true); // Устанавливаем состояние загрузки курсов в true
-
+      setCoursesLoading(true);
       const subcategoriesQuery =
         queryParams.selectedSubcategories.length > 0
           ? `&selectedSubcategoryId=${queryParams.selectedSubcategories.join(
               ","
             )}`
           : "";
-
       const priceQuery = `&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`;
-
       try {
         const response = await axios.get(
           `${apiUrl}/api/courses?schoolurl=${url}&page=${queryParams.page}${subcategoriesQuery}${priceQuery}`
         );
-
         const data = response.data;
         setCourses(data.courses || []);
         setPagination({
@@ -185,10 +192,9 @@ const SchoolDetail = () => {
       } catch (error) {
         setError("Ошибка при загрузке курсов");
       } finally {
-        setCoursesLoading(false); // Устанавливаем состояние загрузки курсов в false
+        setCoursesLoading(false);
       }
     };
-
     fetchCourses();
   }, [
     queryParams.page,
@@ -203,47 +209,30 @@ const SchoolDetail = () => {
   useLayoutEffect(() => {
     const calculateHeight = () => {
       const filterElement = document.querySelector(".subcategory-filter");
-
       if (filterElement) {
-        // Проверяем, мобильная ли версия (ширина < 1024px)
         const isMobile = window.innerWidth < 1024;
-
         if (isMobile) {
-          // Для мобильных устройств используем высоту экрана
           filterElement.style.maxHeight = `${window.innerHeight}px`;
         } else if (bodyRef.current) {
-          // Для десктопной версии используем высоту bodyRef
           const bodyHeight = bodyRef.current.offsetHeight;
           filterElement.style.maxHeight = `${bodyHeight}px`;
         }
       }
     };
-
-    // Вызываем calculateHeight при монтировании и изменении размера окна
     calculateHeight();
     window.addEventListener("resize", calculateHeight);
+    return () => window.removeEventListener("resize", calculateHeight);
+  }, [courses, isFilterReady]);
 
-    // Очищаем обработчик при размонтировании
-    return () => {
-      window.removeEventListener("resize", calculateHeight);
-    };
-  }, [courses, isFilterReady]); // Зависимости: courses и isFilterReady
-
-  // Загрузка подкатегорий при изменении цены
   useEffect(() => {
     if (!school) return;
-
     const fetchFilteredSubcategories = async () => {
       setSubcategoriesLoading(true);
-
       try {
         const response = await axios.get(
           `${apiUrl}/api/courses?schoolurl=${url}&limit=all&minPrice=${queryParams.minPrice}&maxPrice=${queryParams.maxPrice}`
         );
-
         const coursesData = response.data.courses || [];
-
-        // Извлекаем уникальные подкатегории
         const uniqueSubcategories = Array.from(
           new Set(coursesData.map((course) => course.subcategory_name))
         ).map((name) => ({
@@ -251,7 +240,6 @@ const SchoolDetail = () => {
             .subcategory_id,
           name,
         }));
-
         setFilteredSubcategories(uniqueSubcategories);
       } catch (error) {
         setError("Ошибка при загрузке подкатегорий");
@@ -259,24 +247,21 @@ const SchoolDetail = () => {
         setSubcategoriesLoading(false);
       }
     };
-
     fetchFilteredSubcategories();
   }, [queryParams.minPrice, queryParams.maxPrice, url, school]);
 
-  // Обработчик изменения страницы
   const handleResetFilters = useCallback(() => {
     setQueryParams((prev) => ({
       ...prev,
       selectedSubcategories: [],
-      minPrice: "",
-      maxPrice: "",
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
       page: 1,
     }));
     setSliderValues([priceRange[0], priceRange[1]]);
     setFilteredSubcategories(allSubcategories);
   }, [priceRange, allSubcategories]);
 
-  // Обработчик изменения выбранных подкатегорий
   const handleSubcategoryChange = useCallback((selectedSubcategories) => {
     setQueryParams((prev) => ({
       ...prev,
@@ -285,13 +270,12 @@ const SchoolDetail = () => {
     }));
   }, []);
 
-  // Обработчик изменения слайдера
   const handleSliderChange = useCallback((values) => {
     setSliderValues(values);
   }, []);
 
-  // Обработчик завершения изменения слайдера
   const handleSliderAfterChange = useCallback((values) => {
+    setSliderValues(values);
     setQueryParams((prev) => ({
       ...prev,
       minPrice: values[0],
@@ -300,13 +284,11 @@ const SchoolDetail = () => {
     }));
   }, []);
 
-  // Обработчик ручного ввода
   const handleManualInputChange = useCallback(
     (index, value) => {
       const newValues = [...sliderValues];
       newValues[index] = Number(value);
       setSliderValues(newValues);
-
       setQueryParams((prev) => ({
         ...prev,
         minPrice: newValues[0],
@@ -325,7 +307,6 @@ const SchoolDetail = () => {
     [scrollTo]
   );
 
-  // Функция для получения первых двух предложений описания
   const getFirstTwoSentences = useCallback((text) => {
     const sentences = text.match(/[^.!?]+[.!?]+/g);
     if (sentences && sentences.length > 2) {
@@ -392,27 +373,31 @@ const SchoolDetail = () => {
             </div>
           </div>
         </div>
-        <MobileFilterWrapper
-          isFilterOpen={isFilterOpen}
-          toggleFilter={toggleFilter}
-        >
-          <aside className="school-detail__aside">
-            <SubcategoryFilter
-              onReady={() => setIsFilterReady(true)}
-              subcategories={filteredSubcategories}
-              selectedSubcategories={queryParams.selectedSubcategories}
-              onSubcategoryChange={handleSubcategoryChange}
-              sliderMin={priceRange[0]}
-              sliderMax={priceRange[1]}
-              sliderValues={sliderValues}
-              handleSliderChange={handleSliderChange}
-              handleSliderAfterChange={handleSliderAfterChange}
-              handleManualInputChange={handleManualInputChange}
-              onReset={handleResetFilters}
-              loading={subcategoriesLoading}
-            />
-          </aside>
-        </MobileFilterWrapper>
+        {initialData && sliderValues && (
+          <MobileFilterWrapper
+            isFilterOpen={isFilterOpen}
+            toggleFilter={toggleFilter}
+          >
+            <aside className="school-detail__aside">
+              <SubcategoryFilter
+                onReady={() => setIsFilterReady(true)}
+                subcategories={filteredSubcategories}
+                selectedSubcategories={queryParams.selectedSubcategories}
+                onSubcategoryChange={handleSubcategoryChange}
+                sliderMin={priceRange[0]}
+                sliderMax={priceRange[1]}
+                sliderValues={sliderValues}
+                handleSliderChange={handleSliderChange}
+                handleSliderAfterChange={handleSliderAfterChange}
+                handleManualInputChange={handleManualInputChange}
+                onReset={handleResetFilters}
+                loading={subcategoriesLoading}
+                isMobile={windowWidth < 1024}
+                toggleFilter={toggleFilter}
+              />
+            </aside>
+          </MobileFilterWrapper>
+        )}
         <div
           className="school-detail__body"
           ref={(node) => {

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import PriceFilter from "../Courses/PriceFilter";
-import Loading from "../Loading"; // Импортируем компонент Loading
+import Loading from "../Loading";
+import ApplyFiltersButton from "../ApplyFiltersButton";
 
 const SubcategoryFilter = React.forwardRef(
   (
@@ -16,42 +17,156 @@ const SubcategoryFilter = React.forwardRef(
       handleSliderAfterChange,
       handleManualInputChange,
       onReset,
-      loading, // Добавляем пропс для состояния загрузки
+      loading,
+      onApplyFilters,
+      isMobile,
+      toggleFilter,
     },
-    ref // Получаем ref из forwardRef
+    ref
   ) => {
-    const [showAllSubcategories, setShowAllSubcategories] = useState(false); // Управление отображением подкатегорий
+    const [showAllSubcategories, setShowAllSubcategories] = useState(false);
+    const [tempSelectedSubcategories, setTempSelectedSubcategories] = useState(
+      selectedSubcategories
+    );
+    const [tempSliderValues, setTempSliderValues] = useState(sliderValues);
+    const [hasChanges, setHasChanges] = useState(false);
+    const [buttonPosition, setButtonPosition] = useState({});
 
-    // Обработчик изменения выбранных подкатегорий
+    const priceFilterRef = useRef(null);
+    const leftSliderRef = useRef(null);
+    const rightSliderRef = useRef(null);
+    const subcategoryRefs = useRef({});
+
+    const checkForChanges = useCallback(
+      (newSubcategories, newSliderValues) => {
+        const subcategoriesChanged =
+          JSON.stringify(newSubcategories.sort()) !==
+          JSON.stringify(selectedSubcategories.sort());
+        const sliderChanged =
+          newSliderValues[0] !== sliderValues[0] ||
+          newSliderValues[1] !== sliderValues[1];
+        setHasChanges(subcategoriesChanged || sliderChanged);
+      },
+      [selectedSubcategories, sliderValues]
+    );
+
+    // Синхронизация значений при изменении пропсов
+    useEffect(() => {
+      setTempSelectedSubcategories(selectedSubcategories);
+      setTempSliderValues(sliderValues);
+      checkForChanges(selectedSubcategories, sliderValues);
+    }, [selectedSubcategories, sliderValues, checkForChanges]);
+
     const handleSubcategoryChange = (subcategory_id) => {
-      if (selectedSubcategories.includes(subcategory_id)) {
-        onSubcategoryChange(
-          selectedSubcategories.filter((id) => id !== subcategory_id)
-        );
-      } else {
-        onSubcategoryChange([...selectedSubcategories, subcategory_id]);
+      const newSelected = tempSelectedSubcategories.includes(subcategory_id)
+        ? tempSelectedSubcategories.filter((id) => id !== subcategory_id)
+        : [...tempSelectedSubcategories, subcategory_id];
+
+      setTempSelectedSubcategories(newSelected);
+      checkForChanges(newSelected, tempSliderValues);
+      updateButtonPosition(`subcategory-${subcategory_id}`);
+
+      if (!isMobile) {
+        onSubcategoryChange(newSelected);
       }
     };
 
-    // Обработчик для кнопки "Показать все"
+    const handlePriceChange = (values) => {
+      setTempSliderValues(values);
+      checkForChanges(tempSelectedSubcategories, values);
+      updateButtonPosition("price");
+    };
+
+    const handlePriceAfterChange = (values) => {
+      setTempSliderValues(values);
+      checkForChanges(tempSelectedSubcategories, values);
+      if (!isMobile) {
+        handleSliderAfterChange(values);
+      }
+    };
+
     const handleShowAllSubcategories = () => {
       setShowAllSubcategories((prev) => !prev);
     };
 
-    // Отображаемые подкатегории (первые 7 или все)
+    const handleApplyFilters = () => {
+      if (typeof onApplyFilters === "function") {
+        onApplyFilters();
+      }
+      onSubcategoryChange(tempSelectedSubcategories);
+      handleSliderAfterChange(tempSliderValues);
+      setHasChanges(false);
+
+      if (typeof toggleFilter === "function") {
+        toggleFilter();
+      }
+    };
+
+    const handleReset = () => {
+      setTempSelectedSubcategories([]);
+      setTempSliderValues([sliderMin, sliderMax]);
+      checkForChanges([], [sliderMin, sliderMax]);
+      onReset();
+
+      if (!isMobile) {
+        onSubcategoryChange([]);
+        handleSliderAfterChange([sliderMin, sliderMax]);
+      }
+    };
+
+    const updateButtonPosition = (elementId) => {
+      let element;
+
+      if (elementId === "price") {
+        const leftRect = leftSliderRef.current?.getBoundingClientRect();
+        const rightRect = rightSliderRef.current?.getBoundingClientRect();
+
+        if (leftRect && rightRect) {
+          const mouseX = window.event?.clientX || leftRect.right;
+          const leftDistance = Math.abs(mouseX - leftRect.right);
+          const rightDistance = Math.abs(mouseX - rightRect.left);
+
+          element =
+            leftDistance < rightDistance
+              ? leftSliderRef.current
+              : rightSliderRef.current;
+        }
+      } else {
+        element = subcategoryRefs.current[elementId];
+      }
+
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const screenWidth = window.innerWidth;
+        const middle = screenWidth / 2;
+
+        if (rect.left < middle) {
+          setButtonPosition({
+            left: rect.right + 10,
+            top: rect.top + rect.height / 2,
+          });
+        } else {
+          setButtonPosition({
+            left: rect.left - 90,
+            top: rect.top + rect.height / 2,
+          });
+        }
+      }
+    };
+
+    useEffect(() => {
+      onReady();
+    }, [onReady]);
+
     const displayedSubcategories = showAllSubcategories
       ? subcategories
       : subcategories.slice(0, 7);
-
-    useEffect(() => {
-      onReady(); // Уведомляем родительский компонент о готовности
-    }, [onReady]);
 
     return (
       <div className="subcategory-filter" ref={ref}>
         <div className="subcategory-filter__head">
           <p className="subcategory-filter__head__title">Фильтры</p>
-          <div className="subcategory-filter__reset" onClick={onReset}>
+          <div className="subcategory-filter__reset" onClick={handleReset}>
             <svg
               width="19.937622"
               height="17.875000"
@@ -75,50 +190,75 @@ const SubcategoryFilter = React.forwardRef(
           </div>
         </div>
         <div className="subcategory-filter__body">
-          <div className="subcategory-pricefilter">
+          <div className="subcategory-pricefilter" ref={priceFilterRef}>
             <p className="subcategory-pricefilter__title">Цена</p>
             <PriceFilter
               disabledPrise={false}
               sliderMin={Number(sliderMin)}
               sliderMax={Number(sliderMax)}
-              sliderValues={sliderValues.map(Number)}
-              handleSliderChange={handleSliderChange}
-              handleSliderAfterChange={handleSliderAfterChange}
-              handleManualInputChange={handleManualInputChange}
+              sliderValues={tempSliderValues.map(Number)}
+              handleSliderChange={handlePriceChange}
+              handleSliderAfterChange={handlePriceAfterChange}
+              handleManualInputChange={(index, value) => {
+                const newValues = [...tempSliderValues];
+                newValues[index] = Number(value);
+                setTempSliderValues(newValues);
+                checkForChanges(tempSelectedSubcategories, newValues);
+                updateButtonPosition("price");
+
+                if (!isMobile) {
+                  handleSliderAfterChange(newValues);
+                }
+              }}
+              leftSliderRef={leftSliderRef}
+              rightSliderRef={rightSliderRef}
+              isMobile={isMobile}
             />
           </div>
           <div className="subcategory-list">
             <p className="subcategory-list__title">Категория</p>
-            {loading ? ( // Если идет загрузка, показываем индикатор
+            {loading ? (
               <Loading />
-            ) : displayedSubcategories.length > 0 ? ( // Если загрузка завершена и есть подкатегории
+            ) : displayedSubcategories.length > 0 ? (
               displayedSubcategories.map((subcategory) => (
                 <div key={subcategory.id} className="subcategory-item">
                   <label>
                     <input
                       className="custom-checkbox custom-checkbox_detail"
                       type="checkbox"
-                      checked={selectedSubcategories.includes(subcategory.id)}
+                      checked={tempSelectedSubcategories.includes(
+                        subcategory.id
+                      )}
                       onChange={() => handleSubcategoryChange(subcategory.id)}
+                      ref={(el) => {
+                        subcategoryRefs.current[
+                          `subcategory-${subcategory.id}`
+                        ] = el;
+                      }}
                     />
                   </label>
                   {subcategory.name}
                 </div>
               ))
             ) : (
-              <div>Подкатегории не найдены</div> // Если подкатегорий нет
+              <div>Подкатегории не найдены</div>
             )}
-            {!loading &&
-              subcategories.length > 7 && ( // Кнопка "Показать все" только после загрузки
-                <button
-                  onClick={handleShowAllSubcategories}
-                  className="show-all-button"
-                >
-                  {showAllSubcategories ? "Скрыть" : "Показать все"}
-                </button>
-              )}
+            {!loading && subcategories.length > 7 && (
+              <button
+                onClick={handleShowAllSubcategories}
+                className="show-all-button"
+              >
+                {showAllSubcategories ? "Скрыть" : "Показать все"}
+              </button>
+            )}
           </div>
         </div>
+        {hasChanges && isMobile && (
+          <ApplyFiltersButton
+            onClick={handleApplyFilters}
+            buttonPosition={buttonPosition}
+          />
+        )}
       </div>
     );
   }
