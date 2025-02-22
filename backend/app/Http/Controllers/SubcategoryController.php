@@ -74,6 +74,11 @@ class SubcategoryController extends Controller
     {
         // Находим подкатегорию по URL и возвращаем её в виде ресурса
         $subcategory = Subcategory::where('url', $url)->firstOrFail();
+
+        if (!$subcategory) {
+            return response()->json(['message' => 'Subcategory not found'], 404);
+        }
+
         return new SubcategoryResource($subcategory);
     }
 }

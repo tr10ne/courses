@@ -122,6 +122,10 @@ class SchoolController extends Controller
                         WHERE review_school.school_id = schools.id), 0) as avg_rating')
             ->firstOrFail();
 
+        if (!$school) {
+            return response()->json(['message' => 'School not found'], 404);
+        }
+
         return new SchoolResource($school);
     }
 }

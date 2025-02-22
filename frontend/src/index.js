@@ -21,6 +21,7 @@ import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import ProfileEdit from "./Components/Auth/ProfileEdit";
 import PrivateRoute from "./Components/Auth/PrivateRoute";
+import NotFound from "./Components/NotFound";
 
 
 const container = document.getElementById("root");
@@ -35,7 +36,7 @@ if (container) {
           path="/"
           element={
             <App>
-              <Outlet />{" "}
+              <Outlet />
             </App>
           }
         >
@@ -79,7 +80,7 @@ if (container) {
         />
 
         {/* Другие маршруты */}
-        <Route path="*" element={<div>404 Not Found</div>} /> {/* Страница 404 */}
+        <Route path="*" element={<NotFound />} />
         {/* <PrivateRoute path="/dashboard" component={Dashboard} />
 <PrivateRoute path="/settings" component={Settings} /> */}
         </Route>

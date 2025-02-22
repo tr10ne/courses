@@ -7,16 +7,18 @@ import React, {
   useLayoutEffect,
 } from "react";
 import axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import { apiUrl } from "../js/config.js";
 import CourseItem from "../Components/CourseDetail/CourseItem";
 import SubcategoryFilter from "../Components/SchoolDetail/SubcategoryFilter";
+
 import AvgRatingStar from "../Components/AvgRatingStar";
 import Loading from "../Components/Loading";
 
 const SchoolDetail = () => {
+  const navigate = useNavigate();
   const { url } = useParams();
   const [school, setSchool] = useState(null);
   const [courses, setCourses] = useState([]);
@@ -107,6 +109,9 @@ const SchoolDetail = () => {
           ]);
         }
       } catch (error) {
+        if (error.response && error.response.status === 404) {
+					navigate("/404"); // Перенаправляем на страницу 404
+				}
         setError("Ошибка при загрузке данных школы");
       } finally {
         setLoading(false); // Общий индикатор загрузки выключается

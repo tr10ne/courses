@@ -1,7 +1,7 @@
 // CourseDetail.js
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { apiUrl } from "../js/config.js";
 import Breadcrumbs from "../Components/Breadcrumbs.jsx";
 import Loading from "../Components/Loading.jsx";
@@ -12,6 +12,7 @@ import CourseInfo from "../Components/CourseDetail/CourseInfo.jsx";
 import SchoolInfo from "../Components/CourseDetail/SchoolInfo.jsx";
 
 const CourseDetail = () => {
+	const navigate = useNavigate();
 	const { categoryUrl, subcategoryUrl, courseUrl } = useParams();
 	const [course, setCourse] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -19,7 +20,6 @@ const CourseDetail = () => {
 	const headerRef = useRef(null);
 	const [crumbs, setCrumbs] = useState([]);
 	const [visibleReviews, setVisibleReviews] = useState(1);
-
 
 	useEffect(() => {
 		if (!course) return;
@@ -76,13 +76,17 @@ const CourseDetail = () => {
 				}
 			})
 			.catch((error) => {
-				console.error("Ошибка при загрузке курса:", error);
+				if (error.response && error.response.status === 404) {
+					navigate("/404"); // Перенаправляем на страницу 404
+				} else {
+					console.error("Ошибка при загрузке курса:", error);
+				}
 				setError("Ошибка при загрузке данных курса");
 			})
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [courseUrl, categoryUrl, subcategoryUrl]);
+	}, [courseUrl, categoryUrl, subcategoryUrl, navigate]);
 
 	//отрисовываем отзывы
 	const renderReview = () => {
@@ -107,7 +111,6 @@ const CourseDetail = () => {
 		);
 	};
 
-
 	const renderRelatedCourses = () => {
 		if (!course) return;
 		if (course.related_courses.length === 0) return;
@@ -125,44 +128,41 @@ const CourseDetail = () => {
 		return <Loading />;
 	}
 
-	if (error) {
-		return <div>{error}</div>;
-	}
-
-	return (
-		<section className="course">
-			<div className="course__header" ref={headerRef}>
-				<div className=" container">
-					<div className="course__header__inner">
-						<Breadcrumbs crumbs={crumbs} />
-						<h1 className="title">{course.name}</h1>
-						<p className="course__updated-at">
-							Последнее обновление{" "}
-							{moment(course.updated_at).format("DD.MM.YYYY")}
-						</p>
+	if (!error)
+		return (
+			<section className="course">
+				<div className="course__header" ref={headerRef}>
+					<div className=" container">
+						<div className="course__header__inner">
+							<Breadcrumbs crumbs={crumbs} />
+							<h1 className="title">{course.name}</h1>
+							<p className="course__updated-at">
+								Последнее обновление{" "}
+								{moment(course.updated_at).format("DD.MM.YYYY")}
+							</p>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div className="course__main container">
-				<div className="course__content text">
-					<article className="course__block">
-						<h2 className="course__title">О курсе</h2>
-						<p className="course__description">{course.description}</p>
-					</article>
-					<article className="course__block">
-						<h2 className="course__title">Отзывы о курсе</h2>
-						{renderReview()}
-					</article>
-					{renderRelatedCourses()}
+				<div className="course__main container">
+					<div className="course__content text">
+						<article className="course__block">
+							<h2 className="course__title">О курсе</h2>
+							<p className="course__description">{course.description}</p>
+						</article>
+						<article className="course__block">
+							<h2 className="course__title">Отзывы о курсе</h2>
+							{renderReview()}
+						</article>
+						{renderRelatedCourses()}
+					</div>
+					<aside className="course__sidebar">
+						<CourseInfo course={course} />
+						<SchoolInfo school={course.school} />
+					</aside>
 				</div>
-				<aside className="course__sidebar">
-					<CourseInfo course={course} />
-					<SchoolInfo school={course.school} />
-				</aside>
-			</div>
-		</section>
-	);
+			</section>
+		);
 };
 
 export default CourseDetail;

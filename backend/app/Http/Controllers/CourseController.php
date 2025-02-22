@@ -272,6 +272,10 @@ class CourseController extends Controller
         // Получаем курс или выбрасываем исключение 404
         $course = $query->firstOrFail();
 
+        if (!$course) {
+            return response()->json(['message' => 'Course not found'], 404);
+        }
+
         // Возвращаем курс в виде ресурса
         return new CourseResource($course);
     }

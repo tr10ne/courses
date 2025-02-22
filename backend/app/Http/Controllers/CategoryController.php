@@ -96,6 +96,10 @@ class CategoryController extends Controller
     {
         // Находим категорию по URL, если не найдено - будет ошибка 404
         $category = Category::where('url', $url)->firstOrFail();
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
         // Возвращаем категорию в виде ресурса
         return new CategoryResource($category);
     }
