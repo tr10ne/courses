@@ -5,7 +5,9 @@
 @use "./scss/reset";
 @use "./scss/common";
 @use "./scss/not-found";
-@use "./scss/header";
+@use "./scss/header/header";
+@use "./scss/header/auth";
+@use "./scss/header/search";
 
 //Home
 @use "./scss/home/home-page";

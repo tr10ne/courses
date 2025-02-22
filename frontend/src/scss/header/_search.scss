@@ -1,0 +1,88 @@
+@use "../index" as *;
+
+.search {
+	border-right: $border;
+	border-left: $border;
+	width: 100%;
+		padding: 10px 20px;
+		position: fixed;
+		justify-content: center;
+		align-items: center;
+		top: 0;
+		left: 0;
+		z-index: -1;
+		translate: 0 -100%;
+		overflow-y: auto;
+		max-height: var(--element-height-px);
+		background-color: rgba($color: $color-bg1, $alpha: 0.95);
+		opacity: 0;
+		transition: 0.3s;
+		&__input {
+			width: 100%;
+		}
+}
+
+.search__form {
+	height: 100%;
+	display: flex;
+}
+
+.search__input {
+	width: clamp(12.5rem, 5.317rem + 14.93vw, 18.75rem);
+	color: $color-text1;
+	background-color: transparent;
+	font-family: "Faber-Sans-Pro-65-Kraeftig", sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 20px;
+	height: 100%;
+	border: none;
+	outline: none;
+	padding-left: 5px;
+
+	&::placeholder {
+		color: $color-text1_2;
+	}
+}
+
+.search__button {
+	background-color: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	cursor: pointer;
+	outline: none;
+	padding: 15px 15px 15px 25px;
+
+	&:hover,
+	&:focus {
+		.svg-loupe {
+			fill: $color-accent;
+		}
+	}
+}
+
+.svg-loupe {
+	fill: $color-text1_2;
+	width: 30px;
+	height: 30px;
+	transition: 0.3s;
+}
+
+#showSearchButton {
+    padding: 15px;
+	&:hover {
+		.svg-loupe {
+			fill: $color-accent;
+		}
+	}
+
+	& .svg-loupe {
+		fill: $color-text1;
+	}
+}
+
+/* ============================= */
+/* Media */
+

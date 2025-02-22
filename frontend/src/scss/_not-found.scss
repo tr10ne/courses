@@ -57,11 +57,8 @@
 .direction-item {
     padding: 36px 37px;
 
-
 	border-radius: 5px;
 	background-color: $color-bg1;
-	transition: height 1.3s ease; /* Плавное изменение высоты */
-    transition: grid-row-end 1.3s ease;
 }
 
 .direction-item__title {

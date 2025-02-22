@@ -1,18 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import Logo from "./Logo";
+import Logo from "../Logo";
 import { debounce } from "lodash";
 import axios from "axios";
-import { apiUrl } from "../js/config";
-
+import { apiUrl } from "../../js/config";
+import Auth from "./Auth";
+import Search from "./Search";
 
 const Header = ({ pageRef }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
+	const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
 	const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 	const lastScrollTopRef = useRef(0);
 	const menuItemsRef = useRef([]); // Ссылка для хранения элементов меню
+	const authDropdownRef = useRef(null);
 	const [user, setUser] = useState(null);
 
 	const headerRef = useRef(null);
@@ -37,6 +40,27 @@ const Header = ({ pageRef }) => {
 	const handleMenuItemClick = () => {
 		setIsMenuOpen(false);
 	};
+
+	// работа по авторизации
+	const handleAuthIconClick = () => {
+		setIsAuthDropdownOpen((state) => !state);
+	};
+
+	const handleClickOutside = (event) => {
+		if (
+			authDropdownRef.current &&
+			!authDropdownRef.current.contains(event.target)
+		) {
+			setIsAuthDropdownOpen(false);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
 
 	useEffect(() => {
 		const header = headerRef.current;
@@ -153,20 +177,22 @@ const Header = ({ pageRef }) => {
 		});
 	}, [isMenuOpen]); // Зависимость от состояния меню, чтобы обновить обработчики при открытии/закрытии
 
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			axios
+				.get(`${apiUrl}/api/user`, {
+					headers: { Authorization: `Bearer ${token}` },
+				})
+				.then((response) => {
+					setUser(response.data);
+				})
+				.catch((error) => {
+					console.error("Ошибка при загрузке данных пользователя:", error);
+				});
+		}
+	}, []);
 
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.get(`${apiUrl}/api/user`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(response => {
-        setUser(response.data);
-      }).catch(error => {
-        console.error('Ошибка при загрузке данных пользователя:', error);
-      });
-    }
-  }, []);
 	return (
 		<header
 			ref={headerRef}
@@ -210,93 +236,36 @@ const Header = ({ pageRef }) => {
 								Отзывы
 							</Link>
 						</li>
-
-						{user ? (
-              <>
-                <li className="menu__item">
-                  <Link
-                    className="menu__link"
-                    to="/profile"
-                    onClick={handleMenuItemClick}
-                  >
-                    {user.name}
-                  </Link>
-                </li>
-                <li className="menu__item">
-                  <button
-                    className="menu__link"
-                    onClick={() => {
-                      localStorage.removeItem('token');
-                      window.location.href = '/login';
-                    }}
-                  >
-                    Выйти
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="menu__item">
-                  <Link
-                    className="menu__link"
-                    to="/login"
-                    onClick={handleMenuItemClick}
-                  >
-                    Войти
-                  </Link>
-                </li>
-                <li className="menu__item">
-                  <Link
-                    className="menu__link"
-                    to="/register"
-                    onClick={handleMenuItemClick}
-                  >
-                    Зарегистрироваться
-                  </Link>
-                </li>
-              </>
-            )}
 					</ul>
 				</nav>
-				<div ref={searchRef} className={`search ${isSearchOpen ? "open" : ""}`}>
-					<form className="search__form" method="get" action={"/courses"}>
-						<button type="submit" className="search__button" id="searchButton">
-							<svg viewBox="0 0 20 20" className="svg-loupe">
-								<path d="M8.808 0C3.95 0 0 3.951 0 8.808c0 4.856 3.951 8.807 8.808 8.807 4.856 0 8.807-3.95 8.807-8.807S13.665 0 8.808 0Zm0 15.99c-3.96 0-7.182-3.223-7.182-7.182 0-3.96 3.222-7.182 7.182-7.182 3.96 0 7.181 3.222 7.181 7.182 0 3.96-3.222 7.181-7.181 7.181Z" />
-								<path d="m19.762 18.612-4.661-4.661a.812.812 0 1 0-1.15 1.15l4.661 4.66a.81.81 0 0 0 1.15 0 .813.813 0 0 0 0-1.149Z" />
-							</svg>
-						</button>
-						<input
-							type="text"
-							placeholder="Искать курсы..."
-							value={searchTerm}
-							onChange={handleSearchChange}
-							className="search__input"
-							name="search"
-						/>
-					</form>
-				</div>
-				<div className="header__btns">
-					<button
-						type="button"
-						className="search__button"
-						id="showSearchButton"
-						onClick={handleSearchIconClick}
-					>
-						<svg viewBox="0 0 20 20" className="svg-loupe">
-							<path d="M8.808 0C3.95 0 0 3.951 0 8.808c0 4.856 3.951 8.807 8.808 8.807 4.856 0 8.807-3.95 8.807-8.807S13.665 0 8.808 0Zm0 15.99c-3.96 0-7.182-3.223-7.182-7.182 0-3.96 3.222-7.182 7.182-7.182 3.96 0 7.181 3.222 7.181 7.182 0 3.96-3.222 7.181-7.181 7.181Z" />
-							<path d="m19.762 18.612-4.661-4.661a.812.812 0 1 0-1.15 1.15l4.661 4.66a.81.81 0 0 0 1.15 0 .813.813 0 0 0 0-1.149Z" />
-						</svg>
-					</button>
+
+
+<div className="header__right">
+<Search
+					handleSearchIconClick={handleSearchIconClick}
+					searchRef={searchRef}
+					isSearchOpen={isSearchOpen}
+					handleSearchChange={handleSearchChange}
+					searchTerm={searchTerm}
+				/>
+				
+<Auth
+					user={user}
+					isAuthDropdownOpen={isAuthDropdownOpen}
+					handleAuthIconClick={handleAuthIconClick}
+					authDropdownRef={authDropdownRef}
+				/>
+
 					<button
 						className={`btn-menu ${isMenuOpen ? "active" : ""}`}
 						onClick={handleMenuButtonClick}
 					>
 						<span className="btn-menu__line"></span>
 					</button>
-				</div>
+					</div>
 			</div>
 		</header>
+
 	);
 };
 
