@@ -6,12 +6,11 @@ const MobileFilterWrapper = ({
   mobileClass = "mobile-filter-active",
   isFilterOpen,
   toggleFilter,
-  onApplyFilters = () => {}, // Значение по умолчанию для onApplyFilters
+  onApplyFilters = () => {},
 }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= breakpoint);
   const filterRef = useRef(null);
 
-  // Эффект для отслеживания изменения размера окна
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= breakpoint);
@@ -21,11 +20,11 @@ const MobileFilterWrapper = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [breakpoint]);
 
-  // Эффект для управления высотой на мобильных устройствах
   useEffect(() => {
     const calculateHeight = () => {
       if (isMobile && isFilterOpen && filterRef.current) {
         filterRef.current.style.maxHeight = `${window.innerHeight - 100}px`;
+        document.body.style.overflow = "hidden";
       }
     };
 
@@ -34,10 +33,10 @@ const MobileFilterWrapper = ({
 
     return () => {
       window.removeEventListener("resize", calculateHeight);
+      document.body.style.overflow = "auto";
     };
   }, [isMobile, isFilterOpen]);
 
-  // Обработчик клика вне области фильтра
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -57,9 +56,17 @@ const MobileFilterWrapper = ({
     };
   }, [isFilterOpen, toggleFilter]);
 
-  // Если не мобильная версия, просто возвращаем children
   if (!isMobile) {
     return <>{children}</>;
+  }
+
+  // Проверка, что children и его вложенные элементы валидны
+  if (
+    !children ||
+    !React.isValidElement(children) ||
+    !children.props.children
+  ) {
+    return null;
   }
 
   return (
@@ -74,8 +81,9 @@ const MobileFilterWrapper = ({
             className: `${
               children.props.children.props.className || ""
             } ${mobileClass}`.trim(),
-            onApplyFilters, // Передаем функцию применения фильтров
-            isMobile, // Передаем флаг мобильной версии
+            onApplyFilters,
+            isMobile,
+            toggleFilter,
           }),
         })}
     </>

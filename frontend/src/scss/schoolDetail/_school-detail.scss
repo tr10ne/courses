@@ -46,6 +46,7 @@
     margin-top: 7px;
     color: $color-accent;
     cursor: pointer;
+    font-size: 14px;
   }
   &__btn {
     text-align: center;
@@ -75,7 +76,7 @@
   &__head {
     margin-bottom: 25px;
     & h2 {
-      font-size: 18px;
+      font-size: clamp(0.875rem, 0.787rem + 0.423vw, 1.125rem);
       font-family: "FS-Elliot-Pro-Bold", sans-serif;
       margin-left: 30px;
     }
@@ -231,6 +232,16 @@
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Добавляем тень для лучшей видимости
     animation: slideIn 0.3s ease-out;
+    transition: opacity 0.7s ease; /* Плавное исчезновение за 0.5 секунды */
+  }
+
+  .apply-filters-button.visible {
+    opacity: 1;
+  }
+
+  .apply-filters-button.hidden {
+    opacity: 0;
+    pointer-events: none; /* Отключаем клики, когда кнопка скрыта */
   }
 
   @keyframes fadeIn {
@@ -251,5 +262,50 @@
       opacity: 1;
       transform: translate(0% -150%);
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .school-detail {
+    &__head {
+      & h1 {
+        text-align: center;
+      }
+    }
+    &__box {
+      flex-direction: column;
+      gap: 20px;
+    }
+    &__rating__box {
+      width: 100%;
+      justify-content: space-around;
+    }
+  }
+  .courses-item_frame {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+  }
+  .courses-item__controls {
+    flex-direction: row;
+    grid-column: span 2;
+  }
+  .courses-item__content {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+  .courses-item__title {
+    grid-column: span 2;
+  }
+  .expansion-name__schools {
+    justify-self: end;
+  }
+  .courses-item__details {
+    justify-self: start;
+  }
+  .courses-item__price {
+    justify-items: end;
+    align-self: start;
   }
 }

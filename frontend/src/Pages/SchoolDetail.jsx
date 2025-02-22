@@ -141,11 +141,6 @@ const SchoolDetail = () => {
             maxPrice,
           },
         });
-
-        console.log("fetchInitialData completed:", {
-          sliderValues: sliderVals,
-          queryParams: { minPrice, maxPrice },
-        });
       } catch (error) {
         if (error.response && error.response.status === 404) {
           navigate("/404");
