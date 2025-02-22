@@ -110,8 +110,8 @@ const SchoolDetail = () => {
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-					navigate("/404"); // Перенаправляем на страницу 404
-				}
+          navigate("/404"); // Перенаправляем на страницу 404
+        }
         setError("Ошибка при загрузке данных школы");
       } finally {
         setLoading(false); // Общий индикатор загрузки выключается
@@ -119,7 +119,7 @@ const SchoolDetail = () => {
     };
 
     fetchInitialData();
-  }, [url]);
+  }, [url, navigate]);
 
   // Загрузка курсов с учетом пагинации и фильтров
   useEffect(() => {
