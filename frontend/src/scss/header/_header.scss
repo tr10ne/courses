@@ -59,7 +59,7 @@
 	}
 }
 
-.header__right{
+.header__right {
 	display: flex;
 	gap: 25px;
 	align-items: center;
@@ -120,7 +120,6 @@
 		}
 	}
 }
-
 
 .btn-menu {
 	display: none;
@@ -198,13 +197,10 @@
 	}
 }
 
-
 /* ============================= */
 /* media */
 
 @media (max-width: 770px) {
-
-
 	.btn-menu {
 		display: flex;
 	}
@@ -245,5 +241,15 @@
 				}
 			}
 		}
+	}
+}
+
+@media (max-width: 400px) {
+	.header__inner {
+		gap: 0;
+	}
+	.header .logo__svg {
+		width: 30px;
+		height: 30px;
 	}
 }

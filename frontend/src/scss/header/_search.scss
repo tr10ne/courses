@@ -86,3 +86,14 @@
 /* ============================= */
 /* Media */
 
+@media (max-width: 400px) {
+
+    #showSearchButton {
+        padding: 5px;
+
+
+        & .svg-loupe {
+            width: 25px;
+            height: 25px;
+        }}
+}
