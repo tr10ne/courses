@@ -9,7 +9,7 @@ const CollapsibleList = ({ title, items, isOpen, onToggle }) => {
   // Эффект для отслеживания изменения ширины экрана
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth <= 375;
+      const mobile = window.innerWidth <= 480;
       setIsMobile(mobile);
 
       // Если устройство стало НЕ мобильным, открываем список
