@@ -16,8 +16,6 @@
 @use "./scss/home/directions";
 @use "./scss/home/popular-courses";
 
-
-
 //Schools
 @use "./scss/schools/schools";
 @use "./scss/schoolDetail/school-detail";
@@ -43,5 +41,7 @@
 //Reviews
 @use "./scss/reviews/review-item.scss";
 @use "./scss/reviews/reviews";
+
+@use "./scss/mobile-filter-button";
 
 @use "./scss/footer";

@@ -68,6 +68,8 @@
   border-radius: 100px;
   border: 1px solid transparent;
   font-family: "FS-Elliot-Pro-Bold", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
   line-height: 24px;
   &:hover {
     color: $color-accent;
@@ -139,6 +141,9 @@
   & label {
     display: flex;
     align-items: center;
+    font-family: "FS-Elliot-Pro-Regular", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
   }
 }
 
@@ -317,6 +322,7 @@
         display: block;
         width: 100%;
         text-align: center;
+        line-height: normal;
       }
     }
   }
