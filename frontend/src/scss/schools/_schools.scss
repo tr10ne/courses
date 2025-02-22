@@ -320,4 +320,8 @@
   .title {
     text-align: center;
   }
+  .schools__aside {
+    margin-left: clamp(-1rem, -6.47rem + 15.52vw, 7.5rem);
+    margin-right: clamp(-1rem, -6.47rem + 15.52vw, 7.5rem);
+  }
 }
