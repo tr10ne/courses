@@ -20,43 +20,6 @@ margin: 0 auto;
 
 //catgories
 
-.popular-courses__category-list{
-display: flex;
-gap: 20px;
-padding-left: 20px;
-padding-right: 20px;
-padding-bottom: 5px;
-margin-bottom: -5px;
-align-items: center;
-overflow-x: auto;
-
-
-
-&:active {
-  cursor: grabbing; /* добавляет курсор "grabbing" для указания, что контейнер перемещается */
-
-}}
-
-.popular-courses__category-item
-	 {
-		font-size: 14px;
-line-height: 36px;
-		padding: 5px 11px;
-
-		border-radius: 50px;
-
-		transition: 0.2s;
-        white-space: nowrap;
-		cursor: pointer;
-
-		&:hover,
-		&:focus,
-		&.checked {
-			background-color: $color-accent;
-			color: $color-accent-inner;
-		}
-	}
-
     .popular-courses__show-more-btn{
         margin-top: 15px;
         align-self: center;

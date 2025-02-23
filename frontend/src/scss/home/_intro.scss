@@ -29,6 +29,7 @@ z-index: 1;
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 30px;
+    gap: 0px 14px;
 
     font-family: 'Lisboa-Heavy-Regular', sans-serif;
 font-size: 36px;
@@ -53,3 +54,40 @@ line-height: 47px;
 }
 
 
+/* ============================= */
+/* Media */
+
+@media (max-width: 730px) {
+	.intro__inner {
+        flex-direction: column;
+    }
+
+    .intro__content{
+        padding-top: 20px;
+        padding-bottom: 0;
+max-width: 500px;
+margin-bottom: -20px;
+    }
+
+    .intro__svg{
+        position: relative;
+        bottom: 0;
+        right: -20px;
+        padding-left: 12px;
+        width: auto;
+    }
+}
+
+@media (max-width: 530px) {
+
+    .intro__title{
+        font-size: 26px;
+        line-height: 30px;
+        margin-bottom: 10px;
+        gap: 0px 10px;
+    }
+    .intro__text{
+        font-size: 14px;
+        line-height: 26px;
+    }
+}

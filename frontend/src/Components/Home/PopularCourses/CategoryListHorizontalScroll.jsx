@@ -2,35 +2,35 @@ import React, { useEffect, useState } from "react";
 import CategoryItem from "./CategoryItem";
 
 
-const CategoryList = ({
+const CategoryListWithHorizontalScroll = ({
 	categories,
-	setActiveCategoryId,
-	activeCategoryId,
+	setActiveCategory,
+	activeCategory,
 }) => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		if (categories) {
-			setActiveCategoryId(categories[0].id);
+			setActiveCategory(categories[0]);
 
 			setLoading(false);
 		}
-	}, [categories, setActiveCategoryId, setLoading]);
+	}, [categories, setActiveCategory, setLoading]);
 
 	if (loading) return;
 
 	return (
-		<div className="popular-courses__category-list scrollbar scrollbar_horizontal">
+		<div className="home-category-list scrollbar scrollbar_horizontal">
 			{categories.map((category) => (
 				<CategoryItem
 					key={category.id}
 					category={category}
-					setActiveCategoryId={setActiveCategoryId}
-					activeCategoryId={activeCategoryId}
+					setActiveCategory={setActiveCategory}
+					activeCategory={activeCategory}
 				/>
 			))}
 		</div>
 	);
 };
 
-export default CategoryList;
+export default CategoryListWithHorizontalScroll;

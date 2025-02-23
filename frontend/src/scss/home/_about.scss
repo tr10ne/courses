@@ -1,45 +1,104 @@
-@use '../index' as *;
+@use "../index" as *;
 
-.about{
-    display: flex;
-    flex-direction: column;
-    gap: 72px;
-    margin-bottom: 71px;
+.about {
+	display: flex;
+	flex-direction: column;
+	gap: 72px;
+	margin-bottom: 71px;
 }
 
-.about__items{
-    display: grid;
-    grid-template-columns: repeat( 3, 1fr);
-gap: 70px;
+.about__items {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 6px 70px;
 }
 
-.about__item{
-     display: grid;
-    grid-template-columns: 60px 2fr;
-    gap: 25px;
-    grid-template-rows: subgrid;
-    grid-row: span 2;
+.about__item {
+	display: grid;
+	grid-template-columns: 60px 2fr;
+	gap: 25px;
+	grid-template-rows: subgrid;
+	grid-row: span 2;
 }
 
-.about__item__title{
-
-   font-size: 20px;
-font-weight: 700;
-line-height: 27px;
-
+.about__item__title {
+	display: flex;
+	flex-direction: column;
+	font-size: 20px;
+	line-height: 27px;
 }
 
-.about__item__text{
-    grid-column: 1 / 3;
+.about__item__text {
+	grid-column: 1 / 3;
 
-    color: $color-text1_2;
-    font-family: 'FS-Elliot-Pro-Regular', sans-serif;
-font-size: 14px;
-font-weight: 400;
-line-height: 24px;
+	color: $color-text1_2;
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 24px;
 }
 
-.about__svg{
-    width: 60px;
-    height : 50px
+.about__svg {
+	width: 100%;
+	height: 100%;
 }
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 1020px) {
+	.about {
+		gap: 50px;
+	}
+	.about__items {
+		grid-template-columns: repeat(2, 1fr); /* Меняем на 2 колонки */
+	}
+}
+
+@media (max-width: 770px) {
+	.about {
+		margin-bottom: 37px;
+		gap: 32px;
+	}
+
+	.about__items {
+		gap: 6px 45px;
+	}
+
+	.about__item {
+		grid-template-columns: 38px 2fr;
+		gap: 18px;
+	}
+	.about__item__title {
+		font-size: 18px;
+		line-height: 24px;
+	}
+}
+
+@media (max-width: 620px) {
+	.about__items {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+	}
+
+	.about__item__title {
+		flex-direction: row;
+		gap: 5px;
+	}
+}
+
+@media (max-width: 500px) {
+	.about__item {
+		grid-template-columns: 40px 2fr;
+	}
+}
+
+@media (max-width: 380px) {
+	.about__item__title {
+		flex-direction: column;
+		gap: 0;
+	}
+}
+
+

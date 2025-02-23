@@ -1,13 +1,13 @@
 import React from "react";
 
-const CategoryItem = ({ category, setActiveCategoryId, activeCategoryId }) => {
+const CategoryItem = ({ category, setActiveCategory, activeCategory }) => {
 	return (
 		<button
-			className={`popular-courses__category-item ${
-				activeCategoryId === category.id && "checked"
+			className={`home-category-item ${
+				activeCategory.id === category.id && "checked"
 			}`}
 			onClick={() => {
-				setActiveCategoryId(category.id);
+				setActiveCategory(category);
 			}}
 		>
 			{category.name}
