@@ -14,7 +14,7 @@ const Login = () => {
 				password,
 			});
 			if (response.data.token) {
-				localStorage.setItem("remember_token", response.data.token); // Сохраняем токен
+				localStorage.setItem("token", response.data.token); // Сохраняем токен
 				window.location.href = "/profile"; // Перенаправляем на страницу профиля
 			}
 		} catch (error) {

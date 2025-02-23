@@ -14,7 +14,7 @@ const ProfileEdit = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const token = localStorage.getItem('remember_token');
+                const token = localStorage.getItem('token');
                 const response = await fetch(`${apiUrl}/api/user`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -63,17 +63,16 @@ const ProfileEdit = () => {
         }
 
         try {
-            const token = localStorage.getItem('remember_token');
+            const token = localStorage.getItem('token');
             const response = await fetch(`${apiUrl}/api/users/${userId}`, {
                 method: 'PUT',
-                body: JSON.stringify(formData),
+                body: formData, // Отправляем FormData напрямую
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
             });
             const data = await response.json();
-        console.log(data.data.name);
+
             if (response.ok) {
                 alert('Профиль успешно обновлен');
                 // Обновляем состояние
