@@ -98,12 +98,6 @@ const Reviews = () => {
             Отзывы об онлайн школах, курсах от учеников и выпускников.
           </p>
           <div className="reviews__box" ref={RefTarget}>
-            <div className="reviews__lastmod">
-              <p>
-                Последнее обновление:{" "}
-                <span className="lastmod-value">{lastUpdateDate}</span>
-              </p>
-            </div>
             <div className="reviews__sort">
               <p>Сортировка: </p>
               <CustomSelect
@@ -119,6 +113,12 @@ const Reviews = () => {
                   handleSortChange(field, order);
                 }}
               />
+            </div>
+            <div className="reviews__lastmod">
+              <p>
+                Последнее обновление:{" "}
+                <span className="lastmod-value">{lastUpdateDate}</span>
+              </p>
             </div>
           </div>
         </div>

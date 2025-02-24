@@ -11,7 +11,7 @@
   &__head {
     & h1 {
       grid-column: span 2;
-      font-size: 36px;
+      font-size: clamp(1.625rem, 1.405rem + 0.94vw, 2.25rem);
       font-family: "Lisboa-Heavy-Regular", sans-serif;
     }
   }
@@ -66,6 +66,7 @@
     margin-top: 7px;
     color: $color-accent;
     cursor: pointer;
+    font-size: 14px;
   }
   &__link {
     display: block;
@@ -118,6 +119,7 @@
     line-height: 24px;
     font-weight: 400;
     font-family: "FS-Elliot-Pro-Regular", sans-serif;
+    color: $color-text_review;
   }
 }
 
@@ -138,4 +140,69 @@
   font-weight: 400;
   line-height: 24px;
   background-color: $color-bg_review;
+}
+
+@media (max-width: 970px) {
+  .school-reviews__sort {
+    justify-content: end;
+  }
+}
+
+@media (max-width: 820px) {
+  .school-reviews__bag {
+    gap: 0px;
+  }
+}
+
+@media (max-width: 768px) {
+  .school-reviews {
+    display: flex;
+    flex-direction: column;
+    &__box {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      row-gap: 30px;
+    }
+    &__btn {
+      justify-self: end;
+    }
+    &__leave {
+      flex: 1 1 0;
+      align-self: center;
+    }
+    &__sort {
+      flex: 2 1 0;
+      justify-content: start;
+    }
+  }
+  .progress-bar {
+    flex: 1 1 0;
+  }
+  .school-reviews .reviews-other-schools {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .school-reviews {
+    &__box {
+      column-gap: 0px;
+    }
+    &__head h1 {
+      text-align: center;
+    }
+    &__about {
+      grid-column: span 2;
+      order: 1;
+    }
+    &__details {
+      order: 2;
+    }
+    &__btn {
+      order: 3;
+    }
+  }
+  .school-rating__description {
+    line-height: normal;
+  }
 }
