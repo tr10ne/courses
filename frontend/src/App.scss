@@ -1,10 +1,14 @@
-// Variables
+//Common
 @use "./scss/index" as *;
 @use "./scss/animation";
+// @use "./scss/mixins";
+
 
 @use "./scss/reset";
 @use "./scss/common";
 @use "./scss/not-found";
+
+//Header
 @use "./scss/header/header";
 @use "./scss/header/auth";
 @use "./scss/header/search";

@@ -1,4 +1,3 @@
-// CourseDetail.js
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,6 +19,7 @@ const CourseDetail = () => {
 	const headerRef = useRef(null);
 	const [crumbs, setCrumbs] = useState([]);
 	const [visibleReviews, setVisibleReviews] = useState(1);
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
 	useEffect(() => {
 		if (!course) return;
@@ -43,7 +43,21 @@ const CourseDetail = () => {
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (!course) return;
+			setWindowWidth(window.innerWidth);
+		};
+
+		handleResize();
+
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleResize = () => {
+			if (!course || windowWidth < 970) return;
 			const headerHeight = headerRef.current.offsetHeight;
 			const sidebar = document.querySelector(".course__sidebar");
 			sidebar.style.top = `-${Math.floor(headerHeight / 2 + 40)}px`;
@@ -144,12 +158,17 @@ const CourseDetail = () => {
 					</div>
 				</div>
 
-				<div className="course__main container">
-					<div className="course__content text">
+				<div className="course__main container text">
+					<div className="course__content">
 						<article className="course__block">
 							<h2 className="course__title">О курсе</h2>
-							<p className="course__description">{course.description}</p>
+							<p className="course__description ">{course.description}</p>
 						</article>
+						{windowWidth <= 680 && (
+							<article className="course__block course__sidebar">
+								<SchoolInfo school={course.school} />
+							</article>
+						)}
 						<article className="course__block">
 							<h2 className="course__title">Отзывы о курсе</h2>
 							{renderReview()}
@@ -158,7 +177,7 @@ const CourseDetail = () => {
 					</div>
 					<aside className="course__sidebar">
 						<CourseInfo course={course} />
-						<SchoolInfo school={course.school} />
+						{windowWidth > 680 && <SchoolInfo school={course.school} />}
 					</aside>
 				</div>
 			</section>

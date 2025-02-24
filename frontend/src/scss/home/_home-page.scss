@@ -46,7 +46,6 @@
 	}
 }
 
-
 //раскрывающийся список
 .home-category-dropdown {
 	position: relative;
@@ -69,28 +68,27 @@
 	border: 1px solid $color-text1;
 	transition: 0.3s;
 	outline: none;
-}
 
-.home-category-dropdown-item:hover,
-.home-category-dropdown-item:focus {
-	color: $color-accent;
-	border: 1px solid $color-accent;
-}
-
-.home-category-dropdown-item:hover svg,
-.home-category-dropdown-item:focus svg {
-	fill: $color-accent;
+	&:hover,
+	&:focus {
+		color: $color-accent;
+		border: 1px solid $color-accent;
+		& .dropdown-arrow,
+		& .dropdown-arrow {
+			fill: $color-accent;
+		}
+	}
 }
 
 .dropdown-arrow {
 	width: 17px;
 	height: 17px;
 	fill: $color-text1;
-	transition: transform 0.3s;
+	transition: 0.3s;
 }
 
 .dropdown-arrow.rotate {
-	transform: rotate(180deg); /* Поворот стрелки на 180 градусов */
+	transform: rotate(180deg); 
 }
 
 .dropdown-list {
@@ -103,7 +101,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
-		border-radius: 10px;
+	border-radius: 10px;
 }
 
 .dropdown-item {

@@ -1,316 +1,254 @@
 @use "../index" as *;
-@use "../courses/courses-item";
 
 .school-detail {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  column-gap: 19px;
-  row-gap: 32px;
-  padding: 30px 0px;
-  &__head {
-    grid-column: span 2;
-    & h1 {
-      font-size: 36px;
-      font-family: "Lisboa-Heavy-Regular", sans-serif;
-    }
-  }
-  &__box {
-    display: flex;
-    justify-content: space-between;
-    gap: 80px;
-  }
-  &__rating {
-    display: flex;
-    align-items: start;
-    &__box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 33px;
-    }
-  }
-  &__aside {
-    position: relative;
-  }
-  &__about {
-    display: flex;
-    flex-direction: column;
-    & div p {
-      font-family: "FS-Elliot-Pro-Regular", sans-serif;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 24px;
-    }
-  }
-  &__link {
-    margin-top: 7px;
-    color: $color-accent;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  &__btn {
-    text-align: center;
-    padding: 14px;
-    border-radius: 100px;
-    border: 1px solid $color-text1;
-    background-color: $color-bg1;
-    min-width: 225px;
-    &:hover {
-      border: 1px solid transparent;
-      background-color: $color-accent;
-      & p {
-        color: $color-text3;
-      }
-    }
-  }
-  &__footer {
-    grid-column: 2;
-    display: flex;
-  }
-}
-
-.courses-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  &__head {
-    margin-bottom: 25px;
-    & h2 {
-      font-size: clamp(0.875rem, 0.787rem + 0.423vw, 1.125rem);
-      font-family: "FS-Elliot-Pro-Bold", sans-serif;
-      margin-left: 30px;
-    }
-  }
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+	column-gap: 19px;
+	row-gap: 32px;
+	padding: 30px 0px;
+	&__head {
+		grid-column: span 2;
+		& h1 {
+			font-size: 36px;
+			font-family: "Lisboa-Heavy-Regular", sans-serif;
+		}
+	}
+	&__box {
+		display: flex;
+		justify-content: space-between;
+		gap: 80px;
+	}
+	&__rating {
+		display: flex;
+		align-items: start;
+		&__box {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 33px;
+		}
+	}
+	&__aside {
+		position: relative;
+	}
+	&__about {
+		display: flex;
+		flex-direction: column;
+		& div p {
+			font-family: "FS-Elliot-Pro-Regular", sans-serif;
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 24px;
+		}
+	}
+	&__link {
+		margin-top: 7px;
+		color: $color-accent;
+		cursor: pointer;
+		font-size: 14px;
+	}
+	&__btn {
+		text-align: center;
+		padding: 14px;
+		border-radius: 100px;
+		border: 1px solid $color-text1;
+		background-color: $color-bg1;
+		min-width: 225px;
+		&:hover {
+			border: 1px solid transparent;
+			background-color: $color-accent;
+			& p {
+				color: $color-text3;
+			}
+		}
+	}
+	&__footer {
+		grid-column: 2;
+		display: flex;
+	}
 }
 
 .subcategory-filter {
-  position: sticky;
-  top: 83px;
-  display: flex;
-  flex-direction: column;
-  border: $border;
-  border-radius: 5px;
-  &::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    border-bottom: 1px solid $color-text1_3;
-    top: 63px;
-    left: 0px;
-  }
-  &__head {
-    display: flex;
-    justify-content: space-between;
-    padding: 21px;
-    &__title {
-      font-size: 18px;
-      line-height: 22px;
-      font-weight: 700;
-      font-family: "FS-Elliot-Pro-Bold", sans-serif;
-    }
-  }
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding: 21px 15px 21px 20px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: $color-accent $color-bg2;
-    scroll-behavior: smooth;
-  }
-  &__reset {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
+	position: sticky;
+	top: 83px;
+	display: flex;
+	flex-direction: column;
+	border: $border;
+	border-radius: 5px;
+	&::after {
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: 1px;
+		border-bottom: 1px solid $color-text1_3;
+		top: 63px;
+		left: 0px;
+	}
+	&__head {
+		display: flex;
+		justify-content: space-between;
+		padding: 21px;
+		&__title {
+			font-size: 18px;
+			line-height: 22px;
+			font-weight: 700;
+			font-family: "FS-Elliot-Pro-Bold", sans-serif;
+		}
+	}
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: 25px;
+		padding: 21px 15px 21px 20px;
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: $color-accent $color-bg2;
+		scroll-behavior: smooth;
+	}
+	&__reset {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
 }
 
 .subcategory-pricefilter {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  &__title {
-    font-size: 14px;
-    line-height: 17px;
-    font-weight: 700;
-    font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  }
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+	&__title {
+		font-size: 14px;
+		line-height: 17px;
+		font-weight: 700;
+		font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	}
 }
 
 .subcategory-list {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  &__title {
-    font-size: 14px;
-    line-height: 17px;
-    font-weight: 700;
-    font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  }
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+	&__title {
+		font-size: 14px;
+		line-height: 17px;
+		font-weight: 700;
+		font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	}
 }
 
 .subcategory-item {
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: space-between;
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 15px;
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	justify-content: space-between;
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 15px;
 }
 
 .show-all-button {
-  padding: 12px 34px;
-  background-color: #01e45c;
-  color: #fff;
-  border-radius: 100px;
-  border: 1px solid transparent;
-  font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  &:hover {
-    color: #01e45c;
-    background-color: #fff;
-    border: 1px solid #01e45c;
-  }
+	padding: 12px 34px;
+	background-color: #01e45c;
+	color: #fff;
+	border-radius: 100px;
+	border: 1px solid transparent;
+	font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	&:hover {
+		color: #01e45c;
+		background-color: #fff;
+		border: 1px solid #01e45c;
+	}
 }
 
 @media (max-width: 1024px) {
-  .school-detail {
-    display: flex;
-    flex-direction: column;
-  }
+	.school-detail {
+		display: flex;
+		flex-direction: column;
+	}
 
-  .courses-list__head {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0px;
-    & h2 {
-      display: flex;
-      align-items: center;
-      margin-left: 0px;
-    }
-  }
+	.mobile-filter-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 1001;
+		display: flex;
+		justify-content: center;
+		animation: fadeIn 0.3s ease-out;
+	}
 
-  .courses-item_frame {
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-  }
+	.subcategory-filter {
+		position: relative;
+		width: 80%;
+		height: 80%;
+		background: white;
+		border-radius: 8px;
+		overflow-y: auto;
+		z-index: 1001;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	}
 
-  .mobile-filter-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1001;
-    display: flex;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-out;
-  }
+	.apply-filters-button {
+		padding: 6px 12px;
+		background-color: $color-accent; // Используйте ваш цвет акцента
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-size: 12px;
+		z-index: 1000;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Добавляем тень для лучшей видимости
+		animation: slideIn 0.3s ease-out;
+		transition: opacity 0.7s ease; /* Плавное исчезновение за 0.5 секунды */
+	}
 
-  .subcategory-filter {
-    position: relative;
-    width: 80%;
-    height: 80%;
-    background: white;
-    border-radius: 8px;
-    overflow-y: auto;
-    z-index: 1001;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
+	.apply-filters-button.visible {
+		opacity: 1;
+	}
 
-  .apply-filters-button {
-    padding: 6px 12px;
-    background-color: $color-accent; // Используйте ваш цвет акцента
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Добавляем тень для лучшей видимости
-    animation: slideIn 0.3s ease-out;
-    transition: opacity 0.7s ease; /* Плавное исчезновение за 0.5 секунды */
-  }
+	.apply-filters-button.hidden {
+		opacity: 0;
+		pointer-events: none; /* Отключаем клики, когда кнопка скрыта */
+	}
 
-  .apply-filters-button.visible {
-    opacity: 1;
-  }
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
 
-  .apply-filters-button.hidden {
-    opacity: 0;
-    pointer-events: none; /* Отключаем клики, когда кнопка скрыта */
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translate(-100% -150%);
-    }
-    to {
-      opacity: 1;
-      transform: translate(0% -150%);
-    }
-  }
+	@keyframes slideIn {
+		from {
+			opacity: 0;
+			transform: translate(-100% -150%);
+		}
+		to {
+			opacity: 1;
+			transform: translate(0% -150%);
+		}
+	}
 }
 
 @media (max-width: 600px) {
-  .school-detail {
-    &__head {
-      & h1 {
-        text-align: center;
-      }
-    }
-    &__box {
-      flex-direction: column;
-      gap: 20px;
-    }
-    &__rating__box {
-      width: 100%;
-      justify-content: space-around;
-    }
-  }
-  .courses-item_frame {
-    grid-template-columns: 1fr 1fr;
-    row-gap: 20px;
-  }
-  .courses-item__controls {
-    flex-direction: row;
-    grid-column: span 2;
-  }
-  .courses-item__content {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-  }
-  .courses-item__title {
-    grid-column: span 2;
-  }
-  .expansion-name {
-    & span {
-      white-space: nowrap;
-    }
-    &__schools {
-      justify-self: end;
-    }
-  }
-  .courses-item__details {
-    justify-self: start;
-  }
-  .courses-item__price {
-    justify-items: end;
-    align-self: start;
-  }
+	.school-detail {
+		&__head {
+			& h1 {
+				text-align: center;
+			}
+		}
+		&__box {
+			flex-direction: column;
+			gap: 20px;
+		}
+		&__rating__box {
+			width: 100%;
+			justify-content: space-around;
+		}
+	}
 }
