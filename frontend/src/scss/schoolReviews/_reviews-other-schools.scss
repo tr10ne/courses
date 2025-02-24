@@ -8,7 +8,7 @@
   background-color: $color-bg_review;
   gap: 5px;
   &__head {
-    padding: 17px 26px 13px;
+    padding: 17px clamp(1.25rem, 1.027rem + 0.6vw, 1.563rem) 13px;
   }
   &__title {
     font-family: "FS-Elliot-Pro-Bold", sans-serif;
@@ -22,27 +22,25 @@
   }
   &__item {
     display: flex;
-    padding: 13px 26px;
+    padding: 13px clamp(1.25rem, 1.027rem + 0.6vw, 1.563rem);
     gap: 10px;
     border-top: $border;
     justify-content: space-between;
   }
-}
-
-.item-name {
-  flex: 2 1 0;
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: $color-text1;
-}
-
-.item-detail {
-  flex: 1 1 0;
-  display: flex;
-  align-items: center;
-  font-family: "FS-Elliot-Pro-Regular", sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  color: $color-text_review;
+  & .item-name {
+    flex: 2 1 0;
+    font-family: "FS-Elliot-Pro-Regular", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: $color-text1;
+  }
+  & .item-detail {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    font-family: "FS-Elliot-Pro-Regular", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: $color-text_review;
+  }
 }

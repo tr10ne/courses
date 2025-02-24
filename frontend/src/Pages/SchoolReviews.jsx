@@ -52,6 +52,17 @@ const SchoolReviews = () => {
     });
   };
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Загрузка данных школы и отзывов
   useEffect(() => {
     const fetchSchoolAndReviews = async () => {
@@ -290,14 +301,95 @@ const SchoolReviews = () => {
                 Курсы {school.name}
               </Link>
             </div>
+            {isMobile && (
+              <div className="school-reviews__details">
+                <AvgRatingStar className="avg" value={school.rating} />
+                <p className="school-rating__description">
+                  {school.reviews} отзыв от пользователей
+                </p>
+              </div>
+            )}
           </div>
-          <div className="school-reviews__bag" ref={RefTarget}>
-            <div className="school-reviews__details">
-              <AvgRatingStar className="avg" value={school.rating} />
-              <p className="school-rating__description">
-                {school.reviews} отзыв от пользователей
-              </p>
+
+          {!isMobile && (
+            <div className="school-reviews__bag" ref={RefTarget}>
+              <div className="school-reviews__details">
+                <AvgRatingStar className="avg" value={school.rating} />
+                <p className="school-rating__description">
+                  {school.reviews} отзыв от пользователей
+                </p>
+              </div>
+              <div className="school-reviews__sort">
+                <p>Сортировка: </p>
+                <CustomSelect
+                  options={[
+                    { value: "date_desc", label: "Сначала новые" },
+                    { value: "date_asc", label: "Сначала старые" },
+                    { value: "rating_desc", label: "Сначала положительные" },
+                    { value: "rating_asc", label: "Сначала отрицательные" },
+                  ]}
+                  value={`${sortBy.field}_${sortBy.order}`}
+                  onChange={(value) => {
+                    const [field, order] = value.split("_");
+                    handleSortChange(field, order);
+                  }}
+                />
+              </div>
+
+              <div className="school-reviews__leave">
+                <span
+                  className="school-reviews__toform"
+                  onClick={() => {
+                    const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                    const targetElement = reviewFormRef.current;
+
+                    if (targetElement) {
+                      const elementPosition =
+                        targetElement.getBoundingClientRect().top +
+                        window.pageYOffset;
+                      window.scrollTo({
+                        top: elementPosition - offset, // Вычитаем отступ
+                        behavior: "smooth", // Плавная прокрутка
+                      });
+                    }
+                  }}
+                >
+                  Оставить отзыв
+                </span>
+              </div>
             </div>
+          )}
+        </div>
+
+        {!isMobile && (
+          <aside className="school-reviews__sidebar">
+            <div className="sidebar-box">
+              <ReviewsScore
+                totalReviews={allReviews.length}
+                rating5={reviewsByRating[5]}
+                rating4={reviewsByRating[4]}
+                rating3={reviewsByRating[3]}
+                rating2={reviewsByRating[2]}
+                rating1={reviewsByRating[1]}
+              />
+              <ReviewsOtherSchools schools={nearbySchools} />
+            </div>
+          </aside>
+        )}
+
+        {isMobile && (
+          <ReviewsScore
+            totalReviews={allReviews.length}
+            rating5={reviewsByRating[5]}
+            rating4={reviewsByRating[4]}
+            rating3={reviewsByRating[3]}
+            rating2={reviewsByRating[2]}
+            rating1={reviewsByRating[1]}
+          />
+        )}
+
+        {isMobile && (
+          <div className="school-reviews__bag" ref={RefTarget}>
             <div className="school-reviews__sort">
               <p>Сортировка: </p>
               <CustomSelect
@@ -314,6 +406,7 @@ const SchoolReviews = () => {
                 }}
               />
             </div>
+
             <div className="school-reviews__leave">
               <span
                 className="school-reviews__toform"
@@ -336,20 +429,8 @@ const SchoolReviews = () => {
               </span>
             </div>
           </div>
-        </div>
-        <aside className="school-reviews__sidebar">
-          <div className="sidebar-box">
-            <ReviewsScore
-              totalReviews={allReviews.length}
-              rating5={reviewsByRating[5]}
-              rating4={reviewsByRating[4]}
-              rating3={reviewsByRating[3]}
-              rating2={reviewsByRating[2]}
-              rating1={reviewsByRating[1]}
-            />
-            <ReviewsOtherSchools schools={nearbySchools} />
-          </div>
-        </aside>
+        )}
+
         <div className="school-reviews__body">
           {reviews.length === 0 ? (
             <p className="no-reviews-message">
@@ -374,6 +455,7 @@ const SchoolReviews = () => {
           )}
           <ReviewForm about={school.name} ref={reviewFormRef} />
         </div>
+        {isMobile && <ReviewsOtherSchools schools={nearbySchools} />}
       </section>
     </div>
   );
