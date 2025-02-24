@@ -70,7 +70,7 @@ const CourseDetail = () => {
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		};
-	}, [course]);
+	}, [course, windowWidth]);
 
 	// Запрос к API для получения курса по его `url`
 	useEffect(() => {
