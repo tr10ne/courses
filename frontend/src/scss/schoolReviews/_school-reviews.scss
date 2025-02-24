@@ -11,7 +11,7 @@
   &__head {
     & h1 {
       grid-column: span 2;
-      font-size: 36px;
+      font-size: clamp(1.625rem, 1.405rem + 0.94vw, 2.25rem);
       font-family: "Lisboa-Heavy-Regular", sans-serif;
     }
   }
