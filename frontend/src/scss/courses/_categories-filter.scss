@@ -19,7 +19,7 @@
   font-size: 14px;
   line-height: 14px;
   padding: 11px;
-
+white-space: nowrap;
   border-radius: 20px;
 
   transition: 0.2s;
@@ -31,4 +31,14 @@
     background-color: $color-accent;
     color: $color-accent-inner;
   }
+}
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 1024px) {
+
+.categories-filter {
+  padding-top: 22px;
+  padding-bottom: 17px;}
 }

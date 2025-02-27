@@ -36,6 +36,10 @@
 .schools-filter__lbl {
 	display: grid;
 	grid-template-columns: 1fr 15px;
+
+	&_gray{
+		color: $color-text1_2;
+	}
 }
 
 .schools-filter__checkbox {

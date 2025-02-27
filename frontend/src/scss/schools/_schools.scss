@@ -179,11 +179,12 @@
 
 @media (max-width: 1280px) {
 	.main {
-		overflow: hidden;
+		// overflow: hidden;
 	}
 	.schools {
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
 	.category-list {

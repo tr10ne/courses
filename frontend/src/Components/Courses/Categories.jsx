@@ -12,6 +12,21 @@ const Categories = ({
 }) => {
 	const [loading, setLoading] = useState(true);
 	const [categories, setCategories] = useState([]);
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+
+		handleResize();
+
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
 
 	useEffect(() => {
 		axios
@@ -35,16 +50,17 @@ const Categories = ({
 			.catch((error) => {
 				console.error("Ошибка при загрузке категорий:", error);
 				setLoading(false);
-			})
-
+			});
 	}, []);
 
 	return (
 		<div className="categories-filter" name="categories">
 			<div
-				className={`categories-filter__inner container ${
-					disabledCategories ? "disabled" : ""
-				}`}
+				className={`${
+					windowWidth <= 1024
+						? " home-category-list scrollbar scrollbar_horizontal"
+						: "categories-filter__inner container"
+				} ${disabledCategories ? "disabled" : ""}`}
 			>
 				{loading ? (
 					<Loading />

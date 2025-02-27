@@ -10,6 +10,7 @@ const PriceFilter = ({
   handleSliderChange,
   handleSliderAfterChange,
   handleManualInputChange,
+
   leftSliderRef,
   rightSliderRef,
   isMobile, // Добавляем пропс isMobile
@@ -27,15 +28,15 @@ const PriceFilter = ({
     }
   }, [leftSliderRef, rightSliderRef]);
 
-  const handleChangeComplete = (values) => {
-    if (!isMobile) {
-      // На десктопе применяем изменения сразу
-      handleSliderAfterChange(values);
-    } else {
-      // На мобильных устройствах только уведомляем о финальном изменении
-      handleSliderAfterChange(values);
-    }
-  };
+  // const handleChangeComplete = (values) => {
+  //   if (!isMobile) {
+  //     // На десктопе применяем изменения сразу
+  //     handleSliderAfterChange(values);
+  //   } else {
+  //     // На мобильных устройствах только уведомляем о финальном изменении
+  //     handleSliderAfterChange(values);
+  //   }
+  // };
 
   return (
     <div
@@ -51,7 +52,7 @@ const PriceFilter = ({
           max={sliderMax}
           value={sliderValues}
           onChange={handleSliderChange} // Промежуточные изменения
-          onChangeComplete={handleChangeComplete} // Финальные изменения с учётом isMobile
+          onChangeComplete={handleSliderAfterChange} // Финальные изменения с учётом isMobile
           className="rc-slider"
         />
       </div>

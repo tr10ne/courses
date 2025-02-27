@@ -7,6 +7,8 @@ const Category = ({
 	setSelectedCategory,
 	paramCategoryUrl,
 }) => {
+
+//запуск после загрузки страницы fetch запроса
 	useEffect(() => {
 		if (paramCategoryUrl === category.url) {
 			setSelectedCategory(category);

@@ -81,3 +81,14 @@
 
 
 }
+
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 1024px) {
+	.school-detail {
+		display: flex;
+		flex-direction: column;
+	}
+}

@@ -7,7 +7,7 @@ import SchoolsFilter from "./SchoolsFilter";
 const Filter = ({
 	handleFilterReset,
 	loadingPrice,
-	disabledPrise,
+	disabledFilter,
 	sliderMin,
 	sliderMax,
 	sliderValues,
@@ -17,11 +17,11 @@ const Filter = ({
 	schoolsBlockRef,
 	loadingSchools,
 	schools,
-	disabledSchools,
-	selectedSchools,
+	totalSchools,
+	selectedSchoolsId,
 	handleSchoolCheckboxChange,
-	checkedSchoolSpans,
 	handleShowSchools,
+	handleFilterBtnClick
 }) => {
 	return (
 		<div className={`courses-filter`}>
@@ -30,15 +30,14 @@ const Filter = ({
 				<ResetFilterButton handleFilterReset={handleFilterReset} />
 			</span>
 
-			<div className="courses-filter__content scrollbar">
+			<div className={`courses-filter__content scrollbar ${disabledFilter?'disabled':''}`}>
 				<div className="courses-filter__block">
 					<span className="courses-filter__content__title">Цена</span>
 					{loadingPrice ? (
 						<Loading />
 					) : (
 						<PriceFilter
-							disabledPrise={disabledPrise}
-							sliderMin={sliderMin}
+														sliderMin={sliderMin}
 							sliderMax={sliderMax}
 							sliderValues={sliderValues}
 							handleSliderChange={handleSliderChange}
@@ -51,7 +50,7 @@ const Filter = ({
 				<div
 					ref={schoolsBlockRef}
 					className={`courses-filter__block ${
-						schools.length > 5 ? "courses-filter__block_hide" : ""
+						totalSchools.length > 5 ? "courses-filter__block_hide" : ""
 					}`}
 				>
 					<span className="courses-filter__content__title">Школы:</span>
@@ -61,14 +60,18 @@ const Filter = ({
 					) : (
 						<SchoolsFilter
 							schools={schools}
-							disabledSchools={disabledSchools}
-							selectedSchools={selectedSchools}
+							totalSchools={totalSchools}
+							selectedSchoolsId={selectedSchoolsId}
 							handleSchoolCheckboxChange={handleSchoolCheckboxChange}
-							checkedSchoolSpans={checkedSchoolSpans}
 							handleShowSchools={handleShowSchools}
 						/>
 					)}
 				</div>
+
+				<button className="courses-filter__button"
+				onClick={handleFilterBtnClick}>
+					Показать
+				</button>
 			</div>
 		</div>
 	);

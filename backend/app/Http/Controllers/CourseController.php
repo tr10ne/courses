@@ -20,7 +20,7 @@ class CourseController extends Controller
         $selectedSubcategoryId = $request->input('selectedSubcategoryId', null);
         $maxPrice = $request->input('maxPrice', ''); // Фильтр по максимальной цене
         $minPrice = $request->input('minPrice', ''); // Фильтр по минимальной цене
-        $selectedSchools = $request->input('selectedSchools', ''); // Фильтр по выбранным школам
+        $selectedSchoolsId = $request->input('selectedSchoolsId', ''); // Фильтр по выбранным школам
         $schoolUrl = $request->input('schoolurl', ''); // Фильтр по URL школы
         $sortPrice = $request->input('sort_price', null); // Сортировка по цене
         $sortRating = $request->input('sort_rating', null); // Сортировка по рейтингу
@@ -70,9 +70,10 @@ class CourseController extends Controller
                 }
             });
 
+            //получаем список всех школ до фильтраций
+            $totalSchools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
-
-
+            //Сортируем по цене и рейтингу
             if ($sortRating !== null) {
                 $query->orderBy('avg_rating', $sortRating === 'true'  ? 'asc' : 'desc');
             }
@@ -84,23 +85,28 @@ class CourseController extends Controller
         $minTotalPrice = $query->min('price');
         $maxTotalPrice = $query->max('price');
 
-        // Фильтр по минимальной цене
+        // Фильтр по минимальной(переданной) цене
         if ($minPrice != '') {
             $query->where('courses.price', '>=', $minPrice);
         }
 
-        // Фильтр по максимальной цене
+        // Фильтр по максимальной(переданной) цене
         if ($maxPrice != '') {
             $query->where('courses.price', '<=', $maxPrice);
         }
 
         // Получаем список школ
+        // $schools = $query->get()->pluck('school.id')->unique()->values();
         $schools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
         // Дополнительный фильтр по выбранным школам
-        if ($selectedSchools) {
-            $query->whereIn('school_id', explode(',', $selectedSchools));
-        }
+        // if ($selectedSchoolsId) {
+        //     $query->whereIn('school_id', explode(',', $selectedSchoolsId));
+        // }
+        $schoolIds = array_filter(explode(',', $selectedSchoolsId));
+    if (!empty($schoolIds)) {
+        $query->whereIn('school_id', $schoolIds);
+    }
 
         // Обработка случая, когда нет результатов
         if ($query->count() == 0) {
@@ -129,6 +135,7 @@ class CourseController extends Controller
                 'min_total_price' => $minTotalPrice,
                 'max_total_price' => $maxTotalPrice,
                 'schools' => $schools,
+                'totalSchools'=>$totalSchools,
                 'meta' => [
                     'current_page' => $courses->currentPage(),
                     'from' => $courses->firstItem(),
