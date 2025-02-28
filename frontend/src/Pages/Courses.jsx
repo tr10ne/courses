@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import "rc-slider/assets/index.css"; // Импортируем стили
@@ -15,6 +15,8 @@ import Schools from "../Components/Courses/Schools.jsx";
 import Arrows from "../Components/Arrows.jsx";
 import { RequestHandler } from "../js/RequestHandler.js";
 
+
+
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
@@ -25,6 +27,9 @@ const Courses = () => {
 		last_page: 1,
 	});
 
+	//экземпляр запроса
+	const requestHandlerRef = useRef(null);
+
 	//courses
 	const [courses, setCourses] = useState([]);
 	const [loadingCourses, setLoadingCourses] = useState(true);
@@ -33,7 +38,6 @@ const Courses = () => {
 
 	//categories
 	const [selectedCategory, setSelectedCategory] = useState(null);
-	const isUserStartFetch = useRef(false);
 	const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 	const [disabledCategories, setDisabledCategories] = useState(true);
 	const params = useParams();
@@ -49,19 +53,35 @@ const Courses = () => {
 	const [sliderMin, setSliderMin] = useState(0);
 	const [sliderMax, setSliderMax] = useState(0);
 	const [sliderValues, setSliderValues] = useState(["", ""]);
-	const sliderValuesRef = useRef(sliderValues); //для передачи точных значений sliderValues в fetchCourses
-	const isRequestByFilterRef = useRef(false);
 
 	//filter - schools
 	const [loadingSchools, setLoadingSchools] = useState(true);
 	const [totalSchools, setTotalSchools] = useState([]);
 	const [schools, setSchools] = useState([]);
 	const [selectedSchoolsId, setSelectedSchoolsId] = useState([]);
-	const selectedSchoolsIdRef = useRef(selectedSchoolsId); //для передачи точных значений selectedSchoolsId в fetchCourses
 	const schoolsBlockRef = useRef(null);
 
-	const requestHandlerRef = useRef(null);
+	//хлебные крошки
+	const [crumbs, setCrumbs] = useState([]);
 
+	//=======================================================
+	//ФУНКЦИИ
+
+	//скроллиг к нужному элементу
+	const scrollTo = (name) => {
+		const headerHeight =
+			document.documentElement.style.getPropertyValue("--header-height");
+		scroller.scrollTo(name, {
+			duration: 1000,
+			smooth: true,
+			offset: headerHeight * -1,
+		});
+	};
+
+	//================================================================
+	// РАБОТА С ЗАПРОСОМ
+
+	//работа с данными для запроса
 	useEffect(() => {
 		if (!requestHandlerRef.current) {
 			requestHandlerRef.current = new RequestHandler(
@@ -75,8 +95,6 @@ const Courses = () => {
 				recordsPerPage
 			);
 		} else {
-			console.log("===============reinvent===============");
-
 			requestHandlerRef.current.pagination = {
 				current_page: 1,
 			};
@@ -86,8 +104,6 @@ const Courses = () => {
 			setRatingSort(null);
 
 			if (requestHandlerRef.current.location !== location) {
-				console.log("location");
-				console.log(location);
 				requestHandlerRef.current.location = location;
 
 				requestHandlerRef.current.sliderValues = [];
@@ -97,57 +113,136 @@ const Courses = () => {
 				setSliderValues(["", ""]);
 			}
 
-			// if (requestHandlerRef.current.ratingSort !== ratingSort) {
-			// 	console.log("ratingSort");
-			// 	console.log(ratingSort);
-			// 	requestHandlerRef.current.ratingSort = ratingSort;
-			// 	isRequestByFilterRef.current = true;
-			// }
-			// if (requestHandlerRef.current.priceSort !== priceSort) {
-			// 	console.log("priceSort");
-			// 	console.log(priceSort);
-			// 	requestHandlerRef.current.priceSort = priceSort;
-			// 	isRequestByFilterRef.current = true;
-			// }
 			if (requestHandlerRef.current.params !== params) {
-				console.log("params");
-				console.log(params);
 				requestHandlerRef.current.params = params;
 				if (Object.keys(params).length === 0) {
 					setSelectedCategory(null);
 					setSelectedSubcategory(null);
 				}
 			}
+
 			if (requestHandlerRef.current.recordsPerPage !== recordsPerPage) {
-				console.log("recordsPerPage");
-				console.log(recordsPerPage);
 				requestHandlerRef.current.recordsPerPage = recordsPerPage;
 			}
-
-			console.log("===========================");
 		}
 
 		fetchCourses();
+
+		//отключаем предупреждение с помощью комментария
+		//  eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location, params, recordsPerPage]);
 
 	useEffect(() => {
 		if (!requestHandlerRef.current) return;
 
-		console.log("*********reinvent***********");
-
 		if (requestHandlerRef.current.pagination !== pagination) {
-			console.log("pagination");
-			console.log(pagination);
 			requestHandlerRef.current.pagination = pagination;
 		}
-
-		console.log("****************************");
 	}, [pagination]);
 
-	//хлебные крошки
-	const [crumbs, setCrumbs] = useState([]);
+	//Запрос для получения курсов
+	const fetchCourses = (isRequestByFilter) => {
+		// Отменяем предыдущий запрос, если он существует
+		if (abortControllerRef.current) {
+			abortControllerRef.current.abort();
+		}
 
-	//хлебные крошки
+		// Создаем новый AbortController для текущего запроса
+		const controller = new AbortController();
+		abortControllerRef.current = controller;
+
+		setLoadingCourses(true);
+		setDisabledCategories(true);
+		setTotalRecords(0);
+
+		if (isRequestByFilter) {
+			setDisabledFilter(true);
+		} else {
+			setLoadingPrice(true);
+			setLoadingSchools(true);
+		}
+
+		const requestHandler = requestHandlerRef.current;
+
+		const requestUrl = requestHandler.prepareRequestUrl();
+		const requestParams = requestHandler.prepareRequestParams();
+		setFilter(requestHandler.getSearchFilter());
+
+		axios
+			.get(`${apiUrl}/api/courses/${requestUrl}`, {
+				params: requestParams,
+				signal: controller.signal, // Передаем signal для отмены запроса
+			})
+			.then((response) => {
+				console.log("Ответ от API:", response.data); // Проверьте структуру данных
+				// Обрабатываем данные: если ответ — это объект с ключом 'courses' или просто массив
+				const courses = Array.isArray(response.data)
+					? response.data
+					: response.data && Array.isArray(response.data.courses)
+					? response.data.courses
+					: null;
+
+				if (courses) {
+					setCourses(courses);
+					setSchools(response.data.schools);
+					setTotalRecords(response.data.meta.total || 0); // Устанавливаем общее количество записей
+
+					if (!isRequestByFilter) {
+						setTotalSchools(response.data.totalSchools);
+						setSliderMin(parseFloat(response.data.min_total_price));
+						setSliderMax(parseFloat(response.data.max_total_price));
+						setSliderValues([
+							parseFloat(response.data.min_total_price),
+							parseFloat(response.data.max_total_price),
+						]);
+					}
+
+					setPagination(response.data.meta);
+				} else {
+					console.error("Ожидались курсы, но получено:", response.data);
+					setError("Не удалось загрузить курсы.");
+				}
+
+				setLoadingCourses(false);
+				setLoadingSchools(false);
+				setLoadingPrice(false);
+				setDisabledFilter(false);
+				setDisabledCategories(false);
+			})
+			.catch((error) => {
+				if (error.name !== "CanceledError") {
+					// Игнорируем ошибку отмены запроса
+					console.error("Ошибка при загрузке курсов:", error);
+					setError("Не удалось загрузить курсы. Пожалуйста, попробуйте позже.");
+				}
+				setLoadingCourses(false);
+				setLoadingSchools(false);
+				setLoadingPrice(false);
+				setDisabledFilter(false);
+				setDisabledCategories(false);
+			});
+		// Очищаем AbortController при размонтировании или изменении зависимостей
+		return () => {
+			if (abortControllerRef.current) {
+				abortControllerRef.current.abort();
+			}
+		};
+
+
+	};
+
+	//чтобы избежать утечек памяти
+	useEffect(() => {
+		return () => {
+			if (abortControllerRef.current) {
+				abortControllerRef.current.abort();
+			}
+		};
+	}, []);
+
+	//================================================================
+	//ХЛЕБНЫЕ КРОШКИ
+
 	useEffect(() => {
 		if (!courses) return;
 		const crumbs = [
@@ -173,158 +268,18 @@ const Courses = () => {
 		setCrumbs(crumbs);
 	}, [courses, params, selectedCategory, selectedSubcategory]);
 
-	//Запрос для получения курсов
-	const fetchCourses = useCallback(() => {
-		// Отменяем предыдущий запрос, если он существует
-		if (abortControllerRef.current) {
-			abortControllerRef.current.abort();
-		}
+	//=======================================================
+	//ПАГИНАЦИЯ
 
-		console.log("Я в запросе");
-		console.log("selectedSchoolsId =");
-		console.log(selectedSchoolsIdRef.current);
-		console.log(selectedSchoolsId);
-
-		// Создаем новый AbortController для текущего запроса
-		const controller = new AbortController();
-		abortControllerRef.current = controller;
-
-		setLoadingCourses(true);
-		setDisabledCategories(true);
-		setTotalRecords(0);
-
-		if (isRequestByFilterRef.current) {
-			setDisabledFilter(true);
-		} else {
-			setLoadingPrice(true);
-			setLoadingSchools(true);
-		}
-
-		const requestHandler = requestHandlerRef.current;
-		const requestUrl = requestHandler.prepareRequestUrl();
-		console.log(requestUrl);
-		console.log("message");
-
-		// const searchParams = new URLSearchParams(location.search);
-		// const newFilter = searchParams.get("search") || ""; // Используем значение из URL напрямую
-
-		// setFilter(newFilter);
-
-		const requestParams = requestHandler.prepareRequestParams();
-		console.log(requestParams);
-
-		// let request = params.categoryUrl ?? "";
-
-		// if (request && params.subcategoryUrl) {
-		// 	request += `/${params.subcategoryUrl}`;
-		// }
-
-		axios
-			.get(`${apiUrl}/api/courses/${requestUrl}`, {
-				params: requestParams,
-				signal: controller.signal, // Передаем signal для отмены запроса
-			})
-			.then((response) => {
-				console.log("Ответ от API:", response.data); // Проверьте структуру данных
-				// Обрабатываем данные: если ответ — это объект с ключом 'courses' или просто массив
-				const courses = Array.isArray(response.data)
-					? response.data
-					: response.data && Array.isArray(response.data.courses)
-					? response.data.courses
-					: null;
-
-				// Если данные курса есть, сохраняем их в состояние
-				if (courses) {
-					setCourses(courses);
-					setSchools(response.data.schools);
-					setTotalRecords(response.data.meta.total || 0); // Устанавливаем общее количество записей
-
-					if (!isRequestByFilterRef.current) {
-						setTotalSchools(response.data.totalSchools);
-						setSliderMin(parseFloat(response.data.min_total_price));
-						setSliderMax(parseFloat(response.data.max_total_price));
-						setSliderValues([
-							parseFloat(response.data.min_total_price),
-							parseFloat(response.data.max_total_price),
-						]);
-					}
-
-					isRequestByFilterRef.current = false;
-
-					setPagination(response.data.meta);
-				} else {
-					console.error("Ожидались курсы, но получено:", response.data);
-					setError("Не удалось загрузить курсы.");
-				}
-				setLoadingCourses(false);
-				setLoadingSchools(false);
-				setLoadingPrice(false);
-				setDisabledFilter(false);
-				setDisabledCategories(false);
-			})
-			.catch((error) => {
-				if (error.name !== "CanceledError") {
-					// Игнорируем ошибку отмены запроса
-					console.error("Ошибка при загрузке курсов:", error);
-					setError("Не удалось загрузить курсы. Пожалуйста, попробуйте позже.");
-				}
-			})
-			.finally(() => {});
-		// Очищаем AbortController при размонтировании или изменении зависимостей
-		return () => {
-			if (abortControllerRef.current) {
-				abortControllerRef.current.abort();
-			}
-		};
-
-		//Если вы уверены, что sliderValues, sliderMin и sliderMax не должны вызывать пересоздание fetchCourses, можно отключить предупреждение с помощью комментария
-		//  eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pagination.current_page, params, location.search, ratingSort, priceSort]);
-
-	//чтобы избежать утечек памяти.
-	useEffect(() => {
-		return () => {
-			if (abortControllerRef.current) {
-				abortControllerRef.current.abort();
-			}
-		};
-	}, []);
-
-	// useEffect(() => {
-	// 	console.log(" зашел в effect - fetch courses");
-	// 	fetchCourses();
-	// }, []);
-
-	//для передачи точных значений selectedSchoolsId, sliderValues в fetchCourses
-	// useEffect(() => {
-	// 	selectedSchoolsIdRef.current = selectedSchoolsId;
-	// 	sliderValuesRef.current = sliderValues;
-	// }, [selectedSchoolsId, sliderValues]);
-
-	//функция для скроллига к нужному элементу
-	const scrollTo = (name) => {
-		const headerHeight =
-			document.documentElement.style.getPropertyValue("--header-height");
-		scroller.scrollTo(name, {
-			duration: 1000,
-			smooth: true,
-			offset: headerHeight * -1,
-		});
-	};
-
-	//==================================================
-	//Пагинация
-
-	//обрабатываем клик номеру страницы
+	//клик по номеру страницы
 	const handlePageChange = (newPage) => {
-		isRequestByFilterRef.current = true;
 		setPagination((prev) => ({ ...prev, current_page: newPage }));
 		requestHandlerRef.current.pagination = { current_page: newPage };
 		scrollTo("courses");
-		fetchCourses();
+		fetchCourses(true);
 	};
 
-	//==================================================
+	//=======================================================
 	//РАБОТА С ФИЛЬТРАЦИЕЙ
 
 	//делаем высоту для filter
@@ -333,7 +288,6 @@ const Courses = () => {
 			const filter = sidebarRef.current.querySelector(
 				".courses-filter__content"
 			);
-			console.log(filter);
 			const INDENT = 20;
 			const windowHeight = window.innerHeight;
 			const headerHeight =
@@ -355,21 +309,9 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
-	// Обработчик нажатия на кнопку для фильтрации
-	const handleFilterBtnClick = () => {
-		isRequestByFilterRef.current = true;
-		requestHandlerRef.current.sliderValues = sliderValues;
-		requestHandlerRef.current.selectedSchoolsId = selectedSchoolsId;
-		requestHandlerRef.current.pagination = { current_page: 1 };
-
-		scrollTo("courses");
-		fetchCourses();
-	};
 
 	//обработчик нажатия на категорию
 	const handleCategoryChange = (category) => {
-		console.log("category change");
-
 		// Если новая категория совпадает с текущей, сбрасываем выбранную категорию
 		if (params.categoryUrl === category.url) {
 			setSelectedCategory(null);
@@ -382,8 +324,17 @@ const Courses = () => {
 	//обработчик нажатия на подкатегорию
 	const handleSubcategoryClick = (subcategory) => {
 		setSelectedSubcategory(subcategory);
-		console.log("SUBcategory change");
 		scrollTo("categories");
+	};
+
+	// Обработчик нажатия на кнопку для фильтрации
+	const handleFilterBtnClick = () => {
+		requestHandlerRef.current.sliderValues = sliderValues;
+		requestHandlerRef.current.selectedSchoolsId = selectedSchoolsId;
+		requestHandlerRef.current.pagination = { current_page: 1 };
+
+		scrollTo("courses");
+		fetchCourses(true);
 	};
 
 	//обработчик нажатия на кнопку reset в фильтрах
@@ -392,7 +343,7 @@ const Courses = () => {
 		scrollTo("courses");
 
 		setSelectedSchoolsId([]);
-		setSliderValues(["", ""]);
+		setSliderValues([sliderMin, sliderMax]);
 		setRatingSort(null);
 		setPriceSort(null);
 
@@ -402,7 +353,7 @@ const Courses = () => {
 		requestHandlerRef.current.ratingSort = null;
 		requestHandlerRef.current.priceSort = null;
 
-		fetchCourses();
+		fetchCourses(true);
 	};
 
 	//обработчик изменения поля ввода цены в фильтре
@@ -420,6 +371,7 @@ const Courses = () => {
 		setSliderValues(newValues);
 	};
 
+	//обработчик изменения выбранной школы
 	const handleSchoolCheckboxChange = (schoolId) => {
 		setSelectedSchoolsId((prev) => {
 			if (prev.includes(schoolId)) {
@@ -437,35 +389,8 @@ const Courses = () => {
 		schoolsBlockRef.current.classList.remove("courses-filter__block_hide");
 	};
 
-	//===========================
+
 	// обработка cортировки
-
-	// const handleSortByRating = () => {
-	// 	const sort =
-	// 		ratingSort === null ? "true" : ratingSort === "true" ? "false" : null;
-
-	// 	setRatingSort(sort);
-	// 	requestHandlerRef.current.ratingSort = sort;
-	// 	requestHandlerRef.current.pagination = { current_page: 1 };
-
-	// 	isRequestByFilterRef.current = true;
-	// 	fetchCourses();
-
-	// };
-
-	// const handleSortByPrice = () => {
-	// 	const sort =
-	// 		priceSort === null ? "true" : priceSort === "true" ? "false" : null;
-	// 	setPriceSort(sort);
-	// 	requestHandlerRef.current.priceSort = sort;
-	// 	requestHandlerRef.current.pagination = { current_page: 1 };
-
-	// 	isRequestByFilterRef.current = true;
-
-	// 	fetchCourses();
-
-	// };
-
 	const handleSort = (sortField, setSortField, requestHandlerField) => {
 		const sort =
 			sortField === null ? "true" : sortField === "true" ? "false" : null;
@@ -474,26 +399,27 @@ const Courses = () => {
 		requestHandlerRef.current[requestHandlerField] = sort;
 		requestHandlerRef.current.pagination = { current_page: 1 };
 
-		isRequestByFilterRef.current = true;
-		fetchCourses();
+		fetchCourses(true);
 	};
 
+	//сортировка по рейтингу
 	const handleSortByRating = () => {
 		handleSort(ratingSort, setRatingSort, "ratingSort");
 	};
 
+	//сортировка по цене
 	const handleSortByPrice = () => {
 		handleSort(priceSort, setPriceSort, "priceSort");
 	};
 
-	//===========================
-	//отрисовка элементов
+	//=======================================================
+	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
 	// отрисовываем курсы с пагинацией
 	const renderCourses = () => {
 		if (loadingCourses) return <Loading />;
 
-		if (error) return <p>{error}</p>; // Показываем сообщение об ошибке
+		if (error) return <p>{error}</p>;
 
 		return (
 			<>

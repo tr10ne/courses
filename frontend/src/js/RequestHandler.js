@@ -18,13 +18,16 @@ export class RequestHandler {
 		this.selectedSchoolsId = selectedSchoolsId;
 		this.ratingSort = ratingSort;
 		this.priceSort = priceSort;
-		this.params = params; // this.searchParams = new URLSearchParams(this.location.search);
-		// this.newFilter = searchParams.get("search") || "";
+		this.params = params;
+	}
+
+    getSearchFilter() {
+		const searchParams = new URLSearchParams(this.location.search);
+		return searchParams.get("search") || "";
 	}
 
 	prepareRequestParams() {
-		const searchParams = new URLSearchParams(this.location.search);
-		const newFilter = searchParams.get("search") || "";
+		const newFilter = this.getSearchFilter();
 
 		return {
 			limit: this.recordsPerPage,
@@ -48,20 +51,4 @@ export class RequestHandler {
 		return request;
 	}
 
-	// handlePreRequest(setDisabledFilter, setLoadingPrice, setLoadingSchools) {
-	// 	if (this.isRequestByFilter) {
-	// 		setDisabledFilter(true);
-	// 	} else {
-	// 		setLoadingPrice(true);
-	// 		setLoadingSchools(true);
-	// 	}
-	// }
-
-	updateSliderValues(newValues) {
-		this.sliderValues = newValues;
-	}
-
-	updateSelectedSchoolsId(newSelectedSchoolsId) {
-		this.selectedSchoolsId = newSelectedSchoolsId;
-	}
 }
