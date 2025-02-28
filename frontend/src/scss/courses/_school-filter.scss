@@ -4,6 +4,8 @@
 /* Schools filter */
 
 .schools-filter {
+	// max-height: 200px;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -12,10 +14,13 @@
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 15px;
+	transition: max-height 3s linear;
 }
 
 .show-schools-btn {
-	display: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	position: relative;
 	padding: 11px;
 
@@ -26,6 +31,8 @@
 	font-family: inherit;
 	transition: 0.2s;
 	cursor: pointer;
+	color: $color-accent;
+	border: 1px solid $color-accent;
 
 	&:hover {
 		color: $color-accent-inner;

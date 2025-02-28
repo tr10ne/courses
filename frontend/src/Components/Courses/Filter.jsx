@@ -14,15 +14,20 @@ const Filter = ({
 	handleSliderChange,
 	handleSliderAfterChange,
 	handleManualInputChange,
-	schoolsBlockRef,
 	loadingSchools,
 	schools,
 	totalSchools,
 	selectedSchoolsId,
 	handleSchoolCheckboxChange,
-	handleShowSchools,
-	handleFilterBtnClick
+	handleFilterBtnClick,
+	setIsHiddenSchools,
+	isHiddenSchools,
 }) => {
+	//нажатие на кнопку показать все школы
+	const handleShowSchools = () => {
+		setIsHiddenSchools(!isHiddenSchools);
+	};
+
 	return (
 		<div className={`courses-filter`}>
 			<span className="courses-filter__header">
@@ -30,14 +35,18 @@ const Filter = ({
 				<ResetFilterButton handleFilterReset={handleFilterReset} />
 			</span>
 
-			<div className={`courses-filter__content scrollbar ${disabledFilter?'disabled':''}`}>
+			<div
+				className={`courses-filter__content scrollbar ${
+					disabledFilter ? "disabled" : ""
+				}`}
+			>
 				<div className="courses-filter__block">
 					<span className="courses-filter__content__title">Цена</span>
 					{loadingPrice ? (
 						<Loading />
 					) : (
 						<PriceFilter
-														sliderMin={sliderMin}
+							sliderMin={sliderMin}
 							sliderMax={sliderMax}
 							sliderValues={sliderValues}
 							handleSliderChange={handleSliderChange}
@@ -48,10 +57,13 @@ const Filter = ({
 				</div>
 
 				<div
-					ref={schoolsBlockRef}
-					className={`courses-filter__block ${
-						totalSchools.length > 5 ? "courses-filter__block_hide" : ""
-					}`}
+					className={`courses-filter__block
+
+
+					`}
+					style={
+						!isHiddenSchools ? { maxHeight: "100%" } : { maxHeight: "200px" }
+					}
 				>
 					<span className="courses-filter__content__title">Школы:</span>
 
@@ -64,12 +76,15 @@ const Filter = ({
 							selectedSchoolsId={selectedSchoolsId}
 							handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 							handleShowSchools={handleShowSchools}
+							isHiddenSchools={isHiddenSchools}
 						/>
 					)}
 				</div>
 
-				<button className="courses-filter__button"
-				onClick={handleFilterBtnClick}>
+				<button
+					className="courses-filter__button"
+					onClick={handleFilterBtnClick}
+				>
 					Показать
 				</button>
 			</div>

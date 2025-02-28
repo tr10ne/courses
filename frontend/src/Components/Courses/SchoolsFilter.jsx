@@ -8,6 +8,7 @@ const SchoolsFilter = ({
 	selectedSchoolsId,
 	handleSchoolCheckboxChange,
 	handleShowSchools,
+	isHiddenSchools
 }) => {
 
 	// Сортируем totalSchools так, чтобы школы из списка schools шли первыми
@@ -45,8 +46,9 @@ const SchoolsFilter = ({
 					disabledSchools ? "disabled" : ""
 				}`}
 				onClick={handleShowSchools}
+				style={!isHiddenSchools ? { marginTop: 25 } : {}}
 			>
-				Показать все школы ({totalSchools.length - 5})
+				{isHiddenSchools?`Показать все школы (${totalSchools.length - 5})`:'Скрыть школы'}
 			</button>
 		</>
 	);

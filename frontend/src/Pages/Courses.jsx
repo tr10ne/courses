@@ -57,7 +57,7 @@ const Courses = () => {
 	const [totalSchools, setTotalSchools] = useState([]);
 	const [schools, setSchools] = useState([]);
 	const [selectedSchoolsId, setSelectedSchoolsId] = useState([]);
-	const schoolsBlockRef = useRef(null);
+	const [isHiddenSchools, setIsHiddenSchools] = useState(true);
 
 	//хлебные крошки
 	const [crumbs, setCrumbs] = useState([]);
@@ -225,8 +225,6 @@ const Courses = () => {
 				abortControllerRef.current.abort();
 			}
 		};
-
-
 	};
 
 	//чтобы избежать утечек памяти
@@ -307,7 +305,6 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
-
 	//обработчик нажатия на категорию
 	const handleCategoryChange = (category) => {
 		// Если новая категория совпадает с текущей, сбрасываем выбранную категорию
@@ -337,7 +334,7 @@ const Courses = () => {
 
 	//обработчик нажатия на кнопку reset в фильтрах
 	const handleFilterReset = () => {
-		schoolsBlockRef.current.classList.add("courses-filter__block_hide");
+		setIsHiddenSchools(true);
 		scrollTo("courses");
 
 		setSelectedSchoolsId([]);
@@ -382,10 +379,6 @@ const Courses = () => {
 		});
 	};
 
-	//нажатие на кнопку показать все школы
-	const handleShowSchools = () => {
-		schoolsBlockRef.current.classList.remove("courses-filter__block_hide");
-	};
 
 
 	// обработка cортировки
@@ -400,7 +393,7 @@ const Courses = () => {
 		fetchCourses(true);
 	};
 
-	//сортировка по рейтингу
+	//сортировка по рейтинг
 	const handleSortByRating = () => {
 		handleSort(ratingSort, setRatingSort, "ratingSort");
 	};
@@ -426,6 +419,16 @@ const Courses = () => {
 						Курсы по ка тегории {selectedSubcategory.name}
 					</p>
 				)}
+				<div className="courses__titles courses-item_frame">
+					<span>Курс</span>
+					<span className="courses__titles__item" onClick={handleSortByRating}>
+						Рейтинг <Arrows state={ratingSort} />
+					</span>
+					<span className="courses__titles__item" onClick={handleSortByPrice}>
+						Цена <Arrows state={priceSort} />
+					</span>
+					<span>Ссылка на курс</span>
+				</div>
 				<ul className="courses-list">
 					{!courses || courses.length === 0 ? (
 						<CourseItem foo={"Не найдено ни одно курса"} />
@@ -487,30 +490,17 @@ const Courses = () => {
 						handleSliderChange={setSliderValues}
 						handleSliderAfterChange={setSliderValues}
 						handleManualInputChange={handleManualInputChange}
-						schoolsBlockRef={schoolsBlockRef}
+						setIsHiddenSchools={setIsHiddenSchools}
+						isHiddenSchools={isHiddenSchools}
 						loadingSchools={loadingSchools}
 						schools={schools}
 						totalSchools={totalSchools}
 						selectedSchoolsId={selectedSchoolsId}
 						handleSchoolCheckboxChange={handleSchoolCheckboxChange}
-						handleShowSchools={handleShowSchools}
 						handleFilterBtnClick={handleFilterBtnClick}
 					/>
 				</aside>
 				<div className="courses-content">
-					<div className="courses__titles courses-item_frame">
-						<span>Курс</span>
-						<span
-							className="courses__titles__item"
-							onClick={handleSortByRating}
-						>
-							Рейтинг <Arrows state={ratingSort} />
-						</span>
-						<span className="courses__titles__item" onClick={handleSortByPrice}>
-							Цена <Arrows state={priceSort} />
-						</span>
-						<span>Ссылка на курс</span>
-					</div>
 					{renderCourses()}
 					{selectedCategory && (
 						<>
