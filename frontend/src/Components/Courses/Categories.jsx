@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Loading from "../Loading";
 import Category from "./Category";
-import { apiUrl } from "../../js/config";
+import { loadCategories } from "../../js/loadCategories";
 
 const Categories = ({
 	paramCategoryUrl,
@@ -29,22 +28,9 @@ const Categories = ({
 	}, []);
 
 	useEffect(() => {
-		axios
-			.get(`${apiUrl}/api/categories`)
-			.then((response) => {
-				console.log("Ответ от API:", response.data);
-
-				const result = Array.isArray(response.data)
-					? response.data
-					: response.data && Array.isArray(response.data.data)
-					? response.data.data
-					: null;
-
-				if (Array.isArray(result)) {
-					setCategories(result);
-				} else {
-					console.error("Ожидался массив, но получено:", response.data);
-				}
+		loadCategories()
+			.then((loadedCategories) => {
+				setCategories(loadedCategories);
 				setLoading(false);
 			})
 			.catch((error) => {

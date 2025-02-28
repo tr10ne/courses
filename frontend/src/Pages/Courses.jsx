@@ -15,8 +15,6 @@ import Schools from "../Components/Courses/Schools.jsx";
 import Arrows from "../Components/Arrows.jsx";
 import { RequestHandler } from "../js/RequestHandler.js";
 
-
-
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
