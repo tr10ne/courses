@@ -52,7 +52,7 @@ const PriceFilter = ({
           max={sliderMax}
           value={sliderValues}
           onChange={handleSliderChange} // Промежуточные изменения
-          onChangeComplete={handleSliderAfterChange} // Финальные изменения с учётом isMobile
+          onChangeComplete={(values)=>handleSliderAfterChange(values, sliderRef)} // Финальные изменения с учётом isMobile
           className="rc-slider"
         />
       </div>
@@ -60,14 +60,14 @@ const PriceFilter = ({
         <input
           type="number"
           value={sliderValues[0] || 0}
-          onChange={(e) => handleManualInputChange(0, e.target.value)}
+          onChange={(e) => handleManualInputChange(0, e.target.value, e)}
           min={sliderMin}
           max={sliderValues[1]}
         />
         <input
           type="number"
           value={sliderValues[1] || 0}
-          onChange={(e) => handleManualInputChange(1, e.target.value)}
+          onChange={(e) => handleManualInputChange(1, e.target.value, e)}
           min={sliderValues[0]}
           max={sliderMax}
         />

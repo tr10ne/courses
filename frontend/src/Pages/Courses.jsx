@@ -20,6 +20,8 @@ const Courses = () => {
 	const location = useLocation(); //// Хук для отслеживания изменений в URL
 	const [error, setError] = useState(null);
 	const abortControllerRef = useRef(null);
+	const [crumbs, setCrumbs] = useState([]); //хлебные крошки
+	const timeoutRef = useRef(null); // Ref для хранения ID таймера
 	const [pagination, setPagination] = useState({
 		current_page: 1,
 		last_page: 1,
@@ -45,6 +47,8 @@ const Courses = () => {
 	const [disabledFilter, setDisabledFilter] = useState(true);
 	const [filter, setFilter] = useState("");
 	const sidebarRef = useRef(null);
+	const [filterButtonTop, setFilterButtonTop] = useState(null);
+	const [isFilterButtonVisible, setIsFilterButtonVisible] = useState(false);
 
 	//filter - price
 	const [loadingPrice, setLoadingPrice] = useState(true);
@@ -58,9 +62,6 @@ const Courses = () => {
 	const [schools, setSchools] = useState([]);
 	const [selectedSchoolsId, setSelectedSchoolsId] = useState([]);
 	const [isHiddenSchools, setIsHiddenSchools] = useState(true);
-
-	//хлебные крошки
-	const [crumbs, setCrumbs] = useState([]);
 
 	//=======================================================
 	//ФУНКЦИИ
@@ -305,6 +306,38 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
+	const filterButtonRef = useRef(null);
+
+	// Обработчик изменения высоты и отображения кнопки фильтрации
+	const handleFilterButtonTopChange = (elem) => {
+		const sidebarRect = sidebarRef.current.getBoundingClientRect();
+		const inputRect = elem.getBoundingClientRect();
+
+		const heightRelative = inputRect.top - sidebarRect.top;
+		 const buttonPosition = heightRelative + inputRect.height / 2 - filterButtonRef.current.offsetHeight / 2;
+
+		setFilterButtonTop(buttonPosition);
+		setIsFilterButtonVisible(true);
+
+		// Очищаем предыдущий таймер, если он существует
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		  }
+		  
+		  timeoutRef.current = setTimeout(() => {
+			setIsFilterButtonVisible(false);
+		  }, 4000);
+	};
+
+	// Очистка таймера при размонтировании компонента
+	useEffect(() => {
+		return () => {
+		  if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		  }
+		};
+	  }, []);
+
 	//обработчик нажатия на категорию
 	const handleCategoryChange = (category) => {
 		// Если новая категория совпадает с текущей, сбрасываем выбранную категорию
@@ -330,6 +363,8 @@ const Courses = () => {
 
 		scrollTo("courses");
 		fetchCourses(true);
+
+		setIsFilterButtonVisible(false);
 	};
 
 	//обработчик нажатия на кнопку reset в фильтрах
@@ -351,8 +386,14 @@ const Courses = () => {
 		fetchCourses(true);
 	};
 
+	//обработчик изменения цены через ползунок
+	const handleSliderAfterChange = (values, sliderRef) => {
+		setSliderValues(values);
+		handleFilterButtonTopChange(sliderRef.current);
+	};
+
 	//обработчик изменения поля ввода цены в фильтре
-	const handleManualInputChange = (index, value) => {
+	const handleManualInputChange = (index, value, event) => {
 		const newValue = parseFloat(value);
 		if (isNaN(newValue)) return;
 
@@ -364,10 +405,12 @@ const Courses = () => {
 		if (index === 1 && newValue <= sliderValues[0]) return;
 
 		setSliderValues(newValues);
+
+		handleFilterButtonTopChange(event.target);
 	};
 
 	//обработчик изменения выбранной школы
-	const handleSchoolCheckboxChange = (schoolId) => {
+	const handleSchoolCheckboxChange = (schoolId, event) => {
 		setSelectedSchoolsId((prev) => {
 			if (prev.includes(schoolId)) {
 				// Если школа уже выбрана, удаляем её из списка
@@ -377,9 +420,9 @@ const Courses = () => {
 				return [...prev, schoolId];
 			}
 		});
+
+		handleFilterButtonTopChange(event.target);
 	};
-
-
 
 	// обработка cортировки
 	const handleSort = (sortField, setSortField, requestHandlerField) => {
@@ -488,7 +531,7 @@ const Courses = () => {
 						sliderMax={sliderMax}
 						sliderValues={sliderValues}
 						handleSliderChange={setSliderValues}
-						handleSliderAfterChange={setSliderValues}
+						handleSliderAfterChange={handleSliderAfterChange}
 						handleManualInputChange={handleManualInputChange}
 						setIsHiddenSchools={setIsHiddenSchools}
 						isHiddenSchools={isHiddenSchools}
@@ -498,6 +541,9 @@ const Courses = () => {
 						selectedSchoolsId={selectedSchoolsId}
 						handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 						handleFilterBtnClick={handleFilterBtnClick}
+						filterButtonTop={filterButtonTop}
+						isFilterButtonVisible={isFilterButtonVisible}
+						filterButtonRef={filterButtonRef}
 					/>
 				</aside>
 				<div className="courses-content">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import ResetFilterButton from "./ResetFilterButton";
 import Loading from "../Loading";
 import PriceFilter from "./PriceFilter";
@@ -22,7 +22,12 @@ const Filter = ({
 	handleFilterBtnClick,
 	setIsHiddenSchools,
 	isHiddenSchools,
+	filterButtonTop,
+	isFilterButtonVisible,
+	filterButtonRef,
 }) => {
+	const schoolsHeightRef = useRef(null);
+
 	//нажатие на кнопку показать все школы
 	const handleShowSchools = () => {
 		setIsHiddenSchools(!isHiddenSchools);
@@ -62,7 +67,9 @@ const Filter = ({
 
 					`}
 					style={
-						!isHiddenSchools ? { maxHeight: "100%" } : { maxHeight: "200px" }
+						!isHiddenSchools
+							? { maxHeight: "100%" }
+							: { maxHeight: schoolsHeightRef.current + 190 + "px" }
 					}
 				>
 					<span className="courses-filter__content__title">Школы:</span>
@@ -77,13 +84,20 @@ const Filter = ({
 							handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 							handleShowSchools={handleShowSchools}
 							isHiddenSchools={isHiddenSchools}
+							schoolsHeightRef={schoolsHeightRef}
 						/>
 					)}
 				</div>
 
 				<button
-					className="courses-filter__button"
+					className={`courses-filter__button ${
+						!isFilterButtonVisible ? "courses-filter__button_hidden" : ""
+					}`}
+					ref={filterButtonRef}
 					onClick={handleFilterBtnClick}
+					style={{
+						top: `${filterButtonTop}px`,
+					}}
 				>
 					Показать
 				</button>

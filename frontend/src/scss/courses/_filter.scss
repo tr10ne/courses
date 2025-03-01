@@ -8,36 +8,34 @@
 	border-radius: 5px;
 	background-color: $color-bg1;
 	overflow: hidden;
+}
 
-	&__header {
-		padding: 15px 20px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		border-bottom: $border;
+.courses-filter__header {
+	padding: 15px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: $border;
 
-		font-size: 18px;
-		line-height: 22px;
-	}
+	font-size: 18px;
+	line-height: 22px;
+}
 
-	&__content {
-		padding: 15px 20px;
-		display: flex;
-		flex-direction: column;
-		gap: 30px;
-		overflow-y: auto;
+.courses-filter__content {
+	padding: 15px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+	overflow-y: auto;
 
-		&__title {
-			margin-bottom: 15px;
-		}
+	&__title {
+		margin-bottom: 15px;
 	}
 }
 
 .courses-filter__block {
 	display: flex;
 	flex-direction: column;
-
-	
 }
 
 .courses-filter__reset-btn {
@@ -55,5 +53,45 @@
 		& svg {
 			fill: $color-accent;
 		}
+	}
+}
+
+.courses-filter__button {
+	position: absolute;
+	top: 0;
+	left: 100%;
+	transition: 0.3s;
+	padding: 20px;
+
+	border-radius: 10px;
+	background-color: $color-accent;
+
+	color: $color-accent-inner;
+	font-family: inherit;
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: -7px;
+		width: 20px;
+		height: 20px;
+		background-color: $color-accent;
+		border-radius: 5px;
+
+		transform: translateY(-50%) rotate(45deg);
+		outline: none;
+		z-index: 2;
+		opacity: 1;
+	}
+
+	&:hover,
+	&:focus {
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+
+	&_hidden {
+		opacity: 0;
+		pointer-events: none;
 	}
 }

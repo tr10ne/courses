@@ -43,6 +43,7 @@
 .schools-filter__lbl {
 	display: grid;
 	grid-template-columns: 1fr 15px;
+	position: relative;
 
 	&_gray{
 		color: $color-text1_2;
@@ -50,7 +51,11 @@
 }
 
 .schools-filter__checkbox {
-	display: none;
+		position: absolute;
+	visibility: hidden;
+	pointer-events: none;
+
+
 }
 
 .schools-filter__lbl__span {

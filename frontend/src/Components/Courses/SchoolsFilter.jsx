@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import SchoolFilter from "./SchoolFilter";
 
 const SchoolsFilter = ({
@@ -8,8 +8,10 @@ const SchoolsFilter = ({
 	selectedSchoolsId,
 	handleSchoolCheckboxChange,
 	handleShowSchools,
-	isHiddenSchools
+	isHiddenSchools,
+	schoolsHeightRef,
 }) => {
+	const firstFiveSchoolRefs = useRef([]);
 
 	// Сортируем totalSchools так, чтобы школы из списка schools шли первыми
 	const sortedSchools = [...totalSchools].sort((a, b) => {
@@ -24,11 +26,34 @@ const SchoolsFilter = ({
 		return 0;
 	});
 
+	// Вычисляем высоту первых 5 элементов после рендера
+	useEffect(() => {
+		if (firstFiveSchoolRefs.current.length > 0) {
+			let totalHeight = 0;
+
+			// Суммируем высоту первых 5 элементов
+			firstFiveSchoolRefs.current.forEach((ref) => {
+				if (ref) {
+					totalHeight += ref.offsetHeight;
+				}
+			});
+
+			// Сохраняем результат в schoolsHeightRef
+			schoolsHeightRef.current = totalHeight;
+		}
+	}, [sortedSchools, schoolsHeightRef]);
+
 	return (
 		<>
 			<div className={`schools-filter  ${disabledSchools ? "disabled" : ""}`}>
-				{sortedSchools.map((school) => {
+				{sortedSchools.map((school, index) => {
 					const isSchoolInList = schools.some((s) => s.id === school.id);
+
+					const ref =
+						index < 5
+							? (el) => (firstFiveSchoolRefs.current[index] = el)
+							: null;
+
 					return (
 						<SchoolFilter
 							key={school.id}
@@ -36,6 +61,8 @@ const SchoolsFilter = ({
 							selectedSchoolsId={selectedSchoolsId}
 							handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 							isSchoolInList={isSchoolInList}
+							schoolsHeightRef={schoolsHeightRef}
+							ref={ref}
 						/>
 					);
 				})}
@@ -48,7 +75,9 @@ const SchoolsFilter = ({
 				onClick={handleShowSchools}
 				style={!isHiddenSchools ? { marginTop: 25 } : {}}
 			>
-				{isHiddenSchools?`Показать все школы (${totalSchools.length - 5})`:'Скрыть школы'}
+				{isHiddenSchools
+					? `Показать все школы (${totalSchools.length - 5})`
+					: "Скрыть школы"}
 			</button>
 		</>
 	);
