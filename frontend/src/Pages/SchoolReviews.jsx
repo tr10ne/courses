@@ -11,6 +11,7 @@ import ReviewsScore from "../Components/SchoolReviews/ReviewsScore";
 import ReviewsOtherSchools from "../Components/SchoolReviews/ReviewsOtherSchools";
 import CustomSelect from "../Components/SchoolReviews/CustomSelect";
 import ReviewForm from "../Components/Reviews/ReviewForm";
+import PageMetadata from "../Components/PageMetadata";
 
 const SchoolReviews = () => {
   const { url } = useParams();
@@ -277,48 +278,127 @@ const SchoolReviews = () => {
     setQueryParams((prev) => ({ ...prev, page: 1 })); // Сбрасываем страницу на первую
   };
 
+  const SchoolReviewsTitle = `Отзывы о ${school.name}, ${school.reviews} реальных отзывов о школе ${school.name} | COURSES`;
+  const SchoolReviewsDescription = `Узнайте, что говорят учащиеся о школе ${school.name}. Рейтинг ${school.rating} на основании ${school.reviews} проверенных отзывов.`;
+
   return (
-    <div className="container">
-      <section className="school-reviews">
-        <div className="school-reviews__head block-head">
-          <Breadcrumbs crumbs={crumbs} />
-          <h1>Отзывы {school.name}</h1>
-          <div className="school-reviews__box">
-            <div className="school-reviews__about">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: isExpanded
-                    ? school.description
-                    : truncatedDescription,
-                }}
-              />
+    <>
+      <PageMetadata
+        title={SchoolReviewsTitle}
+        description={SchoolReviewsDescription}
+      />
+      <div className="container">
+        <section className="school-reviews">
+          <div className="school-reviews__head block-head">
+            <Breadcrumbs crumbs={crumbs} />
+            <h1>Отзывы {school.name}</h1>
+            <div className="school-reviews__box">
+              <div className="school-reviews__about">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: isExpanded
+                      ? school.description
+                      : truncatedDescription,
+                  }}
+                />
+              </div>
+              <div className="school-reviews__btn">
+                <Link
+                  className="school-reviews__link"
+                  to={`/schools/${school.url}`}
+                >
+                  Курсы {school.name}
+                </Link>
+              </div>
+              {isMobile && (
+                <div className="school-reviews__details">
+                  <AvgRatingStar className="avg" value={school.rating} />
+                  <p className="school-rating__description">
+                    {school.reviews} отзыв от пользователей
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="school-reviews__btn">
-              <Link
-                className="school-reviews__link"
-                to={`/schools/${school.url}`}
-              >
-                Курсы {school.name}
-              </Link>
-            </div>
-            {isMobile && (
-              <div className="school-reviews__details">
-                <AvgRatingStar className="avg" value={school.rating} />
-                <p className="school-rating__description">
-                  {school.reviews} отзыв от пользователей
-                </p>
+
+            {!isMobile && (
+              <div className="school-reviews__bag" ref={RefTarget}>
+                <div className="school-reviews__details">
+                  <AvgRatingStar className="avg" value={school.rating} />
+                  <p className="school-rating__description">
+                    {school.reviews} отзыв от пользователей
+                  </p>
+                </div>
+                <div className="school-reviews__sort">
+                  <p>Сортировка: </p>
+                  <CustomSelect
+                    options={[
+                      { value: "date_desc", label: "Сначала новые" },
+                      { value: "date_asc", label: "Сначала старые" },
+                      { value: "rating_desc", label: "Сначала положительные" },
+                      { value: "rating_asc", label: "Сначала отрицательные" },
+                    ]}
+                    value={`${sortBy.field}_${sortBy.order}`}
+                    onChange={(value) => {
+                      const [field, order] = value.split("_");
+                      handleSortChange(field, order);
+                    }}
+                  />
+                </div>
+
+                <div className="school-reviews__leave">
+                  <span
+                    className="school-reviews__toform"
+                    onClick={() => {
+                      const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                      const targetElement = reviewFormRef.current;
+
+                      if (targetElement) {
+                        const elementPosition =
+                          targetElement.getBoundingClientRect().top +
+                          window.pageYOffset;
+                        window.scrollTo({
+                          top: elementPosition - offset, // Вычитаем отступ
+                          behavior: "smooth", // Плавная прокрутка
+                        });
+                      }
+                    }}
+                  >
+                    Оставить отзыв
+                  </span>
+                </div>
               </div>
             )}
           </div>
 
           {!isMobile && (
-            <div className="school-reviews__bag" ref={RefTarget}>
-              <div className="school-reviews__details">
-                <AvgRatingStar className="avg" value={school.rating} />
-                <p className="school-rating__description">
-                  {school.reviews} отзыв от пользователей
-                </p>
+            <aside className="school-reviews__sidebar">
+              <div className="sidebar-box">
+                <ReviewsScore
+                  totalReviews={allReviews.length}
+                  rating5={reviewsByRating[5]}
+                  rating4={reviewsByRating[4]}
+                  rating3={reviewsByRating[3]}
+                  rating2={reviewsByRating[2]}
+                  rating1={reviewsByRating[1]}
+                />
+                <ReviewsOtherSchools schools={nearbySchools} />
               </div>
+            </aside>
+          )}
+
+          {isMobile && (
+            <ReviewsScore
+              totalReviews={allReviews.length}
+              rating5={reviewsByRating[5]}
+              rating4={reviewsByRating[4]}
+              rating3={reviewsByRating[3]}
+              rating2={reviewsByRating[2]}
+              rating1={reviewsByRating[1]}
+            />
+          )}
+
+          {isMobile && (
+            <div className="school-reviews__bag" ref={RefTarget}>
               <div className="school-reviews__sort">
                 <p>Сортировка: </p>
                 <CustomSelect
@@ -359,105 +439,35 @@ const SchoolReviews = () => {
               </div>
             </div>
           )}
-        </div>
 
-        {!isMobile && (
-          <aside className="school-reviews__sidebar">
-            <div className="sidebar-box">
-              <ReviewsScore
-                totalReviews={allReviews.length}
-                rating5={reviewsByRating[5]}
-                rating4={reviewsByRating[4]}
-                rating3={reviewsByRating[3]}
-                rating2={reviewsByRating[2]}
-                rating1={reviewsByRating[1]}
-              />
-              <ReviewsOtherSchools schools={nearbySchools} />
-            </div>
-          </aside>
-        )}
-
-        {isMobile && (
-          <ReviewsScore
-            totalReviews={allReviews.length}
-            rating5={reviewsByRating[5]}
-            rating4={reviewsByRating[4]}
-            rating3={reviewsByRating[3]}
-            rating2={reviewsByRating[2]}
-            rating1={reviewsByRating[1]}
-          />
-        )}
-
-        {isMobile && (
-          <div className="school-reviews__bag" ref={RefTarget}>
-            <div className="school-reviews__sort">
-              <p>Сортировка: </p>
-              <CustomSelect
-                options={[
-                  { value: "date_desc", label: "Сначала новые" },
-                  { value: "date_asc", label: "Сначала старые" },
-                  { value: "rating_desc", label: "Сначала положительные" },
-                  { value: "rating_asc", label: "Сначала отрицательные" },
-                ]}
-                value={`${sortBy.field}_${sortBy.order}`}
-                onChange={(value) => {
-                  const [field, order] = value.split("_");
-                  handleSortChange(field, order);
-                }}
-              />
-            </div>
-
-            <div className="school-reviews__leave">
-              <span
-                className="school-reviews__toform"
-                onClick={() => {
-                  const offset = 100; // Отступ сверху в пикселях (например, 50px)
-                  const targetElement = reviewFormRef.current;
-
-                  if (targetElement) {
-                    const elementPosition =
-                      targetElement.getBoundingClientRect().top +
-                      window.pageYOffset;
-                    window.scrollTo({
-                      top: elementPosition - offset, // Вычитаем отступ
-                      behavior: "smooth", // Плавная прокрутка
-                    });
-                  }
-                }}
-              >
-                Оставить отзыв
-              </span>
-            </div>
+          <div className="school-reviews__body">
+            {reviews.length === 0 ? (
+              <p className="no-reviews-message">
+                Пока здесь нет отзывов. Будьте первым - оставьте свой отзыв о{" "}
+                {school.name}!
+              </p>
+            ) : (
+              <>
+                <div className="review-list">
+                  {reviews.map((review) => (
+                    <ReviewItem key={review.id} review={review} />
+                  ))}
+                </div>
+                <div className="school-reviews__footer">
+                  <Pagination
+                    currentPage={pagination.current_page}
+                    lastPage={pagination.last_page}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </>
+            )}
+            <ReviewForm about={school.name} ref={reviewFormRef} />
           </div>
-        )}
-
-        <div className="school-reviews__body">
-          {reviews.length === 0 ? (
-            <p className="no-reviews-message">
-              Пока здесь нет отзывов. Будьте первым - оставьте свой отзыв о{" "}
-              {school.name}!
-            </p>
-          ) : (
-            <>
-              <div className="review-list">
-                {reviews.map((review) => (
-                  <ReviewItem key={review.id} review={review} />
-                ))}
-              </div>
-              <div className="school-reviews__footer">
-                <Pagination
-                  currentPage={pagination.current_page}
-                  lastPage={pagination.last_page}
-                  onPageChange={handlePageChange}
-                />
-              </div>
-            </>
-          )}
-          <ReviewForm about={school.name} ref={reviewFormRef} />
-        </div>
-        {isMobile && <ReviewsOtherSchools schools={nearbySchools} />}
-      </section>
-    </div>
+          {isMobile && <ReviewsOtherSchools schools={nearbySchools} />}
+        </section>
+      </div>
+    </>
   );
 };
 
