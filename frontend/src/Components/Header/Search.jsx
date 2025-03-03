@@ -4,7 +4,18 @@ const Search = ({
 	isSearchOpen,
 	handleSearchChange,
 	searchTerm,
+	isSearchFocusedRef
 }) => {
+
+	const handleFocus = () => {
+		isSearchFocusedRef.current = true;
+	};
+
+	const handleBlur = () => {
+		isSearchFocusedRef.current = false;
+	};
+
+
 	return (
 		<>
 
@@ -23,6 +34,8 @@ const Search = ({
 						onChange={handleSearchChange}
 						className="search__input"
 						name="search"
+						onFocus={handleFocus}
+						onBlur={handleBlur}
 					/>
 				</form>
 			</div>

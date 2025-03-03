@@ -23,6 +23,8 @@ const Header = ({ pageRef }) => {
 	const menuRef = useRef(null);
 	const searchRef = useRef(null);
 
+	const isSearchFocusedRef = useRef(false);
+
 	const handleSearchChange = (event) => {
 		setSearchTerm(event.target.value);
 	};
@@ -122,6 +124,8 @@ const Header = ({ pageRef }) => {
 
 	useEffect(() => {
 		const handleScroll = () => {
+			if (isSearchFocusedRef.current) return;
+
 			const currentScrollTop = window.scrollY;
 			const threshold = 100;
 			const isDesktop = window.matchMedia("(min-width: 700px)").matches;
@@ -239,22 +243,22 @@ const Header = ({ pageRef }) => {
 					</ul>
 				</nav>
 
+				<div className="header__right">
+					<Search
+						handleSearchIconClick={handleSearchIconClick}
+						searchRef={searchRef}
+						isSearchOpen={isSearchOpen}
+						handleSearchChange={handleSearchChange}
+						searchTerm={searchTerm}
+						isSearchFocusedRef={isSearchFocusedRef}
+					/>
 
-<div className="header__right">
-<Search
-					handleSearchIconClick={handleSearchIconClick}
-					searchRef={searchRef}
-					isSearchOpen={isSearchOpen}
-					handleSearchChange={handleSearchChange}
-					searchTerm={searchTerm}
-				/>
-
-<Auth
-					user={user}
-					isAuthDropdownOpen={isAuthDropdownOpen}
-					handleAuthIconClick={handleAuthIconClick}
-					authDropdownRef={authDropdownRef}
-				/>
+					<Auth
+						user={user}
+						isAuthDropdownOpen={isAuthDropdownOpen}
+						handleAuthIconClick={handleAuthIconClick}
+						authDropdownRef={authDropdownRef}
+					/>
 
 					<button
 						className={`btn-menu ${isMenuOpen ? "active" : ""}`}
@@ -262,10 +266,9 @@ const Header = ({ pageRef }) => {
 					>
 						<span className="btn-menu__line"></span>
 					</button>
-					</div>
+				</div>
 			</div>
 		</header>
-
 	);
 };
 
