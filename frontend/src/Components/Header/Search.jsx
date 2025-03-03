@@ -16,7 +16,6 @@ const Search = ({
 		isSearchFocusedRef.current = false;
 	};
 
-
 	return (
 		<>
 

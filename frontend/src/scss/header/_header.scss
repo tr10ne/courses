@@ -67,6 +67,23 @@
 
 .logo {
 	display: flex;
+	min-width: 151px;
+	width: 100%;
+	justify-content: center;
+
+	&.active{
+
+.logo__svg{
+	fill: $color-accent;
+			stroke: $color-accent;
+}
+
+.logo__text,
+.logo__cursor{
+	color: $color-accent;
+}
+
+	}
 
 	&__text {
 		font-family: "Lisboa-Heavy-Regular", sans-serif;
