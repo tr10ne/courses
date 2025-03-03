@@ -15,6 +15,7 @@ import Schools from "../Components/Courses/Schools.jsx";
 import Arrows from "../Components/Arrows.jsx";
 import { RequestHandler } from "../js/RequestHandler.js";
 import ArrowsFilter from "../Components/ArrowsFilter.jsx";
+import PageMetadata from "../Components/PageMetadata.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -537,6 +538,28 @@ const Courses = () => {
 	};
 
 	//=======================================================
+	//SEO
+
+	const titleRef = useRef(null);
+	const descriptionRef = useRef(null);
+
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
+
+	useEffect(() => {
+		if (titleRef.current) {
+			setTitle(titleRef.current.textContent);
+		}
+
+		if (descriptionRef.current) {
+			setDescription(descriptionRef.current.textContent);
+		}
+	}, []);
+
+	const CoursesTitle = `${title}: каталог курсов онлайн школ с рейтингом и отзывами | COURSES`;
+	const CoursesDescription = `${description.split(".")[0].trim()}`;
+
+	//=======================================================
 	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
 	// отрисовываем курсы с пагинацией
@@ -583,94 +606,102 @@ const Courses = () => {
 	};
 
 	return (
-		<section className="courses section">
-			<div className="container">
-				<div className="block-head">
-					<Breadcrumbs crumbs={crumbs} />
-					<h1 className="title">Онлайн-курсы</h1>
-					<p className="text">
-						Список всех онлайн-курсов с рейтингом, отзывами и детальным
-						описанием курса 2025 года. Для удобства поиска курса используйте
-						фильтры, сортировку, сравнение и поиск. Мы обновляем информацию о
-						всех курсах каждую неделю.
-					</p>
+		<>
+			<PageMetadata title={CoursesTitle} description={CoursesDescription} />
+
+			<section className="courses section">
+				<div className="container">
+					<div className="block-head">
+						<Breadcrumbs crumbs={crumbs} />
+						<h1 className="title" ref={titleRef}>
+							Онлайн-курсы
+						</h1>
+						<p className="text" ref={descriptionRef}>
+							Список всех онлайн-курсов с рейтингом, отзывами и детальным
+							описанием курса 2025 года. Для удобства поиска курса используйте
+							фильтры, сортировку, сравнение и поиск. Мы обновляем информацию о
+							всех курсах каждую неделю.
+						</p>
+					</div>
 				</div>
-			</div>
 
-			<Categories
-				setSelectedCategory={setSelectedCategory}
-				paramCategoryUrl={params.categoryUrl}
-				handleCategoryChange={handleCategoryChange}
-				disabledCategories={disabledCategories}
-			/>
+				<Categories
+					setSelectedCategory={setSelectedCategory}
+					paramCategoryUrl={params.categoryUrl}
+					handleCategoryChange={handleCategoryChange}
+					disabledCategories={disabledCategories}
+				/>
 
-			<div className={`courses-main container`} name="courses">
-				<aside className="courses-sidebar" ref={sidebarRef}>
-					<p className="request-result-count ">
-						{loadingCourses
-							? "выполняется запрос..."
-							: `По вашему запросу ${filter !== "" ? `"${filter}"` : ""} найдено
+				<div className={`courses-main container`} name="courses">
+					<aside className="courses-sidebar" ref={sidebarRef}>
+						<p className="request-result-count ">
+							{loadingCourses
+								? "выполняется запрос..."
+								: `По вашему запросу ${
+										filter !== "" ? `"${filter}"` : ""
+								  } найдено
 						${totalRecords} курсов`}
-					</p>
+						</p>
 
-					<button
-						className="courses__show-filter-button"
-						onClick={handleShowFilterClick}
-					>
-						Фильтры
-						<ArrowsFilter />
-					</button>
-					<Filter
-						handleFilterReset={handleFilterReset}
-						loadingPrice={loadingPrice}
-						disabledFilter={disabledFilter}
-						sliderMin={sliderMin}
-						sliderMax={sliderMax}
-						sliderValues={sliderValues}
-						handleSliderChange={handleSliderChange}
-						handleSliderAfterChange={handleSliderAfterChange}
-						handleManualInputChange={handleManualInputChange}
-						setIsHiddenSchools={setIsHiddenSchools}
-						isHiddenSchools={isHiddenSchools}
-						loadingSchools={loadingSchools}
-						schools={schools}
-						totalSchools={totalSchools}
-						selectedSchoolsId={selectedSchoolsId}
-						handleSchoolCheckboxChange={handleSchoolCheckboxChange}
-						handleFilterBtnClick={handleFilterBtnClick}
-						filterButtonTop={filterButtonTop}
-						filterButtonLeft={filterButtonLeft}
-						isFilterButtonVisible={isFilterButtonVisible}
-						filterButtonRef={filterButtonRef}
-						filterRef={filterRef}
-						filterHeaderRef={filterHeaderRef}
-						filterContentRef={filterContentRef}
-						handleFilterCloseBtnClick={handleFilterCloseBtnClick}
-					/>
-				</aside>
-				<div className="courses-content">
-					{renderCourses()}
-					{selectedCategory && (
-						<>
-							<Subcategories
-								selectedCategory={selectedCategory}
-								loadingCourses={loadingCourses}
-								handleSubcategoryClick={handleSubcategoryClick}
-								paramSubcategoryUrl={params.subcategoryUrl}
-								setSelectedSubcategory={setSelectedSubcategory}
-							/>
-							<Schools
-								selectedCategoryName={selectedCategory.name}
-								loadingCourses={loadingCourses}
-								schools={
-									Array.isArray(totalSchools) ? totalSchools.slice(0, 2) : []
-								}
-							/>
-						</>
-					)}
+						<button
+							className="courses__show-filter-button"
+							onClick={handleShowFilterClick}
+						>
+							Фильтры
+							<ArrowsFilter />
+						</button>
+						<Filter
+							handleFilterReset={handleFilterReset}
+							loadingPrice={loadingPrice}
+							disabledFilter={disabledFilter}
+							sliderMin={sliderMin}
+							sliderMax={sliderMax}
+							sliderValues={sliderValues}
+							handleSliderChange={handleSliderChange}
+							handleSliderAfterChange={handleSliderAfterChange}
+							handleManualInputChange={handleManualInputChange}
+							setIsHiddenSchools={setIsHiddenSchools}
+							isHiddenSchools={isHiddenSchools}
+							loadingSchools={loadingSchools}
+							schools={schools}
+							totalSchools={totalSchools}
+							selectedSchoolsId={selectedSchoolsId}
+							handleSchoolCheckboxChange={handleSchoolCheckboxChange}
+							handleFilterBtnClick={handleFilterBtnClick}
+							filterButtonTop={filterButtonTop}
+							filterButtonLeft={filterButtonLeft}
+							isFilterButtonVisible={isFilterButtonVisible}
+							filterButtonRef={filterButtonRef}
+							filterRef={filterRef}
+							filterHeaderRef={filterHeaderRef}
+							filterContentRef={filterContentRef}
+							handleFilterCloseBtnClick={handleFilterCloseBtnClick}
+						/>
+					</aside>
+					<div className="courses-content">
+						{renderCourses()}
+						{selectedCategory && (
+							<>
+								<Subcategories
+									selectedCategory={selectedCategory}
+									loadingCourses={loadingCourses}
+									handleSubcategoryClick={handleSubcategoryClick}
+									paramSubcategoryUrl={params.subcategoryUrl}
+									setSelectedSubcategory={setSelectedSubcategory}
+								/>
+								<Schools
+									selectedCategoryName={selectedCategory.name}
+									loadingCourses={loadingCourses}
+									schools={
+										Array.isArray(totalSchools) ? totalSchools.slice(0, 2) : []
+									}
+								/>
+							</>
+						)}
+					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</>
 	);
 };
 

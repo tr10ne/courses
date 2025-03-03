@@ -17,6 +17,7 @@ import MobileFilterWrapper from "../Components/MobileFilterWrapper";
 import MobileFilterButton from "../Components/MobileFilterButton";
 import AvgRatingStar from "../Components/AvgRatingStar";
 import Loading from "../Components/Loading";
+import PageMetadata from "../Components/PageMetadata";
 
 const SchoolDetail = () => {
   const navigate = useNavigate();
@@ -332,101 +333,110 @@ const SchoolDetail = () => {
   if (error) return <div>{error}</div>;
   if (!school) return <div>Школа не найдена</div>;
 
+  const SchoolDetailTitle = `${school.name}: список онлайн-курсов школы ${school.name} | COURSES`;
+  const SchoolDetailDescription = `${school.description.split(".")[0].trim()}`;
+
   return (
-    <div className="container">
-      <section className="school-detail">
-        <div className="school-detail__head block-head">
-          <Breadcrumbs crumbs={crumbs} />
-          <h1>{school.name}</h1>
-          <div className="school-detail__box">
-            <div className="school-detail__about">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: isExpanded
-                    ? school.description
-                    : truncatedDescription,
-                }}
-              />
-              {school.description.length > truncatedDescription.length && (
-                <span onClick={toggleExpand} className="school-detail__link">
-                  {isExpanded ? "Свернуть" : "Подробнее..."}
-                </span>
-              )}
-            </div>
-            <div className="school-detail__rating">
-              <div className="school-detail__rating__box">
-                <AvgRatingStar className="avg" value={school.rating} />
-                <Link
-                  className="school-detail__btn"
-                  to={`/schools/${school.url}/reviews`}
-                >
-                  <p className="school-reviewcount school-reviewcount_detail">
-                    <span>{school.reviews}</span> отзывов о школе
-                  </p>
-                </Link>
+    <>
+      <PageMetadata
+        title={SchoolDetailTitle}
+        description={SchoolDetailDescription}
+      />
+      <div className="container">
+        <section className="school-detail">
+          <div className="school-detail__head block-head">
+            <Breadcrumbs crumbs={crumbs} />
+            <h1>{school.name}</h1>
+            <div className="school-detail__box">
+              <div className="school-detail__about">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: isExpanded
+                      ? school.description
+                      : truncatedDescription,
+                  }}
+                />
+                {school.description.length > truncatedDescription.length && (
+                  <span onClick={toggleExpand} className="school-detail__link">
+                    {isExpanded ? "Свернуть" : "Подробнее..."}
+                  </span>
+                )}
+              </div>
+              <div className="school-detail__rating">
+                <div className="school-detail__rating__box">
+                  <AvgRatingStar className="avg" value={school.rating} />
+                  <Link
+                    className="school-detail__btn"
+                    to={`/schools/${school.url}/reviews`}
+                  >
+                    <p className="school-reviewcount school-reviewcount_detail">
+                      <span>{school.reviews}</span> отзывов о школе
+                    </p>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        {initialData && sliderValues && (
-          <MobileFilterWrapper
-            isFilterOpen={isFilterOpen}
-            toggleFilter={toggleFilter}
+          {initialData && sliderValues && (
+            <MobileFilterWrapper
+              isFilterOpen={isFilterOpen}
+              toggleFilter={toggleFilter}
+            >
+              <aside className="school-detail__aside">
+                <SubcategoryFilter
+                  onReady={() => setIsFilterReady(true)}
+                  subcategories={filteredSubcategories}
+                  selectedSubcategories={queryParams.selectedSubcategories}
+                  onSubcategoryChange={handleSubcategoryChange}
+                  sliderMin={priceRange[0]}
+                  sliderMax={priceRange[1]}
+                  sliderValues={sliderValues}
+                  handleSliderChange={handleSliderChange}
+                  handleSliderAfterChange={handleSliderAfterChange}
+                  handleManualInputChange={handleManualInputChange}
+                  onReset={handleResetFilters}
+                  loading={subcategoriesLoading}
+                  isMobile={windowWidth < 1024}
+                  toggleFilter={toggleFilter}
+                />
+              </aside>
+            </MobileFilterWrapper>
+          )}
+          <div
+            className="school-detail__body"
+            ref={(node) => {
+              RefTarget.current = node;
+              bodyRef.current = node;
+            }}
           >
-            <aside className="school-detail__aside">
-              <SubcategoryFilter
-                onReady={() => setIsFilterReady(true)}
-                subcategories={filteredSubcategories}
-                selectedSubcategories={queryParams.selectedSubcategories}
-                onSubcategoryChange={handleSubcategoryChange}
-                sliderMin={priceRange[0]}
-                sliderMax={priceRange[1]}
-                sliderValues={sliderValues}
-                handleSliderChange={handleSliderChange}
-                handleSliderAfterChange={handleSliderAfterChange}
-                handleManualInputChange={handleManualInputChange}
-                onReset={handleResetFilters}
-                loading={subcategoriesLoading}
-                isMobile={windowWidth < 1024}
-                toggleFilter={toggleFilter}
-              />
-            </aside>
-          </MobileFilterWrapper>
-        )}
-        <div
-          className="school-detail__body"
-          ref={(node) => {
-            RefTarget.current = node;
-            bodyRef.current = node;
-          }}
-        >
-          <div className="courses-list">
-            <div className="courses-list__head">
-              <h2>Все курсы {school.name}</h2>
-              {windowWidth <= 1024 && (
-                <MobileFilterButton onClick={toggleFilter} />
+            <div className="courses-list">
+              <div className="courses-list__head">
+                <h2>Все курсы {school.name}</h2>
+                {windowWidth <= 1024 && (
+                  <MobileFilterButton onClick={toggleFilter} />
+                )}
+              </div>
+              {coursesLoading ? (
+                <Loading />
+              ) : courses.length > 0 ? (
+                courses.map((course) => (
+                  <CourseItem key={course.id} course={course} school={school} />
+                ))
+              ) : (
+                <p>Курсы не найдены</p>
               )}
             </div>
-            {coursesLoading ? (
-              <Loading />
-            ) : courses.length > 0 ? (
-              courses.map((course) => (
-                <CourseItem key={course.id} course={course} school={school} />
-              ))
-            ) : (
-              <p>Курсы не найдены</p>
-            )}
           </div>
-        </div>
-        <div className="school-detail__footer">
-          <Pagination
-            currentPage={pagination.current_page}
-            lastPage={pagination.last_page}
-            onPageChange={handlePageChange}
-          />
-        </div>
-      </section>
-    </div>
+          <div className="school-detail__footer">
+            <Pagination
+              currentPage={pagination.current_page}
+              lastPage={pagination.last_page}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 
