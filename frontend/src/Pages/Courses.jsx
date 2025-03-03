@@ -322,8 +322,8 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
-	// Обработчик изменения высоты и отображения кнопки фильтрации
-	const handleFilterButtonTopChange = (elem) => {
+	// Обработчик изменения позициии и отображения кнопки фильтрации
+	const handleFilterButtonPositionChange = (elem) => {
 		const sidebarRect = sidebarRef.current.getBoundingClientRect();
 		const elemRect = elem.getBoundingClientRect();
 
@@ -375,17 +375,6 @@ const Courses = () => {
 		};
 	}, []);
 
-	useEffect(() => {
-		const handleTouchMove = (event) => {
-			// Логика обработчика
-		};
-
-		window.addEventListener("touchmove", handleTouchMove, { passive: true });
-		return () => {
-			window.removeEventListener("touchmove", handleTouchMove);
-		};
-	}, []);
-
 	// Очистка таймера при размонтировании компонента
 	useEffect(() => {
 		return () => {
@@ -422,6 +411,7 @@ const Courses = () => {
 		fetchCourses(true);
 
 		setIsFilterButtonVisible(false);
+		setIsFilterOpen(false);
 	};
 
 	//обработчик нажатия на кнопку reset в фильтрах
@@ -447,7 +437,7 @@ const Courses = () => {
 	const handleSliderAfterChange = (values, slider) => {
 		setSliderValues(values);
 
-		handleFilterButtonTopChange(slider);
+		handleFilterButtonPositionChange(slider);
 	};
 
 	//обработчик изменения цены через ползунок
@@ -470,7 +460,7 @@ const Courses = () => {
 
 		setSliderValues(newValues);
 
-		handleFilterButtonTopChange(event.target.parentElement);
+		handleFilterButtonPositionChange(event.target.parentElement);
 	};
 
 	//обработчик изменения выбранной школы
@@ -485,7 +475,7 @@ const Courses = () => {
 			}
 		});
 
-		handleFilterButtonTopChange(event.target.nextElementSibling);
+		handleFilterButtonPositionChange(event.target.nextElementSibling);
 	};
 
 	// обработка cортировки
@@ -576,14 +566,14 @@ const Courses = () => {
 					</p>
 				)}
 				<div className="courses__titles courses-item_frame">
-					<span>Курс</span>
+					<span className="courses__titles_text">Курс</span>
 					<span className="courses__titles__item" onClick={handleSortByRating}>
 						Рейтинг <Arrows state={ratingSort} />
 					</span>
 					<span className="courses__titles__item" onClick={handleSortByPrice}>
 						Цена <Arrows state={priceSort} />
 					</span>
-					<span>Ссылка на курс</span>
+					<span className="courses__titles_text">Ссылка на курс</span>
 				</div>
 				<ul className="courses-list">
 					{!courses || courses.length === 0 ? (
@@ -676,6 +666,7 @@ const Courses = () => {
 							filterHeaderRef={filterHeaderRef}
 							filterContentRef={filterContentRef}
 							handleFilterCloseBtnClick={handleFilterCloseBtnClick}
+							setIsFilterButtonVisible={setIsFilterButtonVisible}
 						/>
 					</aside>
 					<div className="courses-content">

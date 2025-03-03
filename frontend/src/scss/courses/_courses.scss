@@ -145,4 +145,43 @@
 	.courses__show-filter-button {
 		display: flex;
 	}
+
+}
+
+@media (max-width: 600px) {
+	.request-result-count{
+		font-size: 12px;
+		line-height: 18px;
+	}
+
+	.courses__show-filter-button{
+		padding: 9px 16px;
+		gap: 10px;
+
+		font-size: 14px;
+		line-height: 17px;
+
+		svg{
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	.courses-main{
+		gap: 8px;
+	}
+
+	.courses__titles{
+		margin-bottom: 12px;
+
+		&_text{
+			display: none;
+		}
+	}
+
+	.courses__subcategories__title,
+	.courses__schools__title{
+		font-size: 22px;
+		line-height: 27px;
+	}
 }

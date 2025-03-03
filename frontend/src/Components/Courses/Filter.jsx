@@ -30,13 +30,15 @@ const Filter = ({
 	filterRef,
 	filterHeaderRef,
 	filterContentRef,
-	handleFilterCloseBtnClick
+	handleFilterCloseBtnClick,
+	setIsFilterButtonVisible
 }) => {
 	const schoolsHeightRef = useRef(null);
 
 	//нажатие на кнопку показать все школы
 	const handleShowSchools = () => {
 		setIsHiddenSchools(!isHiddenSchools);
+		setIsFilterButtonVisible(false);
 	};
 
 	return (

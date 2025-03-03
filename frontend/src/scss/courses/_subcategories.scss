@@ -37,3 +37,22 @@
 		color: $color-accent;
 	}
 }
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 1360px) {
+
+	.courses__subcategories__list{
+		column-count: 3;
+		column-gap: 46px;
+	}
+}
+
+@media (max-width: 600px) {
+
+	.courses__subcategories__list{
+		column-count: 2;
+		column-gap: 20px;
+	}
+}

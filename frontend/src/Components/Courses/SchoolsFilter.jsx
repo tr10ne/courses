@@ -44,7 +44,11 @@ const SchoolsFilter = ({
 
 	return (
 		<>
-			<div className={`schools-filter  ${disabledSchools ? "disabled" : ""}`}>
+			<div
+				className={`schools-filter  ${disabledSchools ? "disabled" : ""}`}
+									style={!isHiddenSchools ? { overflow: "visible" } : undefined}
+
+			>
 				{sortedSchools.map((school, index) => {
 					const isSchoolInList = schools.some((s) => s.id === school.id);
 

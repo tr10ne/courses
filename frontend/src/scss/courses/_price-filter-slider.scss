@@ -62,8 +62,20 @@
 /* Стили для контейнера с инпутами */
 .slider-labels {
 	display: flex;
+	position: relative;
 	justify-content: space-between;
 	margin-top: 10px;
+
+	&::after{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		content: '';
+		width: 15px;
+		height: 2px;
+		background-color: $color-text1_3;
+	}
 }
 
 /* Стили для инпутов */
@@ -89,4 +101,15 @@
 .slider-labels input:focus {
 	outline: none;
 	border-color: $color-accent;
+}
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 1024px) {
+	.slider-labels{
+		&::after{
+			width: 50px;
+		}
+	}
 }
