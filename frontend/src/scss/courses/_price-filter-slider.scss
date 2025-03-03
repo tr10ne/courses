@@ -45,6 +45,8 @@
 		margin-top: -6px;
 		padding: 5px;
 
+		opacity: 1;
+
 		&:active,
 		&:focus-visible {
 			box-shadow: 0 0 5px $color-accent;
@@ -76,6 +78,11 @@
 	font-family: "FS-Elliot-Pro-Regular", sans-serif;
 	font-weight: 400;
 	line-height: 15px;
+}
+
+/* Стили для обертки инпутов */
+.slider-labels div {
+	position: relative;
 }
 
 /* Стили для инпутов при фокусе */

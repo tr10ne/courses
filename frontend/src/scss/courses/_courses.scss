@@ -15,6 +15,7 @@
 	gap: 20px;
 	align-self: start;
 	top: calc(var(--header-height-px) + 20px);
+	background-color: $color-bg1;
 }
 
 .request-result-count {
@@ -32,12 +33,12 @@
 	flex-direction: column;
 	margin-bottom: 78px;
 
-	& .pagination{
+	& .pagination {
 		margin-top: 43px;
 	}
 }
 
-.courses__titles{
+.courses__titles {
 	margin-bottom: 20px;
 	padding-top: 5px;
 	justify-items: center;
@@ -47,7 +48,7 @@
 	color: $color-text1_2;
 }
 
-.courses__titles__item{
+.courses__titles__item {
 	display: flex;
 	gap: 5px;
 	align-items: center;
@@ -80,17 +81,68 @@
 	gap: 10px;
 
 	list-style: none;
-
-
 }
 
+.courses__show-filter-button {
+	display: none;
+	align-items: center;
+	gap: 16px;
+	padding: 11px 26px;
+
+	color: inherit;
+	background-color: inherit;
+	font-family: inherit;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 22px;
+	outline: none;
+
+	border: $border;
+	border-radius: 100px;
+
+	transition: 0.3s;
+
+	&:hover,
+	&:focus {
+		border-color: $color-accent;
+		color: $color-accent;
+
+		& svg {
+			fill: $color-accent;
+		}
+	}
+
+	& svg {
+		width: 20px;
+		height: 20px;
+		fill: $color-text1_2;
+		transition: 0.3s;
+	}
+}
 
 /* ============================= */
 /* Media */
 
 @media (max-width: 1024px) {
-	.school-detail {
+	.courses-main {
 		display: flex;
 		flex-direction: column;
+		gap: 22px;
+		padding-top: 0;
+	}
+
+	.courses-sidebar {
+		flex-direction: row;
+		z-index: 1001;
+		align-self: stretch;
+		align-items: center;
+		position: static;
+		justify-content: space-between;
+		padding-top: 20px;
+		padding-bottom: 0;
+	}
+
+	.courses__show-filter-button {
+		display: flex;
 	}
 }

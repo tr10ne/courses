@@ -3,6 +3,7 @@ import ResetFilterButton from "./ResetFilterButton";
 import Loading from "../Loading";
 import PriceFilter from "./PriceFilter";
 import SchoolsFilter from "./SchoolsFilter";
+import Cross from "../Cross";
 
 const Filter = ({
 	handleFilterReset,
@@ -23,8 +24,13 @@ const Filter = ({
 	setIsHiddenSchools,
 	isHiddenSchools,
 	filterButtonTop,
+	filterButtonLeft,
 	isFilterButtonVisible,
 	filterButtonRef,
+	filterRef,
+	filterHeaderRef,
+	filterContentRef,
+	handleFilterCloseBtnClick
 }) => {
 	const schoolsHeightRef = useRef(null);
 
@@ -34,8 +40,14 @@ const Filter = ({
 	};
 
 	return (
-		<div className={`courses-filter`}>
-			<span className="courses-filter__header">
+		<div className="courses-filter-wrapper" ref={filterRef}>
+			<button className="courses-filter-wrapper__close-button"
+			onClick={handleFilterCloseBtnClick}>
+
+			<Cross/>
+			</button>
+		<div className={`courses-filter`} >
+			<span className="courses-filter__header" ref={filterHeaderRef}>
 				Фильтры
 				<ResetFilterButton handleFilterReset={handleFilterReset} />
 			</span>
@@ -44,6 +56,7 @@ const Filter = ({
 				className={`courses-filter__content scrollbar ${
 					disabledFilter ? "disabled" : ""
 				}`}
+				ref={filterContentRef}
 			>
 				<div className="courses-filter__block">
 					<span className="courses-filter__content__title">Цена</span>
@@ -97,10 +110,12 @@ const Filter = ({
 					onClick={handleFilterBtnClick}
 					style={{
 						top: `${filterButtonTop}px`,
-					}}
+						left: filterButtonLeft,
+							}}
 				>
 					Показать
 				</button>
+			</div>
 			</div>
 		</div>
 	);

@@ -27,10 +27,8 @@
 	flex-direction: column;
 	gap: 30px;
 	overflow-y: auto;
+	overflow-x: hidden;
 
-	&__title {
-		margin-bottom: 15px;
-	}
 }
 
 .courses-filter__block {
@@ -67,7 +65,9 @@
 	background-color: $color-accent;
 
 	color: $color-accent-inner;
-	font-family: inherit;
+	font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	font-weight: 700;
+	z-index: 1;
 
 	&::before {
 		content: "";
@@ -93,5 +93,80 @@
 	&_hidden {
 		opacity: 0;
 		pointer-events: none;
+	}
+}
+
+.courses-filter-wrapper__close-button {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	padding: 10px;
+	display: none;
+
+	border-radius: 5px;
+
+	transition: 0.3s;
+
+	&:hover {
+		background-color: $color-accent;
+
+		.cross {
+			fill: $color-accent-inner;
+		}
+	}
+
+	.cross {
+		width: 14px;
+		height: 14px;
+		fill: $color-text1;
+		transition: 0.3s;
+	}
+}
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 1024px) {
+	.courses-filter-wrapper {
+		position: fixed;
+		top: 0;
+		left: 100%;
+		width: 100%;
+		padding: 20px;
+		height: 100vh;
+		background-color: rgba($color: $color-bg1, $alpha: 0.93);
+		opacity: 0;
+		transition: 0.5s;
+	}
+
+	.courses-filter-wrapper__close-button {
+		display: flex;
+	}
+
+	.courses-filter {
+		height: 100%;
+		margin: 0 auto;
+		max-width: 500px;
+	}
+
+	.courses-filter__reset-btn {
+		display: none;
+	}
+
+	.courses-filter__button {
+		position: absolute;
+		left: auto;
+		padding: 10px 20px;
+
+		font-family: inherit;
+		transition: 0s;
+
+		&::before {
+			display: none;
+		}
+
+		// &_hidden {
+		// 	display: none;
+		// }
 	}
 }

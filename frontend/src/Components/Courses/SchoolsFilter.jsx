@@ -38,7 +38,6 @@ const SchoolsFilter = ({
 				}
 			});
 
-			// Сохраняем результат в schoolsHeightRef
 			schoolsHeightRef.current = totalHeight;
 		}
 	}, [sortedSchools, schoolsHeightRef]);

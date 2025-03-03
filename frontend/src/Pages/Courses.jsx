@@ -14,6 +14,7 @@ import { scroller } from "react-scroll";
 import Schools from "../Components/Courses/Schools.jsx";
 import Arrows from "../Components/Arrows.jsx";
 import { RequestHandler } from "../js/RequestHandler.js";
+import ArrowsFilter from "../Components/ArrowsFilter.jsx";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -46,9 +47,15 @@ const Courses = () => {
 	const [totalRecords, setTotalRecords] = useState(0);
 	const [disabledFilter, setDisabledFilter] = useState(true);
 	const [filter, setFilter] = useState("");
-	const sidebarRef = useRef(null);
 	const [filterButtonTop, setFilterButtonTop] = useState(null);
+	const [filterButtonLeft, setFilterButtonleft] = useState(null);
 	const [isFilterButtonVisible, setIsFilterButtonVisible] = useState(false);
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const filterRef = useRef(null);
+	const filterHeaderRef = useRef(null);
+	const filterContentRef = useRef(null);
+	const sidebarRef = useRef(null);
+	const filterButtonRef = useRef(null);
 
 	//filter - price
 	const [loadingPrice, setLoadingPrice] = useState(true);
@@ -64,7 +71,7 @@ const Courses = () => {
 	const [isHiddenSchools, setIsHiddenSchools] = useState(true);
 
 	//=======================================================
-	//ФУНКЦИИ
+	//ОБЩИЕ ФУНКЦИИ
 
 	//скроллиг к нужному элементу
 	const scrollTo = (name) => {
@@ -75,6 +82,10 @@ const Courses = () => {
 			smooth: true,
 			offset: headerHeight * -1,
 		});
+	};
+
+	const isMobile = () => {
+		return window.innerWidth <= 1024;
 	};
 
 	//================================================================
@@ -281,21 +292,25 @@ const Courses = () => {
 
 	//делаем высоту для filter
 	useEffect(() => {
+		const INDENT = 20;
 		const handleFilterMaxHeight = () => {
-			const filter = sidebarRef.current.querySelector(
-				".courses-filter__content"
-			);
-			const INDENT = 20;
-			const windowHeight = window.innerHeight;
-			const headerHeight =
-				document.documentElement.style.getPropertyValue("--header-height");
-			const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
-			const filterTop = filter.getBoundingClientRect().top;
+			if (!isMobile()) {
+				const windowHeight = window.innerHeight;
+				const headerHeight =
+					document.documentElement.style.getPropertyValue("--header-height");
+				const sidebarTop = sidebarRef.current.getBoundingClientRect().top;
+				const filterTop = filterContentRef.current.getBoundingClientRect().top;
 
-			const filterMaxHeight =
-				windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
+				const filterMaxHeight =
+					windowHeight - headerHeight - INDENT * 2 - (filterTop - sidebarTop);
 
-			filter.style.maxHeight = filterMaxHeight + "px";
+				filterContentRef.current.style.maxHeight = filterMaxHeight + "px";
+			} else {
+				filterContentRef.current.style.maxHeight = `calc(100vh - ${
+					filterHeaderRef.current.getBoundingClientRect().height + INDENT * 2
+				}px`;
+				setIsHiddenSchools(false);
+			}
 		};
 
 		if (!loadingCourses) handleFilterMaxHeight();
@@ -306,37 +321,78 @@ const Courses = () => {
 		};
 	}, [loadingCourses]);
 
-	const filterButtonRef = useRef(null);
-
 	// Обработчик изменения высоты и отображения кнопки фильтрации
 	const handleFilterButtonTopChange = (elem) => {
 		const sidebarRect = sidebarRef.current.getBoundingClientRect();
-		const inputRect = elem.getBoundingClientRect();
+		const elemRect = elem.getBoundingClientRect();
 
-		const heightRelative = inputRect.top - sidebarRect.top;
-		 const buttonPosition = heightRelative + inputRect.height / 2 - filterButtonRef.current.offsetHeight / 2;
+		let buttonPositionTop;
+		let buttonPositionLeft = "100%";
 
-		setFilterButtonTop(buttonPosition);
+		if (!isMobile()) {
+			filterContentRef.current.appendChild(filterButtonRef.current);
+
+			const heightRelative = elemRect.top - sidebarRect.top;
+			buttonPositionTop =
+				heightRelative +
+				elemRect.height / 2 -
+				filterButtonRef.current.offsetHeight / 2;
+		} else {
+			elem.appendChild(filterButtonRef.current);
+			buttonPositionTop =
+				0 - filterButtonRef.current.offsetHeight / 2 + elemRect.height / 2;
+
+			if (elemRect.left + elemRect.width / 2 > window.innerWidth / 2)
+				buttonPositionLeft = 0 - filterButtonRef.current.offsetWidth - 5 + "px";
+			else buttonPositionLeft = elemRect.width + 3 + "px";
+		}
+
+		setFilterButtonTop(buttonPositionTop);
+		setFilterButtonleft(buttonPositionLeft);
+
 		setIsFilterButtonVisible(true);
 
 		// Очищаем предыдущий таймер, если он существует
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
-		  }
-		  
-		  timeoutRef.current = setTimeout(() => {
+		}
+
+		timeoutRef.current = setTimeout(() => {
 			setIsFilterButtonVisible(false);
-		  }, 4000);
+		}, 4000);
 	};
+
+	//скрываем кнопку фильтрации, при изменении размера
+	useEffect(() => {
+		const hideFilterBtn = () => {
+			setIsFilterButtonVisible(false);
+		};
+
+		window.addEventListener("resize", hideFilterBtn);
+		return () => {
+			window.removeEventListener("resize", hideFilterBtn);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleTouchMove = (event) => {
+			// Логика обработчика
+		};
+
+		window.addEventListener("touchmove", handleTouchMove, { passive: true });
+		return () => {
+			window.removeEventListener("touchmove", handleTouchMove);
+		};
+	}, []);
 
 	// Очистка таймера при размонтировании компонента
 	useEffect(() => {
 		return () => {
-		  if (timeoutRef.current) {
-			clearTimeout(timeoutRef.current);
-		  }
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
 		};
-	  }, []);
+	}, []);
 
 	//обработчик нажатия на категорию
 	const handleCategoryChange = (category) => {
@@ -387,9 +443,16 @@ const Courses = () => {
 	};
 
 	//обработчик изменения цены через ползунок
-	const handleSliderAfterChange = (values, sliderRef) => {
+	const handleSliderAfterChange = (values, slider) => {
 		setSliderValues(values);
-		handleFilterButtonTopChange(sliderRef.current);
+
+		handleFilterButtonTopChange(slider);
+	};
+
+	//обработчик изменения цены через ползунок
+	const handleSliderChange = (values) => {
+		setSliderValues(values);
+		setIsFilterButtonVisible(false);
 	};
 
 	//обработчик изменения поля ввода цены в фильтре
@@ -406,7 +469,7 @@ const Courses = () => {
 
 		setSliderValues(newValues);
 
-		handleFilterButtonTopChange(event.target);
+		handleFilterButtonTopChange(event.target.parentElement);
 	};
 
 	//обработчик изменения выбранной школы
@@ -421,7 +484,7 @@ const Courses = () => {
 			}
 		});
 
-		handleFilterButtonTopChange(event.target);
+		handleFilterButtonTopChange(event.target.nextElementSibling);
 	};
 
 	// обработка cортировки
@@ -444,6 +507,33 @@ const Courses = () => {
 	//сортировка по цене
 	const handleSortByPrice = () => {
 		handleSort(priceSort, setPriceSort, "priceSort");
+	};
+
+	//обработчик нажатия на кнопку показать фильтр
+	const handleShowFilterClick = () => {
+		setIsFilterOpen(true);
+	};
+
+	useEffect(() => {
+		if (filterRef.current) {
+			if (isFilterOpen) {
+				filterRef.current.style.left = "0";
+				filterRef.current.style.opacity = "1";
+				document.body.style.overflowY = "hidden";
+			} else {
+				filterRef.current.style.left = "";
+				filterRef.current.style.opacity = "";
+				document.body.style.overflowY = "auto";
+			}
+		}
+	}, [isFilterOpen]);
+
+	//обработчик нажатия на кнопку закрыть окно с фильтрацией
+	const handleFilterCloseBtnClick = () => {
+		setIsFilterOpen(false);
+		setSelectedSchoolsId([]);
+		setSliderValues([sliderMin, sliderMax]);
+		setIsFilterButtonVisible(false);
 	};
 
 	//=======================================================
@@ -523,6 +613,13 @@ const Courses = () => {
 						${totalRecords} курсов`}
 					</p>
 
+					<button
+						className="courses__show-filter-button"
+						onClick={handleShowFilterClick}
+					>
+						Фильтры
+						<ArrowsFilter />
+					</button>
 					<Filter
 						handleFilterReset={handleFilterReset}
 						loadingPrice={loadingPrice}
@@ -530,7 +627,7 @@ const Courses = () => {
 						sliderMin={sliderMin}
 						sliderMax={sliderMax}
 						sliderValues={sliderValues}
-						handleSliderChange={setSliderValues}
+						handleSliderChange={handleSliderChange}
 						handleSliderAfterChange={handleSliderAfterChange}
 						handleManualInputChange={handleManualInputChange}
 						setIsHiddenSchools={setIsHiddenSchools}
@@ -542,8 +639,13 @@ const Courses = () => {
 						handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 						handleFilterBtnClick={handleFilterBtnClick}
 						filterButtonTop={filterButtonTop}
+						filterButtonLeft={filterButtonLeft}
 						isFilterButtonVisible={isFilterButtonVisible}
 						filterButtonRef={filterButtonRef}
+						filterRef={filterRef}
+						filterHeaderRef={filterHeaderRef}
+						filterContentRef={filterContentRef}
+						handleFilterCloseBtnClick={handleFilterCloseBtnClick}
 					/>
 				</aside>
 				<div className="courses-content">
