@@ -24,6 +24,7 @@ const Header = ({ pageRef }) => {
 	const searchRef = useRef(null);
 
 	const isSearchFocusedRef = useRef(false);
+	const searchInputRef = useRef(null);
 
 	const handleSearchChange = (event) => {
 		setSearchTerm(event.target.value);
@@ -113,6 +114,9 @@ const Header = ({ pageRef }) => {
 	useEffect(() => {
 		if (searchRef.current && headerRef.current) {
 			if (isSearchOpen) {
+				if (searchInputRef.current) {
+					searchInputRef.current.focus();
+				}
 				searchRef.current.style.translate = `0 ${headerRef.current.offsetHeight}px`;
 				searchRef.current.style.opacity = "1";
 			} else {
@@ -121,6 +125,8 @@ const Header = ({ pageRef }) => {
 			}
 		}
 	}, [isSearchOpen]);
+
+
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -251,6 +257,7 @@ const Header = ({ pageRef }) => {
 						handleSearchChange={handleSearchChange}
 						searchTerm={searchTerm}
 						isSearchFocusedRef={isSearchFocusedRef}
+						searchInputRef={searchInputRef}
 					/>
 
 					<Auth

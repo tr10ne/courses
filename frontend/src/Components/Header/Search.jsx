@@ -4,7 +4,8 @@ const Search = ({
 	isSearchOpen,
 	handleSearchChange,
 	searchTerm,
-	isSearchFocusedRef
+	isSearchFocusedRef,
+	searchInputRef
 }) => {
 
 	const handleFocus = () => {
@@ -28,6 +29,7 @@ const Search = ({
 						</svg>
 					</button>
 					<input
+					ref={searchInputRef}
 						type="text"
 						placeholder="Искать курсы..."
 						value={searchTerm}
