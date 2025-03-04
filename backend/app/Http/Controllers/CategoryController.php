@@ -8,14 +8,14 @@ use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
 {
-    // Метод для получения списка всех категорий
+    // метод для получения списка всех категорий
     public function index()
     {
-        // Возвращаем все категории в виде коллекции ресурса
+        // возвращаем все категории в виде коллекции ресурса
         return CategoryResource::collection(Category::all());
     }
 
-    // Метод для создания новой категории
+    // метод для создания новой категории
     public function store(Request $request)
     {
         // Валидация данных запроса
@@ -30,12 +30,12 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    // Метод для получения категории по её идентификатору
+    // метод для получения категории по её идентификатору
     public function show($id)
     {
         $category = Category::findOrFail($id);
 
-        // Находим категорию по ID, если не найдено - будет ошибка 404
+        // находим категорию по ID, если не найдено - будет ошибка 404
         return  response()->json([
             "category" => new CategoryResource($category),
             "subcategories" => $category->subcategories

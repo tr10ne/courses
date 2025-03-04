@@ -13,9 +13,10 @@ import Subcategories from "../Components/Courses/Subcategories.jsx";
 import { scroller } from "react-scroll";
 import Schools from "../Components/Courses/Schools.jsx";
 import Arrows from "../Components/Arrows.jsx";
-import { RequestHandler } from "../js/RequestHandler.js";
+import { CoursesRequestHandler } from "../js/CoursesRequestHandler.js";
 import ArrowsFilter from "../Components/ArrowsFilter.jsx";
 import PageMetadata from "../Components/PageMetadata.jsx";
+import { isDesktop } from "../js/utils.js";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
@@ -30,7 +31,7 @@ const Courses = () => {
 	});
 
 	//экземпляр запроса
-	const requestHandlerRef = useRef(null);
+	const coursesRequestHandlerRef = useRef(null);
 
 	//courses
 	const [courses, setCourses] = useState([]);
@@ -85,17 +86,13 @@ const Courses = () => {
 		});
 	};
 
-	const isMobile = () => {
-		return window.innerWidth <= 1024;
-	};
-
 	//================================================================
 	// РАБОТА С ЗАПРОСОМ
 
 	//работа с данными для запроса
 	useEffect(() => {
-		if (!requestHandlerRef.current) {
-			requestHandlerRef.current = new RequestHandler(
+		if (!coursesRequestHandlerRef.current) {
+			coursesRequestHandlerRef.current = new CoursesRequestHandler(
 				location,
 				pagination,
 				sliderValues,
@@ -106,34 +103,34 @@ const Courses = () => {
 				recordsPerPage
 			);
 		} else {
-			requestHandlerRef.current.pagination = {
+			coursesRequestHandlerRef.current.pagination = {
 				current_page: 1,
 			};
-			requestHandlerRef.current.priceSort = null;
-			requestHandlerRef.current.ratingSort = null;
+			coursesRequestHandlerRef.current.priceSort = null;
+			coursesRequestHandlerRef.current.ratingSort = null;
 			setPriceSort(null);
 			setRatingSort(null);
 
-			if (requestHandlerRef.current.location !== location) {
-				requestHandlerRef.current.location = location;
+			if (coursesRequestHandlerRef.current.location !== location) {
+				coursesRequestHandlerRef.current.location = location;
 
-				requestHandlerRef.current.sliderValues = [];
-				requestHandlerRef.current.selectedSchoolsId = ["", ""];
+				coursesRequestHandlerRef.current.sliderValues = [];
+				coursesRequestHandlerRef.current.selectedSchoolsId = ["", ""];
 
 				setSelectedSchoolsId([]);
 				setSliderValues(["", ""]);
 			}
 
-			if (requestHandlerRef.current.params !== params) {
-				requestHandlerRef.current.params = params;
+			if (coursesRequestHandlerRef.current.params !== params) {
+				coursesRequestHandlerRef.current.params = params;
 				if (Object.keys(params).length === 0) {
 					setSelectedCategory(null);
 					setSelectedSubcategory(null);
 				}
 			}
 
-			if (requestHandlerRef.current.recordsPerPage !== recordsPerPage) {
-				requestHandlerRef.current.recordsPerPage = recordsPerPage;
+			if (coursesRequestHandlerRef.current.recordsPerPage !== recordsPerPage) {
+				coursesRequestHandlerRef.current.recordsPerPage = recordsPerPage;
 			}
 		}
 
@@ -144,10 +141,10 @@ const Courses = () => {
 	}, [location, params, recordsPerPage]);
 
 	useEffect(() => {
-		if (!requestHandlerRef.current) return;
+		if (!coursesRequestHandlerRef.current) return;
 
-		if (requestHandlerRef.current.pagination !== pagination) {
-			requestHandlerRef.current.pagination = pagination;
+		if (coursesRequestHandlerRef.current.pagination !== pagination) {
+			coursesRequestHandlerRef.current.pagination = pagination;
 		}
 	}, [pagination]);
 
@@ -173,11 +170,11 @@ const Courses = () => {
 			setLoadingSchools(true);
 		}
 
-		const requestHandler = requestHandlerRef.current;
+		const coursesRequestHandler = coursesRequestHandlerRef.current;
 
-		const requestUrl = requestHandler.prepareRequestUrl();
-		const requestParams = requestHandler.prepareRequestParams();
-		setFilter(requestHandler.getSearchFilter());
+		const requestUrl = coursesRequestHandler.prepareRequestUrl();
+		const requestParams = coursesRequestHandler.prepareRequestParams();
+		setFilter(coursesRequestHandler.getSearchFilter());
 
 		axios
 			.get(`${apiUrl}/api/courses/${requestUrl}`, {
@@ -283,7 +280,7 @@ const Courses = () => {
 	//клик по номеру страницы
 	const handlePageChange = (newPage) => {
 		setPagination((prev) => ({ ...prev, current_page: newPage }));
-		requestHandlerRef.current.pagination = { current_page: newPage };
+		coursesRequestHandlerRef.current.pagination = { current_page: newPage };
 		scrollTo("courses");
 		fetchCourses(true);
 	};
@@ -295,7 +292,7 @@ const Courses = () => {
 	useEffect(() => {
 		const INDENT = 20;
 		const handleFilterMaxHeight = () => {
-			if (!isMobile()) {
+			if (isDesktop()) {
 				const windowHeight = window.innerHeight;
 				const headerHeight =
 					document.documentElement.style.getPropertyValue("--header-height");
@@ -330,7 +327,7 @@ const Courses = () => {
 		let buttonPositionTop;
 		let buttonPositionLeft = "100%";
 
-		if (!isMobile()) {
+		if (isDesktop()) {
 			filterContentRef.current.appendChild(filterButtonRef.current);
 
 			const heightRelative = elemRect.top - sidebarRect.top;
@@ -403,9 +400,9 @@ const Courses = () => {
 
 	// Обработчик нажатия на кнопку для фильтрации
 	const handleFilterBtnClick = () => {
-		requestHandlerRef.current.sliderValues = sliderValues;
-		requestHandlerRef.current.selectedSchoolsId = selectedSchoolsId;
-		requestHandlerRef.current.pagination = { current_page: 1 };
+		coursesRequestHandlerRef.current.sliderValues = sliderValues;
+		coursesRequestHandlerRef.current.selectedSchoolsId = selectedSchoolsId;
+		coursesRequestHandlerRef.current.pagination = { current_page: 1 };
 
 		scrollTo("courses");
 		fetchCourses(true);
@@ -424,16 +421,17 @@ const Courses = () => {
 		setRatingSort(null);
 		setPriceSort(null);
 
-		requestHandlerRef.current.sliderValues = ["", ""];
-		requestHandlerRef.current.selectedSchoolsId = [];
-		requestHandlerRef.current.pagination = { current_page: 1 };
-		requestHandlerRef.current.ratingSort = null;
-		requestHandlerRef.current.priceSort = null;
+		coursesRequestHandlerRef.current.sliderValues = ["", ""];
+		coursesRequestHandlerRef.current.selectedSchoolsId = [];
+		coursesRequestHandlerRef.current.pagination = { current_page: 1 };
+		coursesRequestHandlerRef.current.ratingSort = null;
+		coursesRequestHandlerRef.current.priceSort = null;
 
+		handleFilterCloseBtnClick();
 		fetchCourses(true);
 	};
 
-	//обработчик изменения цены через ползунок
+	//обработчик события после изменения цены через ползунок
 	const handleSliderAfterChange = (values, slider) => {
 		setSliderValues(values);
 
@@ -479,18 +477,18 @@ const Courses = () => {
 	};
 
 	// обработка cортировки
-	const handleSort = (sortField, setSortField, requestHandlerField) => {
+	const handleSort = (sortField, setSortField, coursesRequestHandlerField) => {
 		const sort =
 			sortField === null ? "true" : sortField === "true" ? "false" : null;
 
 		setSortField(sort);
-		requestHandlerRef.current[requestHandlerField] = sort;
-		requestHandlerRef.current.pagination = { current_page: 1 };
+		coursesRequestHandlerRef.current[coursesRequestHandlerField] = sort;
+		coursesRequestHandlerRef.current.pagination = { current_page: 1 };
 
 		fetchCourses(true);
 	};
 
-	//сортировка по рейтинг
+	//сортировка по рейтингу
 	const handleSortByRating = () => {
 		handleSort(ratingSort, setRatingSort, "ratingSort");
 	};
@@ -505,7 +503,7 @@ const Courses = () => {
 		setIsFilterOpen(true);
 	};
 
-	useEffect(() => {
+		useEffect(() => {
 		if (filterRef.current) {
 			if (isFilterOpen) {
 				filterRef.current.style.left = "0";
@@ -522,10 +520,15 @@ const Courses = () => {
 	//обработчик нажатия на кнопку закрыть окно с фильтрацией
 	const handleFilterCloseBtnClick = () => {
 		setIsFilterOpen(false);
-		setSelectedSchoolsId([]);
-		setSliderValues([sliderMin, sliderMax]);
 		setIsFilterButtonVisible(false);
 	};
+
+		useEffect(() => {
+		window.addEventListener("resize", handleFilterCloseBtnClick);
+		return () => {
+			window.removeEventListener("resize", handleFilterCloseBtnClick);
+		};
+	}, []);
 
 	//=======================================================
 	//SEO

@@ -129,6 +129,7 @@
 @media (max-width: 1024px) {
 	.courses-filter-wrapper {
 		position: fixed;
+        z-index: 1002;
 		top: 0;
 		left: 100%;
 		width: 100%;
@@ -149,11 +150,7 @@
 		max-width: 500px;
 	}
 
-	.courses-filter__reset-btn {
-		display: none;
-	}
-
-	.courses-filter__button {
+		.courses-filter__button {
 		position: absolute;
 		left: auto;
 		padding: 10px 20px;

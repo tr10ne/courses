@@ -1,6 +1,5 @@
-export class RequestHandler {
+export class CoursesRequestHandler {
 	constructor(
-
 		location,
 		pagination,
 		sliderValues,
@@ -21,11 +20,13 @@ export class RequestHandler {
 		this.params = params;
 	}
 
+	//получаем данные из запроса ?search=
     getSearchFilter() {
 		const searchParams = new URLSearchParams(this.location.search);
 		return searchParams.get("search") || "";
 	}
 
+	//получаем параметры для запроса
 	prepareRequestParams() {
 		const newFilter = this.getSearchFilter();
 
@@ -40,7 +41,7 @@ export class RequestHandler {
 			sort_price: this.priceSort,
 		};
 	}
-
+	//часть строки запроса с выбранной категорией и подкатегорией
 	prepareRequestUrl() {
 		let request = this.params.categoryUrl ?? "";
 

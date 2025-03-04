@@ -9,6 +9,7 @@ import PageMetadata from "../Components/PageMetadata";
 const Home = () => {
   const [categories, setCategories] = useState(null);
 
+  //получаем категории и подкатегории
   useEffect(() => {
     loadCategories()
       .then((loadedCategories) => {
@@ -19,10 +20,17 @@ const Home = () => {
       });
   }, []);
 
+  //========================================================
+  //SEO
+  
   const HomeTitle =
     "Реальные отзывы об онлайн-курсах и школах от студентов и учеников | Агрегатор онлайн-курсов COURSES";
   const HomeDescription =
     "Агрегатор онлайн-курсов COURSES представляет реальные отзывы от студентов и учеников о пройденных курсах в IT школах.";
+
+
+    //=======================================================
+	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
   return (
     <>

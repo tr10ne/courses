@@ -7,7 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CategoryResource extends JsonResource
 {
-    // Метод для преобразования данных ресурса в массив
     public function toArray(Request $request): array
     {
         return [

@@ -8,12 +8,14 @@ const PopularCourses = ({ categories }) => {
 	const [nextPage, setNextPage] = useState(null);
 	const [blocks, setBlocks] = useState([]);
 
+	//изначально выбираем первую категорию
 	useEffect(() => {
 		if (categories) {
 			setActiveCategory(categories[0]);
 		}
 	}, [categories]);
 
+	//отрисовка популярных курсов в зависимости от выбранной категории
 	useEffect(() => {
 		if (categories && activeCategory) {
 			setLoading(false);
@@ -21,22 +23,25 @@ const PopularCourses = ({ categories }) => {
 		}
 	}, [activeCategory, categories]);
 
-	const renderCourses = (categoryId, page = 1) => {
-		return (
-			<PopularCourseList
-			key={`${categoryId}-${page}`}
-				categoryId={categoryId}
-				page={page}
-				setNextPage={setNextPage}
-			/>
-		);
-	};
 
+	//обработчик нажатия на кнопку посмотреть еще
 	const handleShowMore = () => {
 		setBlocks((prevBlocks) => [
 			...prevBlocks,
 			renderCourses(activeCategory.id, nextPage),
 		]);
+	};
+
+	//метод для отрисовки блока курсов
+	const renderCourses = (categoryId, page = 1) => {
+		return (
+			<PopularCourseList
+				key={`${categoryId}-${page}`}
+				categoryId={categoryId}
+				page={page}
+				setNextPage={setNextPage}
+			/>
+		);
 	};
 
 	if (loading) return;
@@ -50,15 +55,15 @@ const PopularCourses = ({ categories }) => {
 				activeCategory={activeCategory}
 			/>
 			<div className="popular-courses__content container">
-			{blocks}
-			{nextPage && (
-				<button
-					className="popular-courses__show-more-btn"
-					onClick={handleShowMore}
-				>
-					Посмотреть еще
-				</button>
-			)}
+				{blocks}
+				{nextPage && (
+					<button
+						className="popular-courses__show-more-btn"
+						onClick={handleShowMore}
+					>
+						Посмотреть еще
+					</button>
+				)}
 			</div>
 		</section>
 	);

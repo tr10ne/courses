@@ -23,68 +23,65 @@ import ProfileEdit from "./Components/Auth/ProfileEdit";
 import PrivateRoute from "./Components/Auth/PrivateRoute";
 import NotFound from "./Components/NotFound/NotFound";
 
-
 const container = document.getElementById("root");
 
 if (container) {
-  const root = createRoot(container);
-  root.render(
-    <Router>
-      <ScrollToTop />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <App>
-              <Outlet />
-            </App>
-          }
-        >
-          <Route index element={<Home />} />
-          <Route path="courses" element={<Courses />} />
-          <Route path="schools" element={<Schools />} />
-          <Route path="reviews" element={<Reviews />} />
-          <Route path="users" element={<Users />} />
-          {/* <Route path="courses/:url" element={<CourseDetail />} /> */}
-          <Route path="schools/:url" element={<SchoolDetail />} />
-          <Route path="schools/:url/reviews" element={<SchoolReviews />} />
-          <Route path="/courses/:categoryUrl" element={<Courses />} />
-          <Route
-            path="/courses/:categoryUrl/:subcategoryUrl"
-            element={<Courses />}
-          />
-          <Route
-            path="/courses/:categoryUrl/:subcategoryUrl/:courseUrl"
-            element={<CourseDetail />}
-          />
- {/* Публичные маршруты */}
- <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+	const root = createRoot(container);
+	root.render(
+		<Router>
+			<ScrollToTop />
+			<Routes>
+				<Route
+					path="/"
+					element={
+						<App>
+							<Outlet />
+						</App>
+					}
+				>
+					<Route index element={<Home />} />
+					<Route path="courses" element={<Courses />} />
+					<Route path="schools" element={<Schools />} />
+					<Route path="reviews" element={<Reviews />} />
+					<Route path="users" element={<Users />} />
+					{/* <Route path="courses/:url" element={<CourseDetail />} /> */}
+					<Route path="schools/:url" element={<SchoolDetail />} />
+					<Route path="schools/:url/reviews" element={<SchoolReviews />} />
+					<Route path="/courses/:categoryUrl" element={<Courses />} />
+					<Route
+						path="/courses/:categoryUrl/:subcategoryUrl"
+						element={<Courses />}
+					/>
+					<Route
+						path="/courses/:categoryUrl/:subcategoryUrl/:courseUrl"
+						element={<CourseDetail />}
+					/>
+					{/* Публичные маршруты */}
+					<Route path="/login" element={<Login />} />
+					<Route path="/register" element={<Register />} />
 
-        {/* Защищенные маршруты */}
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <ProfileEdit />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/users"
-          element={
-            <PrivateRoute>
-              <Users />
-            </PrivateRoute>
-          }
-        />
+					{/* Защищенные маршруты */}
+					<Route
+						path="/profile"
+						element={
+							<PrivateRoute>
+								<ProfileEdit />
+							</PrivateRoute>
+						}
+					/>
+					<Route
+						path="/users"
+						element={
+							<PrivateRoute>
+								<Users />
+							</PrivateRoute>
+						}
+					/>
 
-        {/* Другие маршруты */}
-        <Route path="*" element={<NotFound />} />
-        {/* <PrivateRoute path="/dashboard" component={Dashboard} />
-<PrivateRoute path="/settings" component={Settings} /> */}
-        </Route>
-      </Routes>
-    </Router>
-  );
+					{/* Другие маршруты */}
+					<Route path="*" element={<NotFound />} />
+				</Route>
+			</Routes>
+		</Router>
+	);
 }

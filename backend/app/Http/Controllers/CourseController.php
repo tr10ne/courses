@@ -96,14 +96,10 @@ class CourseController extends Controller
         }
 
         // Получаем список школ
-        // $schools = $query->get()->pluck('school.id')->unique()->values();
         $schools = SchoolResource::collection($query->get()->pluck('school')->unique());
 
         // Дополнительный фильтр по выбранным школам
-        // if ($selectedSchoolsId) {
-        //     $query->whereIn('school_id', explode(',', $selectedSchoolsId));
-        // }
-        $schoolIds = array_filter(explode(',', $selectedSchoolsId));
+              $schoolIds = array_filter(explode(',', $selectedSchoolsId));
     if (!empty($schoolIds)) {
         $query->whereIn('school_id', $schoolIds);
     }

@@ -46,8 +46,7 @@ const SchoolsFilter = ({
 		<>
 			<div
 				className={`schools-filter  ${disabledSchools ? "disabled" : ""}`}
-									style={!isHiddenSchools ? { overflow: "visible" } : undefined}
-
+				style={!isHiddenSchools ? { overflow: "visible" } : undefined}
 			>
 				{sortedSchools.map((school, index) => {
 					const isSchoolInList = schools.some((s) => s.id === school.id);
@@ -64,7 +63,6 @@ const SchoolsFilter = ({
 							selectedSchoolsId={selectedSchoolsId}
 							handleSchoolCheckboxChange={handleSchoolCheckboxChange}
 							isSchoolInList={isSchoolInList}
-							schoolsHeightRef={schoolsHeightRef}
 							ref={ref}
 						/>
 					);

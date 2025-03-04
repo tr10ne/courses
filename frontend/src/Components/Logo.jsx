@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 const Logo = () => {
-	const [text, setText] = useState(""); // Текст, который будет появляться по буквам
-	const [showCursor, setShowCursor] = useState(false); // Видимость курсора
-	const [isAnimating, setIsAnimating] = useState(true); // Флаг для запуска анимации
-	const fullText = "Courses"; // Текст, который будет появляться
+	const [text, setText] = useState("");
+	const [showCursor, setShowCursor] = useState(false);
+	const [isAnimating, setIsAnimating] = useState(true);
+	const fullText = "Courses";
 
+	// Запуск анимации появления логотипа через 1 секунду
 	useEffect(() => {
-		// Запуск анимации через 1 секунду
 		const animationTimeout = setTimeout(() => {
 			setIsAnimating(true);
 		}, 1000);
@@ -15,8 +15,7 @@ const Logo = () => {
 		return () => clearTimeout(animationTimeout);
 	}, []);
 
-
-
+	//анимация появления букв логотипа
 	useEffect(() => {
 		if (isAnimating) {
 			const typingInterval = setInterval(() => {
@@ -24,9 +23,8 @@ const Logo = () => {
 					if (prevText.length < fullText.length) {
 						const newText = fullText.slice(0, prevText.length + 1);
 
-						if (newText.length === fullText.length) {
-							setShowCursor(false);
-						} else setShowCursor(true);
+						if (newText.length === fullText.length) setShowCursor(false);
+						else setShowCursor(true);
 
 						return newText;
 					} else {
@@ -41,7 +39,7 @@ const Logo = () => {
 		}
 	}, [isAnimating]);
 
-    	return (
+	return (
 		<div className={`logo ${isAnimating ? "active" : ""}`}>
 			<svg
 				viewBox="0 0 318.11 329.75"

@@ -2,8 +2,6 @@ const Search = ({
 	handleSearchIconClick,
 	searchRef,
 	isSearchOpen,
-	handleSearchChange,
-	searchTerm,
 	isSearchFocusedRef,
 	searchInputRef
 }) => {
@@ -31,8 +29,6 @@ const Search = ({
 					ref={searchInputRef}
 						type="text"
 						placeholder="Искать курсы..."
-						value={searchTerm}
-						onChange={handleSearchChange}
 						className="search__input"
 						name="search"
 						onFocus={handleFocus}

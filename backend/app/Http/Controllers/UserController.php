@@ -54,8 +54,8 @@ if (!isset($validatedData['role_id'])) {
 {
     $user = User::findOrFail($id);
 
-    Log::info('Updating user', ['user_id' => $id, 'request_data' => $request->all()]);
-    
+    Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
+
     // Валидация данных запроса для обновления
     $validatedData = $request->validate([
         'name' => 'sometimes|required|string',

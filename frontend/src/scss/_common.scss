@@ -79,7 +79,8 @@
 
 .scrollbar {
   &::-webkit-scrollbar {
-    width: 4px; /* ширина полосы прокрутки */
+    /* ширина полосы прокрутки */
+    width: 4px;
   }
 
   &::-webkit-scrollbar-thumb {

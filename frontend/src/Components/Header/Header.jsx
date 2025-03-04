@@ -1,74 +1,123 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import Logo from "../Logo";
-import { debounce } from "lodash";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { debounce } from "lodash";
 import { apiUrl } from "../../js/config";
+import Logo from "../Logo";
 import Auth from "./Auth";
 import Search from "./Search";
+import { isDesktop, isMobile } from "../../js/utils";
 
 const Header = ({ pageRef }) => {
-	const [searchTerm, setSearchTerm] = useState("");
+	const headerRef = useRef(null);
+	const menuRef = useRef(null);
+	const searchRef = useRef(null);
+	const menuItemsRef = useRef([]); // Ссылка для хранения элементов меню(для атрибута title)
+
+	//открытие элементов меню при нажатии
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
+	const searchInputRef = useRef(null); //ссылка на input поиска
+	const isSearchFocusedRef = useRef(false);
 	const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
+
+	// скрываем header
 	const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-	const lastScrollTopRef = useRef(0);
-	const menuItemsRef = useRef([]); // Ссылка для хранения элементов меню
+	const lastScrollTopRef = useRef(0); //последнее положение скролла
+
+	//авторизация
 	const authDropdownRef = useRef(null);
 	const [user, setUser] = useState(null);
 
-	const headerRef = useRef(null);
-
-	const menuRef = useRef(null);
-	const searchRef = useRef(null);
-
-	const isSearchFocusedRef = useRef(false);
-	const searchInputRef = useRef(null);
-
-	const isDesktop = () => {
-		return window.matchMedia("(min-width: 769px)").matches;
-	};
-
-	const handleSearchChange = (event) => {
-		setSearchTerm(event.target.value);
-	};
+	//=======================================================
+	//ФУНКЦИИ СОБЫТИЙ НАЖАТИЯ НА КНОПКИ В HEADER
 
 	const handleMenuButtonClick = () => {
-		setIsSearchOpen(false); // Закрываем поиск при открытии меню
-		setIsMenuOpen((state) => !state); // Переключаем состояние меню
+		setIsSearchOpen(false);
+		setIsMenuOpen((state) => !state);
 	};
 
 	const handleSearchIconClick = () => {
-		setIsMenuOpen(false); // Закрываем меню при открытии поиска
-		setIsSearchOpen((state) => !state); // Переключаем состояние поиска
+		setIsMenuOpen(false);
+		setIsSearchOpen((state) => !state);
 	};
 
 	const handleMenuItemClick = () => {
 		setIsMenuOpen(false);
 	};
 
-	// работа по авторизации
+	useEffect(() => {
+		if (menuRef.current && headerRef.current) {
+			if (isMenuOpen) {
+				menuRef.current.style.translate = `0 ${headerRef.current.offsetHeight}px`;
+				menuRef.current.style.opacity = "1";
+			} else {
+				menuRef.current.style.translate = "";
+				menuRef.current.style.opacity = "";
+			}
+		}
+	}, [isMenuOpen]);
+
+	useEffect(() => {
+		if (searchRef.current && headerRef.current) {
+			if (isSearchOpen) {
+				if (searchInputRef.current) {
+					searchInputRef.current.focus();
+				}
+				searchRef.current.style.translate = `0 ${headerRef.current.offsetHeight}px`;
+				searchRef.current.style.opacity = "1";
+			} else {
+				searchRef.current.style.translate = "";
+				searchRef.current.style.opacity = "";
+			}
+		}
+	}, [isSearchOpen]);
+
+	//=======================================================
+	// АВТОРИЗАЦИЯ
+
 	const handleAuthIconClick = () => {
 		setIsAuthDropdownOpen((state) => !state);
 	};
 
-	const handleClickOutside = (event) => {
-		if (
-			authDropdownRef.current &&
-			!authDropdownRef.current.contains(event.target)
-		) {
-			setIsAuthDropdownOpen(false);
-		}
-	};
-
+	//закрытие меню авторизации
 	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (
+				authDropdownRef.current &&
+				!authDropdownRef.current.contains(event.target)
+			) {
+				setIsAuthDropdownOpen(false);
+			}
+		};
+
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
 
+	//обработка входа пользователя
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			axios
+				.get(`${apiUrl}/api/user`, {
+					headers: { Authorization: `Bearer ${token}` },
+				})
+				.then((response) => {
+					setUser(response.data);
+				})
+				.catch((error) => {
+					console.error("Ошибка при загрузке данных пользователя:", error);
+				});
+		}
+	}, []);
+
+	//=======================================================
+	//АДАПТИВНЫЙ HEADER
+
+	//отслеживание высоты header c измененеием margin-top у page
 	useEffect(() => {
 		const header = headerRef.current;
 		const page = pageRef.current;
@@ -102,37 +151,9 @@ const Header = ({ pageRef }) => {
 		}
 	}, [pageRef]);
 
-	// Применяем стили для меню и поиска при изменении их состояния
-	useEffect(() => {
-		if (menuRef.current && headerRef.current) {
-			if (isMenuOpen) {
-				menuRef.current.style.translate = `0 ${headerRef.current.offsetHeight}px`;
-				menuRef.current.style.opacity = "1";
-			} else {
-				menuRef.current.style.translate = "";
-				menuRef.current.style.opacity = "";
-			}
-		}
-	}, [isMenuOpen]);
-
-	useEffect(() => {
-		if (searchRef.current && headerRef.current) {
-			if (isSearchOpen) {
-				if (searchInputRef.current) {
-					searchInputRef.current.focus();
-				}
-				searchRef.current.style.translate = `0 ${headerRef.current.offsetHeight}px`;
-				searchRef.current.style.opacity = "1";
-			} else {
-				searchRef.current.style.translate = "";
-				searchRef.current.style.opacity = "";
-			}
-		}
-	}, [isSearchOpen]);
-
+	//скрытие header и его подменю при скроллинге
 	useEffect(() => {
 		const handleScroll = () => {
-			console.log(isSearchFocusedRef.current);
 			if (isSearchFocusedRef.current) return;
 
 			const currentScrollTop = window.scrollY;
@@ -140,10 +161,8 @@ const Header = ({ pageRef }) => {
 
 			if (Math.abs(currentScrollTop - lastScrollTopRef.current) >= threshold) {
 				if (!isDesktop() && currentScrollTop > lastScrollTopRef.current) {
-					// Скролл вниз
 					setIsHeaderVisible(false);
 				} else {
-					// Скролл вверх
 					setIsHeaderVisible(true);
 				}
 
@@ -160,20 +179,21 @@ const Header = ({ pageRef }) => {
 		};
 	}, []);
 
-	// Скрытие мобильного меню при изменении ширины экрана
+	// Скрытие меню при изменении ширины экрана
 	useEffect(() => {
 		const handleResize = () => {
-			if (isDesktop()) setIsMenuOpen(false);
+			if (!isMobile()) setIsMenuOpen(false);
 		};
 
-		// const debouncedResize = debounce(handleResize, 200); // debounce на 200 мс
-		window.addEventListener("resize", handleResize);
+		const debouncedResize = debounce(handleResize, 200);
+		window.addEventListener("resize", debouncedResize);
 
 		return () => {
-			window.removeEventListener("resize", handleResize);
+			window.removeEventListener("resize", debouncedResize);
 		};
 	}, []);
 
+	//заголовки при наведении на меню
 	useEffect(() => {
 		menuItemsRef.current.forEach((item) => {
 			if (item) {
@@ -186,23 +206,10 @@ const Header = ({ pageRef }) => {
 				};
 			}
 		});
-	}, [isMenuOpen]); // Зависимость от состояния меню, чтобы обновить обработчики при открытии/закрытии
-
-	useEffect(() => {
-		const token = localStorage.getItem("token");
-		if (token) {
-			axios
-				.get(`${apiUrl}/api/user`, {
-					headers: { Authorization: `Bearer ${token}` },
-				})
-				.then((response) => {
-					setUser(response.data);
-				})
-				.catch((error) => {
-					console.error("Ошибка при загрузке данных пользователя:", error);
-				});
-		}
 	}, []);
+
+	//=======================================================
+	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
 	return (
 		<header
@@ -255,8 +262,6 @@ const Header = ({ pageRef }) => {
 						handleSearchIconClick={handleSearchIconClick}
 						searchRef={searchRef}
 						isSearchOpen={isSearchOpen}
-						handleSearchChange={handleSearchChange}
-						searchTerm={searchTerm}
 						isSearchFocusedRef={isSearchFocusedRef}
 						searchInputRef={searchInputRef}
 					/>

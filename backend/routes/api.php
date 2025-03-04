@@ -20,8 +20,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::put('/users/{id}', [UserController::class, 'update']);
     // Другие защищенные маршруты
+    Route::put('/users/{id}', [UserController::class, 'update']);
 });
 
 
@@ -41,13 +41,10 @@ Route::get('/schools/url/{url}', [SchoolController::class, 'showByUrl'])->name('
 Route::get('/categories/url/{url}', [CategoryController::class, 'showByUrl']);
 Route::get('/subcategories/url/{url}', [SubcategoryController::class, 'showByUrl']);
 
-
-
-
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('courses', CourseController::class);
 Route::apiResource('reviews', ReviewController::class);
 Route::apiResource('subcategories', SubcategoryController::class);
 Route::apiResource('schools', SchoolController::class);
 Route::apiResource('roles', RoleController::class);
-Route::apiResource('users', UserController::class);
+// Route::apiResource('users', UserController::class);
