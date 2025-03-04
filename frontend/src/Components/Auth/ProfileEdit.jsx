@@ -50,6 +50,7 @@ const ProfileEdit = () => {
 		const newData = {
 			name: name,
 			email: email,
+			password: password
 		};
 		try {
 			const token = localStorage.getItem("token");

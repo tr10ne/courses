@@ -29,6 +29,8 @@ class UserController extends Controller
             'role_id' => 'sometimes|exists:roles,id', // Роль пользователя должна существовать в базе, если передана
         ]);
 
+        Log::info('password', ['pass' => $validatedData['password']]);
+
         // Хешируем пароль перед сохранением
         $validatedData['password'] = Hash::make($validatedData['password']);
 
