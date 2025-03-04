@@ -13,197 +13,221 @@ import { formatPrice } from "../js/formatPrice.js";
 import PageMetadata from "../Components/PageMetadata.jsx";
 
 const CourseDetail = () => {
-  const navigate = useNavigate();
-  const { categoryUrl, subcategoryUrl, courseUrl } = useParams();
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const headerRef = useRef(null);
-  const [crumbs, setCrumbs] = useState([]);
-  const [visibleReviews, setVisibleReviews] = useState(1);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+	const navigate = useNavigate();
+	const { categoryUrl, subcategoryUrl, courseUrl } = useParams();
+	const [course, setCourse] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const headerRef = useRef(null);
+	const [crumbs, setCrumbs] = useState([]);
+	const [visibleReviews, setVisibleReviews] = useState(1);
+	const [schoolInfoOnTon, setSchoolInfoOnTon] = useState(null);
+	const sidebarRef = useRef();
 
-  useEffect(() => {
-    if (!course) return;
-    setCrumbs([
-      { path: "/", name: "Главная" },
-      { path: "/courses", name: "Онлайн-курсы" },
-      {
-        path: `/courses/${course.category.url}`,
-        name: course.category.name,
-      },
-      {
-        path: `/courses/${course.category.url}/${course.subcategory.url}`,
-        name: course.subcategory.name,
-      },
-      {
-        path: `/courses/${course.category.url}/${course.subcategory.url}/${course.url}`,
-        name: course.name,
-      },
-    ]);
-  }, [course]);
+	//================================================================
+	// РАБОТА С ЗАПРОСОМ
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+	useEffect(() => {
+		if (!courseUrl) return;
+		axios
+			.get(
+				`${apiUrl}/api/courses/${categoryUrl}/${subcategoryUrl}/${courseUrl}`
+			)
+			.then((response) => {
+				const result = response.data
+					? response.data.data || response.data
+					: null;
+				if (result) {
+					setCourse(result);
+				} else {
+					setError("Курс не найден");
+				}
+			})
+			.catch((error) => {
+				if (error.response && error.response.status === 404) {
+					navigate("/404"); // Перенаправляем на страницу 404
+				} else {
+					console.error("Ошибка при загрузке курса:", error);
+				}
+				setError("Ошибка при загрузке данных курса");
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	}, [courseUrl, categoryUrl, subcategoryUrl, navigate]);
 
-    handleResize();
+	//================================================================
+	//ХЛЕБНЫЕ КРОШКИ
 
-    window.addEventListener("resize", handleResize);
+	useEffect(() => {
+		if (!course) return;
+		setCrumbs([
+			{ path: "/", name: "Главная" },
+			{ path: "/courses", name: "Онлайн-курсы" },
+			{
+				path: `/courses/${course.category.url}`,
+				name: course.category.name,
+			},
+			{
+				path: `/courses/${course.category.url}/${course.subcategory.url}`,
+				name: course.subcategory.name,
+			},
+			{
+				path: `/courses/${course.category.url}/${course.subcategory.url}/${course.url}`,
+				name: course.name,
+			},
+		]);
+	}, [course]);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+	//================================================================
+	//РАБОТА С ВНУТРЕННЕЙ ЛОГИКОЙ
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (!course || windowWidth < 970) return;
-      const headerHeight = headerRef.current.offsetHeight;
-      const sidebar = document.querySelector(".course__sidebar");
-      sidebar.style.top = `-${Math.floor(headerHeight / 2 + 40)}px`;
-    };
+	//получение текущей ширины окна
+	useEffect(() => {
+		const handleResize = () => {
+			setSchoolInfoOnTon(window.innerWidth > 680);
+		};
 
-    handleResize();
+		handleResize();
 
-    window.addEventListener("resize", handleResize);
+		window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [course, windowWidth]);
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
 
-  // Запрос к API для получения курса по его `url`
-  useEffect(() => {
-    if (!courseUrl) return;
-    axios
-      .get(
-        `${apiUrl}/api/courses/${categoryUrl}/${subcategoryUrl}/${courseUrl}`
-      )
-      .then((response) => {
-        const result = response.data
-          ? response.data.data || response.data
-          : null;
-        if (result) {
-          setCourse(result);
-        } else {
-          setError("Курс не найден");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          navigate("/404"); // Перенаправляем на страницу 404
-        } else {
-          console.error("Ошибка при загрузке курса:", error);
-        }
-        setError("Ошибка при загрузке данных курса");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [courseUrl, categoryUrl, subcategoryUrl, navigate]);
+	//адаптивная высота sideBar для разных размеров course__header
+	useEffect(() => {
+		const handleResize = () => {
+			if (!course || !sidebarRef.current) return;
 
-  const CourseDetailTitle = `Курс ${course?.name} от ${
-    course?.school.name
-  }: цена ${formatPrice(
-    course?.price
-  )}, отзывы студентов, описание и программа | COURSES`;
+			if (window.innerWidth < 970) {
+				sidebarRef.current.style.top = "";
+			} else {
+				const headerHeight = headerRef.current.offsetHeight;
+				sidebarRef.current.style.top = `-${Math.floor(
+					headerHeight / 2 + 40
+				)}px`;
+			}
+		};
 
-  const CourseDetailDescription = `Описание и программа курса ${
-    course?.name
-  } от онлайн-школы ${
-    course?.school.name
-  }. Рейтинг, оценки и отзывы учеников. Актуальная цена ${formatPrice(
-    course?.price
-  )}.`;
+		handleResize();
 
-  //отрисовываем отзывы
-  const renderReview = () => {
-    if (course.reviews.length === 0) return <p>Нет отзывов о курсе</p>;
+		window.addEventListener("resize", handleResize);
 
-    const reviewsToShow = course.reviews.slice(0, visibleReviews);
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, [course]);
 
-    return (
-      <>
-        {reviewsToShow.map((review, index) => (
-          <ReviewItem key={index} review={review} />
-        ))}
-        {visibleReviews < course.reviews.length && (
-          <button
-            className="course__reviews-link"
-            onClick={() => setVisibleReviews(visibleReviews + 3)}
-          >
-            Еще отзывы о курсе
-          </button>
-        )}
-      </>
-    );
-  };
+	//=======================================================
+	//SEO
 
-  const renderRelatedCourses = () => {
-    if (!course) return;
-    if (course.related_courses.length === 0) return;
-    return (
-      <article className="course__block">
-        <h2 className="course__title">Похожие курсы</h2>
-        {course.related_courses.map((relatedCourse) => (
-          <CourseItem key={relatedCourse.id} course={relatedCourse} />
-        ))}
-      </article>
-    );
-  };
+	const CourseDetailTitle = `Курс ${course?.name} от ${
+		course?.school.name
+	}: цена ${formatPrice(
+		course?.price
+	)}, отзывы студентов, описание и программа | COURSES`;
 
-  if (loading) {
-    return <Loading />;
-  }
+	const CourseDetailDescription = `Описание и программа курса ${
+		course?.name
+	} от онлайн-школы ${
+		course?.school.name
+	}. Рейтинг, оценки и отзывы учеников. Актуальная цена ${formatPrice(
+		course?.price
+	)}.`;
 
-  if (!error)
-    return (
-      <>
-        <PageMetadata
-          title={CourseDetailTitle}
-          description={CourseDetailDescription}
-        />
-        <section className="course">
-          <div className="course__header" ref={headerRef}>
-            <div className=" container">
-              <div className="course__header__inner">
-                <Breadcrumbs crumbs={crumbs} />
-                <h1 className="title">{course.name}</h1>
-                <p className="course__updated-at">
-                  Последнее обновление{" "}
-                  {moment(course.updated_at).format("DD.MM.YYYY")}
-                </p>
-              </div>
-            </div>
-          </div>
+	//=======================================================
+	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
-          <div className="course__main container text">
-            <div className="course__content">
-              <article className="course__block">
-                <h2 className="course__title">О курсе</h2>
-                <p className="course__description ">{course.description}</p>
-              </article>
-              {windowWidth <= 680 && (
-                <article className="course__block course__sidebar">
-                  <SchoolInfo school={course.school} />
-                </article>
-              )}
-              <article className="course__block">
-                <h2 className="course__title">Отзывы о курсе</h2>
-                {renderReview()}
-              </article>
-              {renderRelatedCourses()}
-            </div>
-            <aside className="course__sidebar">
-              <CourseInfo course={course} />
-              {windowWidth > 680 && <SchoolInfo school={course.school} />}
-            </aside>
-          </div>
-        </section>
-      </>
-    );
+	//отрисовываем отзывы
+	const renderReview = () => {
+		if (course.reviews.length === 0) return <p>Нет отзывов о курсе</p>;
+
+		const reviewsToShow = course.reviews.slice(0, visibleReviews);
+
+		return (
+			<>
+				{reviewsToShow.map((review, index) => (
+					<ReviewItem key={index} review={review} />
+				))}
+				{visibleReviews < course.reviews.length && (
+					<button
+						className="course__reviews-link"
+						onClick={() => setVisibleReviews(visibleReviews + 3)}
+					>
+						Еще отзывы о курсе
+					</button>
+				)}
+			</>
+		);
+	};
+
+	//отрисовываем связанные курсы
+	const renderRelatedCourses = () => {
+		if (!course) return;
+		if (course.related_courses.length === 0) return;
+		return (
+			<article className="course__block">
+				<h2 className="course__title">Похожие курсы</h2>
+				{course.related_courses.map((relatedCourse) => (
+					<CourseItem key={relatedCourse.id} course={relatedCourse} />
+				))}
+			</article>
+		);
+	};
+
+	if (loading) {
+		return <Loading />;
+	}
+
+	if (!error)
+		return (
+			<>
+				<PageMetadata
+					title={CourseDetailTitle}
+					description={CourseDetailDescription}
+				/>
+				<section className="course">
+					<div className="course__header" ref={headerRef}>
+						<div className=" container">
+							<div className="course__header__inner">
+								<Breadcrumbs crumbs={crumbs} />
+								<h1 className="title">{course.name}</h1>
+								<p className="course__updated-at">
+									Последнее обновление{" "}
+									{moment(course.updated_at).format("DD.MM.YYYY")}
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div className="course__main container text">
+						<div className="course__content">
+							<article className="course__block">
+								<h2 className="course__title">О курсе</h2>
+								<p className="course__description ">{course.description}</p>
+							</article>
+							{!schoolInfoOnTon && (
+								<article className="course__block course__sidebar">
+									<SchoolInfo school={course.school} />
+								</article>
+							)}
+							<article className="course__block">
+								<h2 className="course__title">Отзывы о курсе</h2>
+								{renderReview()}
+							</article>
+							{renderRelatedCourses()}
+						</div>
+						<aside className="course__sidebar" ref={sidebarRef}>
+							<CourseInfo course={course} />
+							{schoolInfoOnTon && <SchoolInfo school={course.school} />}
+						</aside>
+					</div>
+				</section>
+			</>
+		);
 };
 
 export default CourseDetail;

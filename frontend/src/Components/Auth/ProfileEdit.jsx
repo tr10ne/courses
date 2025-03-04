@@ -50,8 +50,13 @@ const ProfileEdit = () => {
 		const newData = {
 			name: name,
 			email: email,
-			password: password
+			password: password,
 		};
+
+		if(avatar){
+			newData['avatar'] = avatar
+		}
+		
 		try {
 			const token = localStorage.getItem("token");
 			const response = await fetch(`${apiUrl}/api/users/${userId}`, {

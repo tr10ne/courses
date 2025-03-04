@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import Loading from "../Loading";
 import DirectionItem from "./DirectionItem";
-import { apiUrl } from "../../js/config";
-import axios from "axios";
 import { loadCategories } from "../../js/loadCategories";
 
 const NotFound = () => {
