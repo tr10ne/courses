@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiUrl } from "../../js/config.js";
 
 const Register = () => {
     const [name, setName] = useState('');
@@ -6,10 +7,11 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('/register', {
+            const response = await fetch(`${apiUrl}/api/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

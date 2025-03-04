@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::post('/login', [UserController::class, 'login']);
+Route::post('/register', [UserController::class, 'store']);
 
 // Получение данных по URL
 Route::prefix('courses')->group(function () {
