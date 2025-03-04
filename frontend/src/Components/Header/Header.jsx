@@ -26,6 +26,10 @@ const Header = ({ pageRef }) => {
 	const isSearchFocusedRef = useRef(false);
 	const searchInputRef = useRef(null);
 
+	const isDesktop = () => {
+		return window.matchMedia("(min-width: 769px)").matches;
+	};
+
 	const handleSearchChange = (event) => {
 		setSearchTerm(event.target.value);
 	};
@@ -126,18 +130,16 @@ const Header = ({ pageRef }) => {
 		}
 	}, [isSearchOpen]);
 
-
-
 	useEffect(() => {
 		const handleScroll = () => {
+			console.log(isSearchFocusedRef.current);
 			if (isSearchFocusedRef.current) return;
 
 			const currentScrollTop = window.scrollY;
 			const threshold = 100;
-			const isDesktop = window.matchMedia("(min-width: 700px)").matches;
 
 			if (Math.abs(currentScrollTop - lastScrollTopRef.current) >= threshold) {
-				if (!isDesktop && currentScrollTop > lastScrollTopRef.current) {
+				if (!isDesktop() && currentScrollTop > lastScrollTopRef.current) {
 					// Скролл вниз
 					setIsHeaderVisible(false);
 				} else {
@@ -161,17 +163,16 @@ const Header = ({ pageRef }) => {
 	// Скрытие мобильного меню при изменении ширины экрана
 	useEffect(() => {
 		const handleResize = () => {
-			setIsMenuOpen(false);
-			setIsSearchOpen(false);
+			if (isDesktop()) setIsMenuOpen(false);
 		};
 
-		const debouncedResize = debounce(handleResize, 200); // debounce на 200 мс
-		window.addEventListener("resize", debouncedResize);
+		// const debouncedResize = debounce(handleResize, 200); // debounce на 200 мс
+		window.addEventListener("resize", handleResize);
 
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		};
-	}, [isMenuOpen]);
+	}, []);
 
 	useEffect(() => {
 		menuItemsRef.current.forEach((item) => {

@@ -71,18 +71,19 @@
 	width: 100%;
 	justify-content: center;
 
-	&.active{
-
-.logo__svg{
-	fill: $color-accent;
+	&.active {
+		.logo__svg {
+			fill: $color-accent;
 			stroke: $color-accent;
-}
+		}
 
-.logo__text,
-.logo__cursor{
-	color: $color-accent;
-}
-
+		.logo__text,
+		.logo__cursor {
+			color: $color-accent;
+		}
+		.logo__cursor {
+			font-weight: 700;
+		}
 	}
 
 	&__text {
@@ -268,5 +269,9 @@
 	.header .logo__svg {
 		width: 30px;
 		height: 30px;
+	}
+
+	.logo {
+		min-width: 141px;
 	}
 }

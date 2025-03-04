@@ -4,7 +4,6 @@ const Logo = () => {
 	const [text, setText] = useState(""); // Текст, который будет появляться по буквам
 	const [showCursor, setShowCursor] = useState(false); // Видимость курсора
 	const [isAnimating, setIsAnimating] = useState(true); // Флаг для запуска анимации
-	const logoSvgRef = useRef(null);
 	const fullText = "Courses"; // Текст, который будет появляться
 
 	useEffect(() => {
