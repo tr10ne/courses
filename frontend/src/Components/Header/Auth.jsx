@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import AvatarSvg from "../Auth/AvatarSvg";
 import Avatar from "../Auth/Avatar";
+import { apiUrl } from "../../js/config";
 
 const Auth = ({
 	user,
@@ -9,10 +10,22 @@ const Auth = ({
 	handleAuthIconClick,
 	authDropdownRef,
 }) => {
+	const [avatar, setAvatar] = useState("");
+
+	// Загрузка данных текущего пользователя
+	useEffect(() => {
+		if (user && user.avatar) {
+			setAvatar(apiUrl + user.avatar);
+		}
+		else {
+			setAvatar(null); // Очищаем состояние, если аватара нет
+		}
+	}, [user]);
+
 	return (
 		<div className="auth-dropdown" ref={authDropdownRef}>
 			<button className="auth-icon" onClick={handleAuthIconClick}>
-				<AvatarSvg isUser={user} />
+				{avatar ? <Avatar src={avatar} /> : <AvatarSvg isUser={user} />}
 			</button>
 			{isAuthDropdownOpen && (
 				<div className="auth-dropdown-menu">

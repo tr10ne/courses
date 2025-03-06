@@ -27,7 +27,7 @@ const ProfileEdit = () => {
 					setName(data.name || "");
 					setEmail(data.email || "");
 					setUserId(data.id);
-					// setAvatarPreview(data.avatar || "");
+					setAvatarPreview(apiUrl + data.avatar || "");
 				} else {
 					alert("Ошибка при загрузке данных пользователя");
 				}
@@ -61,7 +61,7 @@ const ProfileEdit = () => {
 			formData.append("avatar", avatar);
 		}
 
-		formData.append('_method', 'PUT'); // Указываем, что это PUT-запрос
+		formData.append("_method", "PUT"); // Указываем, что это PUT-запрос
 
 		// for (const [key, value] of formData.entries()) {
 		//     console.log(key, value);
@@ -83,7 +83,10 @@ const ProfileEdit = () => {
 				// Обновляем состояние
 				setName(data.data.name || "");
 				setEmail(data.data.email || "");
-				setAvatarPreview(data.data.avatar || "");
+				setAvatarPreview(apiUrl + data.data.avatar || "");
+				if (avatarPreview) {
+					URL.revokeObjectURL(avatarPreview); // Очищаем старый URL
+				}
 			} else {
 				alert(data.data.message || "Ошибка при обновлении профиля");
 			}
@@ -91,6 +94,15 @@ const ProfileEdit = () => {
 			console.error("Ошибка:", error);
 		}
 	};
+
+	useEffect(() => {
+		return () => {
+			// Очищаем объект URL при размонтировании компонента
+			if (avatarPreview) {
+				URL.revokeObjectURL(avatarPreview);
+			}
+		};
+	}, [avatarPreview]);
 
 	return (
 		<div className="container">
@@ -107,7 +119,7 @@ const ProfileEdit = () => {
 						type="text"
 						className="form-control"
 						id="name"
-						value={name || ""} // Если name === undefined, используем пустую строку
+						value={name || ""}
 						onChange={(e) => setName(e.target.value)}
 						required
 					/>
@@ -119,7 +131,7 @@ const ProfileEdit = () => {
 						type="email"
 						className="form-control"
 						id="email"
-						value={email || ""} // Если email === undefined, используем пустую строку
+						value={email || ""}
 						onChange={(e) => setEmail(e.target.value)}
 						required
 					/>
@@ -130,7 +142,7 @@ const ProfileEdit = () => {
 						type="password"
 						className="form-control"
 						id="password"
-						value={password || ""} // Если password === undefined, используем пустую строку
+						value={password || ""}
 						onChange={(e) => setPassword(e.target.value)}
 						minLength="8"
 						placeholder="Минимум 8 символов"
@@ -153,10 +165,11 @@ const ProfileEdit = () => {
 					<label htmlFor="avatar" className="avatar-label">
 						Изменить аватар:
 					</label>
-{
-	avatarPreview?<Avatar src={avatarPreview}/>:<AvatarSvg isUser={true}/>
-
-}
+					{avatarPreview ? (
+						<Avatar src={avatarPreview} />
+					) : (
+						<AvatarSvg isUser={true} />
+					)}
 
 					<input
 						type="file"

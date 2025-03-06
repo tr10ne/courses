@@ -11,8 +11,14 @@
 	align-items: center;
 	justify-content: center;
 
-	&:hover .avatar-svg{
-		fill: $color-accent;
+	&:hover
+
+	{
+		scale: 1.1;
+		.avatar-svg{
+			fill: $color-accent;
+		}
+
 	}
 }
 

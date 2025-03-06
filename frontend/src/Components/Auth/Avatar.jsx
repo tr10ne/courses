@@ -5,7 +5,7 @@ const Avatar = ({ src, alt }) => {
 		<img
 			className="avatar-profile"
 			id="avatarPreview"
-			src={src || "/images/default-avatar.jpg"}
+			src={src}
 			alt={alt || "Avatar"}
 		/>
 	);
