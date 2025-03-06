@@ -8,6 +8,9 @@
 @use "./scss/common";
 @use "./scss/not-found";
 
+//Auth
+@use "./scss/auth/avatar";
+
 //Header
 @use "./scss/header/header";
 @use "./scss/header/auth";

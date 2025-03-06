@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiUrl } from "../../js/config";
+import Avatar from "./Avatar";
+import AvatarSvg from "./AvatarSvg";
 
 const ProfileEdit = () => {
 	const [name, setName] = useState("");
@@ -47,15 +49,7 @@ const ProfileEdit = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// const newData = {
-		// 	name: name,
-		// 	email: email,
-		// 	password: password,
-		// };
 
-		// if(avatar){
-		// 	newData['avatar'] = avatar
-		// }
 		const formData = new FormData();
 		formData.append("name", name);
 		formData.append("email", email);
@@ -67,6 +61,8 @@ const ProfileEdit = () => {
 			formData.append("avatar", avatar);
 		}
 
+		formData.append('_method', 'PUT'); // Указываем, что это PUT-запрос
+
 		// for (const [key, value] of formData.entries()) {
 		//     console.log(key, value);
 		// }
@@ -74,11 +70,9 @@ const ProfileEdit = () => {
 		try {
 			const token = localStorage.getItem("token");
 			const response = await fetch(`${apiUrl}/api/users/${userId}`, {
-				method: "PUT",
-				// body: JSON.stringify(newData),
+				method: "POST",
 				body: formData,
 				headers: {
-					// "Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,
 				},
 			});
@@ -159,12 +153,11 @@ const ProfileEdit = () => {
 					<label htmlFor="avatar" className="avatar-label">
 						Изменить аватар:
 					</label>
-					<img
-						className="profile-avatar"
-						id="avatarPreview"
-						src={avatarPreview || "/images/avatar-default.png"}
-						alt="Avatar"
-					/>
+{
+	avatarPreview?<Avatar src={avatarPreview}/>:<AvatarSvg isUser={true}/>
+
+}
+
 					<input
 						type="file"
 						className="form-control-file"

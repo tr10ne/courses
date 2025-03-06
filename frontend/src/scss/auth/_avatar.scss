@@ -1,0 +1,18 @@
+@use "../index" as *;
+
+.avatar-svg {
+	width: 40px;
+	height: 40px;
+	fill: $color-text1;
+	transition: 0.3s;
+
+    &.user{
+        fill: $color-accent2;
+    }
+}
+
+.avatar-profile{
+    width: 40px;
+	height: 40px;
+    border-radius: 50%;
+}
