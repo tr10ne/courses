@@ -22,10 +22,10 @@ const ProfileEdit = () => {
 				});
 				const data = await response.json();
 				if (response.ok) {
-					setName(data.name || ""); // Если data.name === null, используем пустую строку
-					setEmail(data.email || ""); // Если data.email === null, используем пустую строку
+					setName(data.name || "");
+					setEmail(data.email || "");
 					setUserId(data.id);
-					setAvatarPreview(data.avatar || ""); // Если data.avatar === null, используем пустую строку
+					// setAvatarPreview(data.avatar || "");
 				} else {
 					alert("Ошибка при загрузке данных пользователя");
 				}
@@ -56,7 +56,7 @@ const ProfileEdit = () => {
 		if(avatar){
 			newData['avatar'] = avatar
 		}
-		
+
 		try {
 			const token = localStorage.getItem("token");
 			const response = await fetch(`${apiUrl}/api/users/${userId}`, {
