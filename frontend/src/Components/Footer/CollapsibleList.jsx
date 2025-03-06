@@ -41,7 +41,6 @@ const CollapsibleList = ({ title, items, isOpen, onToggle }) => {
 
   return (
     <div className="footer__nav">
-      {/* Заголовок списка */}
       <div
         className="footer__nav__title"
         onClick={handleClick}
@@ -52,7 +51,6 @@ const CollapsibleList = ({ title, items, isOpen, onToggle }) => {
           {isMobile && (isOpen ? "-" : "+")}
         </span>
       </div>
-      {/* Список с анимацией */}
       <ul
         ref={listRef}
         style={{

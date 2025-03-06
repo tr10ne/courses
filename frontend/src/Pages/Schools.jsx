@@ -15,6 +15,7 @@ const Schools = () => {
     last_page: 1,
   });
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const perPage = 10;
 
   const RefTarget = useRef(null);
@@ -35,6 +36,7 @@ const Schools = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const categoriesQuery =
       selectedCategories.length > 0
         ? `&categories=${selectedCategories.join(",")}`
@@ -47,9 +49,11 @@ const Schools = () => {
       .then((response) => {
         setSchools(response.data.data || []);
         setPagination(response.data.meta);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Ошибка при загрузке школ:", error);
+        setIsLoading(false);
       });
   }, [pagination.current_page, selectedCategories]);
 
@@ -110,12 +114,14 @@ const Schools = () => {
             />
           </aside>
           <div className="schools__body" ref={RefTarget}>
-            {schools.length > 0 ? (
+            {isLoading ? (
+              <Loading />
+            ) : schools.length > 0 ? (
               schools.map((school) => (
                 <SchoolItem key={school.id} school={school} />
               ))
             ) : (
-              <Loading />
+              <div>Школы не найдены</div>
             )}
           </div>
 
