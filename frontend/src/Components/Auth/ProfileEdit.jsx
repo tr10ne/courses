@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { apiUrl } from "../../js/config";
+import { UserContext } from "../UserContext";
 import Avatar from "./Avatar";
 import AvatarSvg from "./AvatarSvg";
 
 const ProfileEdit = () => {
+	const { user, setUser } = useContext(UserContext);
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -13,31 +15,39 @@ const ProfileEdit = () => {
 	const [userId, setUserId] = useState(null);
 
 	// Загрузка данных текущего пользователя
-	useEffect(() => {
-		const fetchUserData = async () => {
-			try {
-				const token = localStorage.getItem("token");
-				const response = await fetch(`${apiUrl}/api/user`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-				const data = await response.json();
-				if (response.ok) {
-					setName(data.name || "");
-					setEmail(data.email || "");
-					setUserId(data.id);
-					setAvatarPreview(apiUrl + data.avatar || "");
-				} else {
-					alert("Ошибка при загрузке данных пользователя");
-				}
-			} catch (error) {
-				console.error("Ошибка:", error);
-			}
-		};
+	// useEffect(() => {
+	// 	const fetchUserData = async () => {
+	// 		try {
+	// 			const token = localStorage.getItem("token");
+	// 			const response = await fetch(`${apiUrl}/api/user`, {
+	// 				headers: {
+	// 					Authorization: `Bearer ${token}`,
+	// 				},
+	// 			});
+	// 			const data = await response.json();
+	// 			if (response.ok) {
+	// 				setName(data.name || "");
+	// 				setEmail(data.email || "");
+	// 				setUserId(data.id);
+	// 				setAvatarPreview(apiUrl + data.avatar || "");
+	// 			} else {
+	// 				alert("Ошибка при загрузке данных пользователя");
+	// 			}
+	// 		} catch (error) {
+	// 			console.error("Ошибка:", error);
+	// 		}
+	// 	};
 
-		fetchUserData();
-	}, []);
+	// 	fetchUserData();
+	// }, []);
+	// Загрузка данных текущего пользователя
+	useEffect(() => {
+		if (!user) return;
+		setName(user.name || "");
+		setEmail(user.email || "");
+		setUserId(user.id);
+		if (user.avatar) setAvatarPreview(apiUrl + user.avatar);
+	}, [user]);
 
 	const handleAvatarChange = (e) => {
 		const file = e.target.files[0];
@@ -61,11 +71,7 @@ const ProfileEdit = () => {
 			formData.append("avatar", avatar);
 		}
 
-		formData.append("_method", "PUT"); // Указываем, что это PUT-запрос
-
-		// for (const [key, value] of formData.entries()) {
-		//     console.log(key, value);
-		// }
+		formData.append("_method", "PUT");
 
 		try {
 			const token = localStorage.getItem("token");
@@ -80,7 +86,7 @@ const ProfileEdit = () => {
 
 			if (response.ok) {
 				alert("Профиль успешно обновлен");
-				// Обновляем состояние
+				setUser(data.data);
 				setName(data.data.name || "");
 				setEmail(data.data.email || "");
 				setAvatarPreview(apiUrl + data.data.avatar || "");

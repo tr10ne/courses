@@ -1,20 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import { Link } from "react-router-dom";
 import AvatarSvg from "../Auth/AvatarSvg";
 import Avatar from "../Auth/Avatar";
 import { apiUrl } from "../../js/config";
+import { UserContext } from "../UserContext";
 
 const Auth = ({
-	user,
 	isAuthDropdownOpen,
 	handleAuthIconClick,
 	authDropdownRef,
 }) => {
+	const { user } = useContext(UserContext);
 	const [avatar, setAvatar] = useState("");
+
 
 	// Загрузка данных текущего пользователя
 	useEffect(() => {
 		if (user && user.avatar) {
+			console.log(user.avatar);
 			setAvatar(apiUrl + user.avatar);
 		}
 		else {

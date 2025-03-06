@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { apiUrl } from "../../js/config.js";
+import { UserContext } from "../UserContext.jsx";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const { setUser } = useContext(UserContext);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -15,6 +17,7 @@ const Login = () => {
 			});
 			if (response.data.token) {
 				localStorage.setItem("token", response.data.token); // Сохраняем токен
+				setUser(response.data.user);
 				window.location.href = "/profile"; // Перенаправляем на страницу профиля
 			}
 		} catch (error) {

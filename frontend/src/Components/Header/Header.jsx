@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { debounce } from "lodash";
@@ -7,6 +7,7 @@ import Logo from "../Logo";
 import Auth from "./Auth";
 import Search from "./Search";
 import { isDesktop, isMobile } from "../../js/utils";
+import { UserContext } from "../UserContext";
 
 const Header = ({ pageRef }) => {
 	const headerRef = useRef(null);
@@ -26,8 +27,8 @@ const Header = ({ pageRef }) => {
 	const lastScrollTopRef = useRef(0); //последнее положение скролла
 
 	//авторизация
+	const { user, setUser } = useContext(UserContext);
 	const authDropdownRef = useRef(null);
-	const [user, setUser] = useState(null);
 
 	//=======================================================
 	//ФУНКЦИИ СОБЫТИЙ НАЖАТИЯ НА КНОПКИ В HEADER
@@ -267,7 +268,6 @@ const Header = ({ pageRef }) => {
 					/>
 
 					<Auth
-						user={user}
 						isAuthDropdownOpen={isAuthDropdownOpen}
 						handleAuthIconClick={handleAuthIconClick}
 						authDropdownRef={authDropdownRef}
