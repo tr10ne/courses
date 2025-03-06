@@ -10,13 +10,24 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const formData = new FormData();
+		formData.append("name", name);
+		formData.append("email", email);
+		if (password) {
+			formData.append("password", password);
+			formData.append("password_confirmation", passwordConfirmation);
+		}
+
+
         try {
             const response = await fetch(`${apiUrl}/api/register`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirmation }),
+                // headers: {
+                //     'Content-Type': 'application/json',
+                // },
+                // body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirmation }),
+                body: formData,
             });
             const data = await response.json();
             if (response.ok) {

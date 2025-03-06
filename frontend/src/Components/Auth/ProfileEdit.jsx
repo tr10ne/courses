@@ -47,23 +47,38 @@ const ProfileEdit = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const newData = {
-			name: name,
-			email: email,
-			password: password,
-		};
+		// const newData = {
+		// 	name: name,
+		// 	email: email,
+		// 	password: password,
+		// };
 
-		if(avatar){
-			newData['avatar'] = avatar
+		// if(avatar){
+		// 	newData['avatar'] = avatar
+		// }
+		const formData = new FormData();
+		formData.append("name", name);
+		formData.append("email", email);
+		if (password) {
+			formData.append("password", password);
+			formData.append("password_confirmation", passwordConfirmation);
 		}
+		if (avatar) {
+			formData.append("avatar", avatar);
+		}
+
+		// for (const [key, value] of formData.entries()) {
+		//     console.log(key, value);
+		// }
 
 		try {
 			const token = localStorage.getItem("token");
 			const response = await fetch(`${apiUrl}/api/users/${userId}`, {
 				method: "PUT",
-				body: JSON.stringify(newData),
+				// body: JSON.stringify(newData),
+				body: formData,
 				headers: {
-					"Content-Type": "application/json",
+					// "Content-Type": "application/json",
 					Authorization: `Bearer ${token}`,
 				},
 			});
