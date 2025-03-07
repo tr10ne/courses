@@ -1,0 +1,73 @@
+@use "../index" as *;
+
+.auth {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+
+	text-align: center;
+}
+
+.auth__form {
+	max-width: 500px;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.link-btn {
+		min-width: 200px;
+		align-self: center;
+	}
+}
+
+.auth__form__group_avatar {
+	align-self: center;
+}
+
+.auth__form__label {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+
+	font-size: 12px;
+	text-align: start;
+	color: $color-text1_2;
+}
+
+.auth__form__input {
+	justify-self: normal;
+	padding: 11px 26px;
+
+	color: $color-text1;
+
+	font-size: 16px;
+	text-align: center;
+	border: $border;
+	border-color: $color-text1;
+	border-radius: 5px;
+
+	transition: 0.3s;
+
+	&:focus {
+		border: $border2;
+	}
+}
+
+/* ============================= */
+/* Media */
+
+@media (max-width: 610px) {
+	.auth__title {
+		font-size: 26px;
+		line-height: 30px;
+	}
+}
+@media (max-width: 400px) {
+	.auth__form__label {
+		text-align: center;
+	}
+}

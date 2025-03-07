@@ -27,7 +27,7 @@ const Header = ({ pageRef }) => {
 	const lastScrollTopRef = useRef(0); //последнее положение скролла
 
 	//авторизация
-	const { user, setUser } = useContext(UserContext);
+	const {  setUser } = useContext(UserContext);
 	const authDropdownRef = useRef(null);
 
 	//=======================================================
@@ -113,7 +113,7 @@ const Header = ({ pageRef }) => {
 					console.error("Ошибка при загрузке данных пользователя:", error);
 				});
 		}
-	}, []);
+	}, [setUser]);
 
 	//=======================================================
 	//АДАПТИВНЫЙ HEADER
