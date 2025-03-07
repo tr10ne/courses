@@ -4,26 +4,26 @@ import { apiUrl } from "../../js/config.js";
 import { UserContext } from "../UserContext.jsx";
 
 const Login = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const { setUser } = useContext(UserContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { user, setUser } = useContext(UserContext);
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		try {
-			const response = await axios.post(`${apiUrl}/api/login`, {
-				email,
-				password,
-			});
-			if (response.data.token) {
-				localStorage.setItem("token", response.data.token); // Сохраняем токен
-				setUser(response.data.user);
-				window.location.href = "/profile"; // Перенаправляем на страницу профиля
-			}
-		} catch (error) {
-			console.error("Ошибка при авторизации:", error);
-		}
-	};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${apiUrl}/api/login`, {
+        email,
+        password,
+      });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token); // Сохраняем токен
+        setUser(response.data.user);
+        window.location.href = "/profile"; // Перенаправляем на страницу профиля
+      }
+    } catch (error) {
+      console.error("Ошибка при авторизации:", error);
+    }
+  };
 
 	return (
 		<div className="container auth">

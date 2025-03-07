@@ -52,6 +52,7 @@ class UserController extends Controller
     {
         // Находим пользователя по ID и возвращаем его с ролью в виде ресурса
         return new UserResource(User::with('role')->findOrFail($id));
+        
     }
 
     public function update($id, Request $request)
@@ -123,8 +124,8 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        // Поиск пользователя по email
-        $user = User::where('email', $credentials['email'])->first();
+        // Поиск пользователя по email с загрузкой связи role
+        $user = User::with('role')->where('email', $credentials['email'])->first();
 
         // Проверка пароля
         if ($user && Hash::check($credentials['password'], $user->password)) {

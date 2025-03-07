@@ -6,14 +6,14 @@ import AvatarSvg from "./AvatarSvg";
 import Cross from "../Cross";
 
 const ProfileEdit = () => {
-	const { user, setUser } = useContext(UserContext);
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [passwordConfirmation, setPasswordConfirmation] = useState("");
-	const [avatar, setAvatar] = useState(null);
-	const [avatarPreview, setAvatarPreview] = useState("");
-	const [userId, setUserId] = useState(null);
+  const { user, setUser } = useContext(UserContext);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [avatar, setAvatar] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [userId, setUserId] = useState(null);
 
 	useEffect(() => {
 		if (!user) return;
@@ -36,8 +36,8 @@ const ProfileEdit = () => {
 		setAvatarPreview(null);
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
 		const formData = new FormData();
 		formData.append("name", name);
@@ -50,16 +50,16 @@ const ProfileEdit = () => {
 		formData.append("avatar", avatar);
 		formData.append("_method", "PUT");
 
-		try {
-			const token = localStorage.getItem("token");
-			const response = await fetch(`${apiUrl}/api/users/${userId}`, {
-				method: "POST",
-				body: formData,
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			const data = await response.json();
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${apiUrl}/api/users/${userId}`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
 
 			if (response.ok) {
 				alert("Профиль успешно обновлен");
@@ -79,14 +79,14 @@ const ProfileEdit = () => {
 		}
 	};
 
-	useEffect(() => {
-		return () => {
-			// Очищаем объект URL при размонтировании компонента
-			if (avatarPreview) {
-				URL.revokeObjectURL(avatarPreview);
-			}
-		};
-	}, [avatarPreview]);
+  useEffect(() => {
+    return () => {
+      // Очищаем объект URL при размонтировании компонента
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
 	return (
 		<div className="container auth">
