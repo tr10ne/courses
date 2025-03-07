@@ -13,12 +13,22 @@ use App\Http\Controllers\UserController;
 // Если вы хотите защитить маршруты, которые требуют аутентификации, используйте middleware auth:sanctum:
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        $user = $request->user();
+        $roleName = $user->role?->name; // Получаем название роли
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $roleName, // Только название роли
+            'avatar' => $user->avatar,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+        ];
     });
     // Другие защищенные маршруты
     Route::put('/users/{id}', [UserController::class, 'update']);
 });
-
 
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/register', [UserController::class, 'store']);
