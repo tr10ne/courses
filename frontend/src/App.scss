@@ -9,11 +9,12 @@
 @use "./scss/not-found";
 
 //Auth
+@use "./scss/auth/auth";
 @use "./scss/auth/avatar";
 
 //Header
 @use "./scss/header/header";
-@use "./scss/header/auth";
+@use "./scss/header/header-auth";
 @use "./scss/header/search";
 
 //Home

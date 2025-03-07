@@ -71,7 +71,10 @@
 	font-size: 12px;
 	font-weight: 700;
 	line-height: 24px;
-	&:hover {
+	outline: none;
+	
+	&:hover,
+	&:focus {
 		color: $color-accent;
 		background-color: $color-text3;
 		border: 1px solid $color-accent;

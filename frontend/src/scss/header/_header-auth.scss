@@ -4,21 +4,22 @@
 }
 
 .auth-icon {
-	background: none;
-	border: none;
-	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	width: 40px;
+	height: 40px;
 
-	&:hover
+	background: none;
+	border: none;
+	cursor: pointer;
 
-	{
+	&:hover {
 		scale: 1.1;
-		.avatar-svg{
+
+		.avatar-svg {
 			fill: $color-accent;
 		}
-
 	}
 }
 
@@ -28,11 +29,10 @@
 	border-radius: 50%;
 }
 
-
 .auth-dropdown-menu {
 	position: absolute;
 	display: flex;
-flex-direction: column;
+	flex-direction: column;
 	padding: 20px;
 	top: 100%;
 	right: 0;
@@ -49,14 +49,13 @@ flex-direction: column;
 	padding: 10px 20px;
 
 	font-family: "FS-Elliot-Pro-Bold", sans-serif;
-    font-weight: 700;
+	font-weight: 700;
 	text-decoration: none;
 	color: $color-text1;
 	text-align: left;
 	white-space: nowrap;
-    font-size: 14px;
-    line-height: 14px;
-
+	font-size: 14px;
+	line-height: 14px;
 }
 
 .auth-dropdown-item:hover {

@@ -55,43 +55,55 @@ class UserController extends Controller
     }
 
     public function update($id, Request $request)
-{
-    $user = User::findOrFail($id);
+    {
+        $user = User::findOrFail($id);
 
-    Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
+        Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
 
-    // Валидация данных запроса для обновления
-    $validatedData = $request->validate([
-        'name' => 'sometimes|required|string',
-        'email' => 'sometimes|required|string|email|unique:users,email,' . $user->id,
-        'password' => 'sometimes|required|string|min:8',
-        'role_id' => 'sometimes|required|exists:roles,id',
-        'avatar' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ]);
-
-    // Если пароль обновляется, хешируем новый пароль
-    if (isset($validatedData['password'])) {
-        $validatedData['password'] = Hash::make($validatedData['password']);
-    }
-
-    // Обработка загрузки аватара
-    if ($request->hasFile('avatar')) {
-        // Удаляем старый аватар, если он существует
-        if ($user->avatar && Storage::exists($user->avatar)) {
-            Storage::delete($user->avatar);
+        if ($request->input('avatar') === 'null') {
+            $request->merge(['avatar' => null]);
         }
 
-        // Сохраняем новый аватар
-        $avatarPath = $request->file('avatar')->store('public/images/users/avatars');
-        $validatedData['avatar'] = str_replace('public/', '/storage/', $avatarPath); 
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string',
+            'email' => 'sometimes|required|string|email|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|string|min:8',
+            'role_id' => 'sometimes|required|exists:roles,id',
+            'avatar' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+
+
+        // Если пароль обновляется, хешируем новый пароль
+        if (isset($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        }
+
+
+        // Обработка удаления/загрузки аватара
+        if ($request->input('avatar') === null && !$request->hasFile('avatar')) {
+                        // Удаляем старый аватар, если он существует
+            if ($user->avatar && Storage::exists(str_replace('/storage/', 'public/', $user->avatar))) {
+                Storage::delete(str_replace('/storage/', 'public/', $user->avatar));
+            }
+            $validatedData['avatar'] = null;
+        } else if ($request->hasFile('avatar')) {
+            // Удаляем старый аватар, если он существует
+            if ($user->avatar && Storage::exists(str_replace('/storage/', 'public/', $user->avatar))) {
+                Storage::delete(str_replace('/storage/', 'public/', $user->avatar));
+            }
+
+            // Сохраняем новый аватар
+            $avatarPath = $request->file('avatar')->store('public/images/users/avatars');
+            $validatedData['avatar'] = str_replace('public/', '/storage/', $avatarPath);
+        }
+
+        // Обновляем данные пользователя
+        $user->update($validatedData);
+
+        // Возвращаем обновленного пользователя в виде ресурса
+        return new UserResource($user);
     }
-
-    // Обновляем данные пользователя
-    $user->update($validatedData);
-
-    // Возвращаем обновленного пользователя в виде ресурса
-    return new UserResource($user);
-}
 
     // Метод для удаления пользователя
     public function destroy($id)

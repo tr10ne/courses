@@ -26,30 +26,38 @@ const Login = () => {
 	};
 
 	return (
-		<div>
-			<h1>Авторизация</h1>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor="email">Email</label>
+		<div className="container auth">
+			<h1 className="title auth__title">
+				Авторизация
+			</h1>
+			<form className="auth__form" onSubmit={handleSubmit}>
+				<div className="auth__form__group">
+					<label className="auth__form__label">Email
 					<input
+					className="auth__form__input"
 						type="email"
 						name="email"
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						required
 					/>
+					</label>
 				</div>
-				<div>
-					<label htmlFor="password">Пароль</label>
+				<div className="auth__form__group">
+					<label className="auth__form__label">Пароль:
+
 					<input
+					className="auth__form__input"
 						type="password"
 						name="password"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						required
 					/>
+
+					</label>
 				</div>
-				<button type="submit">Войти</button>
+				<button type="submit" className="link-btn">Войти</button>
 			</form>
 		</div>
 	);
