@@ -156,7 +156,8 @@
 		animation: pulse 0.5s infinite both alternate ease-in-out;
 	}
 
-	&:hover {
+	&:hover,
+	&:focus {
 		&::before,
 		&::after {
 			background-color: $color-accent;

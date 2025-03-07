@@ -150,7 +150,7 @@ const ProfileEdit = () => {
 					</label>
 				</div>
 				<div className="auth__form__group auth__form__group_avatar">
-					<label className="avatar-label">
+					<label tabindex="0" className="avatar-label">
 						{avatarPreview ? (
 							<Avatar src={avatarPreview} />
 						) : (

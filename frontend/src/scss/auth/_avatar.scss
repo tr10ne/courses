@@ -6,55 +6,56 @@
 	fill: $color-text1;
 	transition: 0.3s;
 
-    &.user{
-        fill: $color-accent;
-    }
+	&.user {
+		fill: $color-accent;
+	}
 }
 
-.avatar-profile{
-    width: 100%;
+.avatar-profile {
+	width: 100%;
 	height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    transition: .3s;
-
+	border-radius: 50%;
+	object-fit: cover;
+	transition: 0.3s;
 }
 
-.avatar-label{
-    display: flex;
-    width: 80px;
-    height: 80px;
-position: relative;
+.avatar-label {
+	display: flex;
+	width: 80px;
+	height: 80px;
+	position: relative;
 
-    cursor: pointer;
+	cursor: pointer;
 
-    .avatar-profile:hover,
-    .avatar-svg:hover
-    {
-       scale: 1.1;
-    }
+	&:focus .avatar-profile,
+	&:focus .avatar-svg,
+	.avatar-profile:hover,
+	.avatar-svg:hover {
+		scale: 1.1;
+	}
 
-    input{
-        display: none;
-    }
+	input {
+		display: none;
+	}
 }
 
-.avatar-delete-btn{
-    padding: 3px;
-    position: absolute;
-    right: -23px;
-    top: 0;
+.avatar-delete-btn {
+	padding: 3px;
+	position: absolute;
+	right: -23px;
+	top: 0;
 
-    .cross{
-                width: 15px;
-        height: 15px;
-        fill: $color-text1;
-        transition: .3s;
-    }
+	.cross {
+		width: 15px;
+		height: 15px;
+		fill: $color-text1;
+		transition: 0.3s;
+	}
 
-    &:hover{
-        .cross{
-            fill: $color-accent;
-        }
-    }
+	&:hover,
+	&:focus {
+		.cross {
+			fill: $color-accent;
+		}
+	}
 }

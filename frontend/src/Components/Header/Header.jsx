@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { debounce } from "lodash";
+import { debounce, dropRight } from "lodash";
 import { apiUrl } from "../../js/config";
 import Logo from "../Logo";
 import Auth from "./Auth";
@@ -27,20 +27,29 @@ const Header = ({ pageRef }) => {
 	const lastScrollTopRef = useRef(0); //последнее положение скролла
 
 	//авторизация
-	const {  setUser } = useContext(UserContext);
+	const { setUser } = useContext(UserContext);
 	const authDropdownRef = useRef(null);
+	const authDropdownMenuRef = useRef(null);
 
 	//=======================================================
 	//ФУНКЦИИ СОБЫТИЙ НАЖАТИЯ НА КНОПКИ В HEADER
 
+	const handleLogoClick = ()=>{
+		setIsSearchOpen(false);
+		setIsMenuOpen(false);
+		setIsAuthDropdownOpen(false);
+	}
+
 	const handleMenuButtonClick = () => {
 		setIsSearchOpen(false);
 		setIsMenuOpen((state) => !state);
+		setIsAuthDropdownOpen(false);
 	};
 
 	const handleSearchIconClick = () => {
 		setIsMenuOpen(false);
 		setIsSearchOpen((state) => !state);
+		setIsAuthDropdownOpen(false);
 	};
 
 	const handleMenuItemClick = () => {
@@ -81,14 +90,47 @@ const Header = ({ pageRef }) => {
 		setIsAuthDropdownOpen((state) => !state);
 	};
 
-	//закрытие меню авторизации
+	useEffect(() => {
+		if (isAuthDropdownOpen) {
+			const top =
+				authDropdownRef.current.offsetHeight +
+				(headerRef.current.offsetHeight -
+					authDropdownRef.current.offsetHeight) /
+					2;
+			authDropdownMenuRef.current.style.top = top + "px";
+			authDropdownMenuRef.current.style.right = 0;
+			authDropdownMenuRef.current.style.opacity = 1;
+
+			setIsSearchOpen(false);
+			setIsMenuOpen(false);
+		} else {
+			const authDropdownRect = authDropdownRef.current.getBoundingClientRect();
+			const distanceFromRightEdge = window.innerWidth - authDropdownRect.right;
+
+			authDropdownMenuRef.current.style.right =
+				(distanceFromRightEdge + authDropdownMenuRef.current.offsetWidth) * -1 +
+				"px";
+		}
+	}, [isAuthDropdownOpen]);
+
+	//закрытие выпадающих элементов
 	useEffect(() => {
 		const handleClickOutside = (event) => {
+			if (headerRef.current.contains(event.target)) return;
+
 			if (
 				authDropdownRef.current &&
 				!authDropdownRef.current.contains(event.target)
 			) {
 				setIsAuthDropdownOpen(false);
+			}
+			if (menuRef.current && !menuRef.current.contains(event.target)) {
+				setIsMenuOpen(false);
+			}
+
+			if (searchRef.current && !searchRef.current.contains(event.target)) {
+				setIsSearchOpen(false);
+				isSearchFocusedRef.current = false;
 			}
 		};
 
@@ -169,6 +211,7 @@ const Header = ({ pageRef }) => {
 
 				setIsSearchOpen(false);
 				setIsMenuOpen(false);
+				setIsAuthDropdownOpen(false);
 
 				lastScrollTopRef.current = currentScrollTop <= 0 ? 0 : currentScrollTop; // Для мобильных браузеров
 			}
@@ -218,7 +261,7 @@ const Header = ({ pageRef }) => {
 			className={`header ${isHeaderVisible ? "" : "hidden"}`}
 		>
 			<div className="container header__inner">
-				<div className="header__logo">
+				<div className="header__logo" onClick={handleLogoClick}>
 					<Link to="/">
 						<Logo />
 					</Link>
@@ -271,6 +314,7 @@ const Header = ({ pageRef }) => {
 						isAuthDropdownOpen={isAuthDropdownOpen}
 						handleAuthIconClick={handleAuthIconClick}
 						authDropdownRef={authDropdownRef}
+						authDropdownMenuRef={authDropdownMenuRef}
 					/>
 
 					<button
