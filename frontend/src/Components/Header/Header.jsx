@@ -34,11 +34,11 @@ const Header = ({ pageRef }) => {
 	//=======================================================
 	//ФУНКЦИИ СОБЫТИЙ НАЖАТИЯ НА КНОПКИ В HEADER
 
-	const handleLogoClick = ()=>{
+	const handleLogoClick = () => {
 		setIsSearchOpen(false);
 		setIsMenuOpen(false);
 		setIsAuthDropdownOpen(false);
-	}
+	};
 
 	const handleMenuButtonClick = () => {
 		setIsSearchOpen(false);
@@ -54,7 +54,6 @@ const Header = ({ pageRef }) => {
 
 	const handleMenuItemClick = () => {
 		handleLogoClick();
-
 	};
 
 	useEffect(() => {
@@ -109,7 +108,8 @@ const Header = ({ pageRef }) => {
 			const distanceFromRightEdge = window.innerWidth - authDropdownRect.right;
 
 			authDropdownMenuRef.current.style.right =
-				(distanceFromRightEdge + authDropdownMenuRef.current.offsetWidth) * -1 +
+				(distanceFromRightEdge + authDropdownMenuRef.current.offsetWidth + 40) *
+					-1 +
 				"px";
 		}
 	}, [isAuthDropdownOpen]);

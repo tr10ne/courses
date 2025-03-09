@@ -15,10 +15,11 @@ class UserResource extends JsonResource
             'name' => $this->name,              // Имя пользователя
             'email' => $this->email,            // Электронная почта пользователя
             'email_verified_at' => $this->email_verified_at, // Дата и время подтверждения электронной почты
-            'role' => $this->role->name,        // Название роли пользователя
+            'role' => $this->role?->name,        // Название роли пользователя
             'avatar' => $this->avatar,          // Аватар пользователя
             'created_at' => $this->created_at,  // Дата и время создания записи о пользователе
             'updated_at' => $this->updated_at,  // Дата и время последнего обновления записи о пользователе
         ];
     }
 }
+

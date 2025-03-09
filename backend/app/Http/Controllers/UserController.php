@@ -28,16 +28,19 @@ class UserController extends Controller
             'email' => 'required|string|email|unique:users,email', // Почта пользователя уникальна
             'password' => 'required|string|min:8|confirmed', // Пароль должен быть не короче 8 символов и подтвержден
             'role_id' => 'sometimes|exists:roles,id', // Роль пользователя должна существовать в базе, если передана
+        ],
+        [
+            'email.unique' => 'Пользователь с таким email уже зарегистрирован.',
         ]);
 
-        Log::info('password', ['pass' => $validatedData['password']]);
+
 
         // Хешируем пароль перед сохранением
         $validatedData['password'] = Hash::make($validatedData['password']);
 
         // Автоматическое заполнение role_id, если оно не передано
         if (!isset($validatedData['role_id'])) {
-            $validatedData['role_id'] = 3; // Например, роль по умолчанию (обычный пользователь)
+            $validatedData['role_id'] = 3; 
         }
 
         // Создаем нового пользователя с валидированными данными
@@ -52,14 +55,13 @@ class UserController extends Controller
     {
         // Находим пользователя по ID и возвращаем его с ролью в виде ресурса
         return new UserResource(User::with('role')->findOrFail($id));
-        
     }
 
     public function update($id, Request $request)
     {
         $user = User::findOrFail($id);
 
-        Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
+        // Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
 
         if ($request->input('avatar') === 'null') {
             $request->merge(['avatar' => null]);
@@ -73,17 +75,14 @@ class UserController extends Controller
             'avatar' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-
-
         // Если пароль обновляется, хешируем новый пароль
         if (isset($validatedData['password'])) {
             $validatedData['password'] = Hash::make($validatedData['password']);
         }
 
-
         // Обработка удаления/загрузки аватара
         if ($request->input('avatar') === null && !$request->hasFile('avatar')) {
-                        // Удаляем старый аватар, если он существует
+            // Удаляем старый аватар, если он существует
             if ($user->avatar && Storage::exists(str_replace('/storage/', 'public/', $user->avatar))) {
                 Storage::delete(str_replace('/storage/', 'public/', $user->avatar));
             }
@@ -119,39 +118,30 @@ class UserController extends Controller
     public function login(Request $request)
     {
         // Валидация данных запроса
-        $credentials = $request->validate([
+        $validatedData = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
         // Поиск пользователя по email с загрузкой связи role
-        $user = User::with('role')->where('email', $credentials['email'])->first();
+        $user = User::with('role')->where('email', $validatedData['email'])->first();
 
-        // Проверка пароля
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            // Создание токена
-            $token = $user->createToken('authToken')->plainTextToken;
-
-            // Возвращаем токен и информацию о пользователе
-            return response()->json([
-                'token' => $token,
-                'user' => new UserResource($user),
-            ]);
+        if (!$user) {
+            return response()->json(['type' => 'email','message' => 'Пользователь с таким email не зарегистрирован'], 401);
         }
 
-        // Попытка аутентификации
-        // if (Auth::attempt($credentials)) {
-        //     $user = Auth::user();
-        //     $token = $user->createToken('authToken')->plainTextToken;
+        // Проверка пароля
+        if (!Hash::check($validatedData['password'], $user->password)) {
+            return response()->json(['type' => 'password', 'message' => 'Неверный пароль'], 401);
+        }
 
-        //     // Возвращаем токен и информацию о пользователе
-        //     return response()->json([
-        //         'token' => $token,
-        //         'user' => new UserResource($user),
-        //     ]);
-        // }
+        // Создание токена
+        $token = $user->createToken('authToken')->plainTextToken;
 
-        // Если аутентификация не удалась
-        return response()->json(['message' => 'Неверные учетные данные'], 401);
+        // Возвращаем токен и информацию о пользователе
+        return response()->json([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ]);
     }
 }

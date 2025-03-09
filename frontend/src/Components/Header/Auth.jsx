@@ -6,23 +6,24 @@ import { apiUrl } from "../../js/config";
 import { UserContext } from "../UserContext";
 
 const Auth = ({
-	isAuthDropdownOpen,
-	handleAuthIconClick,
+		handleAuthIconClick,
 	authDropdownRef,
 	authDropdownMenuRef,
 }) => {
 	const { user } = useContext(UserContext);
 	const [avatar, setAvatar] = useState("");
 
-	// Загрузка данных текущего пользователя
+		// Загрузка данных текущего пользователя
 	useEffect(() => {
 		if (user && user.avatar) {
-			console.log(user.avatar);
 			setAvatar(apiUrl + user.avatar);
 		} else {
 			setAvatar(null); // Очищаем состояние, если аватара нет
 		}
 	}, [user]);
+
+	//=======================================================
+	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
 	return (
 		<div className="auth-dropdown" ref={authDropdownRef}>

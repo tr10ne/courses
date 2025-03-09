@@ -6,14 +6,14 @@ import AvatarSvg from "./AvatarSvg";
 import Cross from "../Cross";
 
 const ProfileEdit = () => {
-  const { user, setUser } = useContext(UserContext);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
-  const [userId, setUserId] = useState(null);
+	const { user, setUser } = useContext(UserContext);
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [passwordConfirmation, setPasswordConfirmation] = useState("");
+	const [avatar, setAvatar] = useState(null);
+	const [avatarPreview, setAvatarPreview] = useState("");
+	const [userId, setUserId] = useState(null);
 
 	useEffect(() => {
 		if (!user) return;
@@ -36,8 +36,10 @@ const ProfileEdit = () => {
 		setAvatarPreview(null);
 	};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
 
 		const formData = new FormData();
 		formData.append("name", name);
@@ -50,24 +52,23 @@ const ProfileEdit = () => {
 		formData.append("avatar", avatar);
 		formData.append("_method", "PUT");
 
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${apiUrl}/api/users/${userId}`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
+		try {
+			const token = localStorage.getItem("token");
+			const response = await fetch(`${apiUrl}/api/users/${userId}`, {
+				method: "POST",
+				body: formData,
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			const data = await response.json();
 
 			if (response.ok) {
 				alert("Профиль успешно обновлен");
 				setUser(data.data);
 				setName(data.data.name || "");
 				setEmail(data.data.email || "");
-				if(data.data.avatar)
-				setAvatarPreview(apiUrl + data.data.avatar );
+				if (data.data.avatar) setAvatarPreview(apiUrl + data.data.avatar);
 				if (avatarPreview) {
 					URL.revokeObjectURL(avatarPreview); // Очищаем старый URL
 				}
@@ -79,14 +80,43 @@ const ProfileEdit = () => {
 		}
 	};
 
-  useEffect(() => {
-    return () => {
-      // Очищаем объект URL при размонтировании компонента
-      if (avatarPreview) {
-        URL.revokeObjectURL(avatarPreview);
-      }
-    };
-  }, [avatarPreview]);
+
+	useEffect(() => {
+		return () => {
+			// Очищаем объект URL при размонтировании компонента
+			if (avatarPreview) {
+				URL.revokeObjectURL(avatarPreview);
+			}
+		};
+	}, [avatarPreview]);
+
+	const handleProfileDelete = async () => {
+		const confirmDelete = window.confirm("Вы уверены, что хотите удалить профиль? Это действие нельзя отменить.");
+		if (!confirmDelete) return; // Если пользователь отменил удаление, выходим
+
+		try {
+		  const token = localStorage.getItem("token");
+		  const response = await fetch(`${apiUrl}/api/users/${userId}`, {
+			method: "DELETE",
+			headers: {
+			  Authorization: `Bearer ${token}`,
+			},
+		  });
+
+		  if (response.ok) {
+			alert("Профиль успешно удален");
+			localStorage.removeItem("token"); 
+			setUser(null);
+			window.location.href = "/";
+		  } else {
+			const data = await response.json();
+			alert(data.message || "Ошибка при удалении профиля");
+		  }
+		} catch (error) {
+		  console.error("Ошибка:", error);
+		  alert("Произошла ошибка при отправке запроса");
+		}
+	  };
 
 	return (
 		<div className="container auth">
@@ -150,7 +180,7 @@ const ProfileEdit = () => {
 					</label>
 				</div>
 				<div className="auth__form__group auth__form__group_avatar">
-					<label tabindex="0" className="avatar-label">
+					<label tabIndex="0" className="avatar-label">
 						{avatarPreview ? (
 							<Avatar src={avatarPreview} />
 						) : (
@@ -174,6 +204,13 @@ const ProfileEdit = () => {
 					Сохранить изменения
 				</button>
 			</form>
+			<button
+				type="button"
+				className="auth__remove-profile "
+				onClick={handleProfileDelete}
+			>
+				удалить профиль
+			</button>
 		</div>
 	);
 };

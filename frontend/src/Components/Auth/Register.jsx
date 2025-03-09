@@ -1,17 +1,35 @@
 import React, { useState } from "react";
 import { apiUrl } from "../../js/config.js";
+import {
+	validateEmail,
+	validateNameLenght,
+	validatePasswordLenght,
+	preventSpaceKeyInput,
+} from "../../js/utils.js";
 
 const Register = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordConfirmation, setPasswordConfirmation] = useState("");
+	const [emailError, setEmailError] = useState("");
+
+	// Проверка, можно ли активировать кнопку "Зарегистрироваться"
+	const isFormValid = () => {
+		return (
+			validateNameLenght(name) &&
+			validateEmail(email) &&
+			validatePasswordLenght(password) &&
+			password === passwordConfirmation
+		);
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setEmailError("");
 
 		const formData = new FormData();
-		formData.append("name", name);
+		formData.append("name", name.trim());
 		formData.append("email", email);
 		if (password) {
 			formData.append("password", password);
@@ -28,10 +46,21 @@ const Register = () => {
 				alert("Успешная регистрация");
 				// Перенаправление на другую страницу или обновление состояния
 			} else {
-				alert(data.message || "Ошибка при регистрации");
+				if (data.errors) {
+					if (data.errors.email) {
+						setEmailError(data.errors.email[0]); // Устанавливаем ошибку email
+					} else {
+						// Выводим остальные ошибки через alert
+						const errorMessage = Object.values(data.errors).flat().join("\n");
+						alert(errorMessage);
+					}
+				} else {
+					alert(data.message || "Ошибка при регистрации");
+				}
 			}
 		} catch (error) {
 			console.error("Ошибка:", error);
+			alert("Произошла ошибка при отправке запроса");
 		}
 	};
 
@@ -54,7 +83,10 @@ const Register = () => {
 				</div>
 				<div className="auth__form__group">
 					<label className="auth__form__label">
-						Email:
+						<span>
+							Email:{" "}
+							{emailError && <span className="auth__error">{emailError}</span>}
+						</span>
 						<input
 							className="auth__form__input"
 							type="email"
@@ -62,6 +94,7 @@ const Register = () => {
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							required
+							onKeyDown={preventSpaceKeyInput}
 						/>
 					</label>
 				</div>
@@ -75,6 +108,7 @@ const Register = () => {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							required
+							onKeyDown={preventSpaceKeyInput}
 						/>
 					</label>
 				</div>
@@ -88,10 +122,11 @@ const Register = () => {
 							value={passwordConfirmation}
 							onChange={(e) => setPasswordConfirmation(e.target.value)}
 							required
+							onKeyDown={preventSpaceKeyInput}
 						/>
 					</label>
 				</div>
-				<button className="link-btn" type="submit">
+				<button className="link-btn" type="submit" disabled={!isFormValid()}>
 					Зарегистрироваться
 				</button>
 			</form>
