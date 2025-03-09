@@ -53,7 +53,8 @@ const Header = ({ pageRef }) => {
 	};
 
 	const handleMenuItemClick = () => {
-		setIsMenuOpen(false);
+		handleLogoClick();
+
 	};
 
 	useEffect(() => {
