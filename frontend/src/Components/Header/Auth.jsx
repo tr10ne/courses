@@ -6,14 +6,14 @@ import { apiUrl } from "../../js/config";
 import { UserContext } from "../UserContext";
 
 const Auth = ({
-		handleAuthIconClick,
+	handleAuthIconClick,
 	authDropdownRef,
 	authDropdownMenuRef,
 }) => {
 	const { user } = useContext(UserContext);
 	const [avatar, setAvatar] = useState("");
 
-		// Загрузка данных текущего пользователя
+	// Загрузка данных текущего пользователя
 	useEffect(() => {
 		if (user && user.avatar) {
 			setAvatar(apiUrl + user.avatar);
@@ -30,21 +30,30 @@ const Auth = ({
 			<button className="auth-icon" onClick={handleAuthIconClick}>
 				{avatar ? <Avatar src={avatar} /> : <AvatarSvg isUser={user} />}
 			</button>
-			<div
-				className={`auth-dropdown-menu `}
-				ref={authDropdownMenuRef}
-			>
+			<div className={`auth-dropdown-menu `} ref={authDropdownMenuRef}>
 				{user ? (
 					<>
-						<Link to="/profile" className="auth-dropdown-item" onClick={handleAuthIconClick}>
+						<Link
+							to="/profile"
+							className="auth-dropdown-item"
+							onClick={handleAuthIconClick}
+						>
 							Личный кабинет
 						</Link>
-						<Link to="/reviews" className="auth-dropdown-item" onClick={handleAuthIconClick}>
+						<Link
+							to="/reviews"
+							className="auth-dropdown-item"
+							onClick={handleAuthIconClick}
+						>
 							Отзывы
 						</Link>
-						<Link to="/settings" className="auth-dropdown-item" onClick={handleAuthIconClick}>
+						<Link
+							to="/settings"
+							className="auth-dropdown-item"
+							onClick={handleAuthIconClick}
+						>
 							Настройки
-						</Link >
+						</Link>
 						<button
 							className="auth-dropdown-item"
 							onClick={() => {
@@ -57,12 +66,19 @@ const Auth = ({
 					</>
 				) : (
 					<>
-						<Link to="/login" className="auth-dropdown-item" onClick={handleAuthIconClick}>
+						<Link
+							to="/login"
+							className="auth-dropdown-item"
+							onClick={handleAuthIconClick}
+						>
 							Войти
 						</Link>
-						<Link to="/register" className="auth-dropdown-item" onClick={handleAuthIconClick}>
+						<Link
+							to="/register"
+							className="auth-dropdown-item"
+							onClick={handleAuthIconClick}
+						>
 							Зарегистрироваться
-
 						</Link>
 					</>
 				)}

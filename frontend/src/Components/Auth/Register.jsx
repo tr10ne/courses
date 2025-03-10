@@ -7,14 +7,22 @@ import {
 	preventSpaceKeyInput,
 } from "../../js/utils.js";
 
+import Eye from "../Eye.jsx";
+
 const Register = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
 	const [passwordConfirmation, setPasswordConfirmation] = useState("");
+	const [showPasswordConfirmation, setShowPasswordConfirmation] = useState("");
+
 	const [emailError, setEmailError] = useState("");
 
-	// Проверка, можно ли активировать кнопку "Зарегистрироваться"
+	//=======================================================
+	//ОБЩИЕ ФУНКЦИИ
+
+	// Проверка, для активировации кнопки "Зарегистрироваться"
 	const isFormValid = () => {
 		return (
 			validateNameLenght(name) &&
@@ -24,6 +32,10 @@ const Register = () => {
 		);
 	};
 
+	//================================================================
+	// РАБОТА С ЗАПРОСОМ
+
+	//запрос на регистрацию пользователя
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setEmailError("");
@@ -44,25 +56,23 @@ const Register = () => {
 			const data = await response.json();
 			if (response.ok) {
 				alert("Успешная регистрация");
-				// Перенаправление на другую страницу или обновление состояния
+				window.location.href = "/login";
 			} else {
-				if (data.errors) {
-					if (data.errors.email) {
-						setEmailError(data.errors.email[0]); // Устанавливаем ошибку email
-					} else {
-						// Выводим остальные ошибки через alert
-						const errorMessage = Object.values(data.errors).flat().join("\n");
-						alert(errorMessage);
-					}
+				const { type, message } = data;
+				// Обрабатываем ошибки в зависимости от типа
+				if (type === "email") {
+					setEmailError(message); // Устанавливаем ошибку email
 				} else {
-					alert(data.message || "Ошибка при регистрации");
+					alert(message); // Выводим остальные ошибки через alert
 				}
 			}
 		} catch (error) {
-			console.error("Ошибка:", error);
-			alert("Произошла ошибка при отправке запроса");
+			alert("Произошла ошибка при регистрации");
 		}
 	};
+
+	//=======================================================
+	//ОТРИСОВКА ЭЛЕМЕНТОВ
 
 	return (
 		<div className="container auth">
@@ -101,29 +111,53 @@ const Register = () => {
 				<div className="auth__form__group">
 					<label className="auth__form__label">
 						Пароль:
-						<input
-							className="auth__form__input"
-							type="password"
-							name="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							required
-							onKeyDown={preventSpaceKeyInput}
-						/>
+						<div className="password-input-wrapper">
+							<input
+								className="auth__form__input"
+								type={showPassword ? "text" : "password"}
+								name="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								required
+								onKeyDown={preventSpaceKeyInput}
+								minLength="8"
+								placeholder="Минимум 8 символов"
+							/>
+							<button
+								type="button"
+								className="password-toggle-btn"
+								onClick={() => setShowPassword(!showPassword)}
+							>
+								<Eye isClose={!showPassword} />
+							</button>
+						</div>
 					</label>
 				</div>
 				<div className="auth__form__group">
 					<label className="auth__form__label">
 						Подтвердите пароль:
-						<input
-							className="auth__form__input"
-							type="password"
-							name="password_confirmation"
-							value={passwordConfirmation}
-							onChange={(e) => setPasswordConfirmation(e.target.value)}
-							required
-							onKeyDown={preventSpaceKeyInput}
-						/>
+						<div className="password-input-wrapper">
+							<input
+								className="auth__form__input"
+								type={showPasswordConfirmation ? "text" : "password"}
+								name="password_confirmation"
+								value={passwordConfirmation}
+								onChange={(e) => setPasswordConfirmation(e.target.value)}
+								required
+								onKeyDown={preventSpaceKeyInput}
+								minLength="8"
+							/>
+
+							<button
+								type="button"
+								className="password-toggle-btn"
+								onClick={() =>
+									setShowPasswordConfirmation(!showPasswordConfirmation)
+								}
+							>
+								<Eye isClose={!showPasswordConfirmation} />
+							</button>
+						</div>
 					</label>
 				</div>
 				<button className="link-btn" type="submit" disabled={!isFormValid()}>

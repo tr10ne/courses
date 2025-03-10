@@ -3,23 +3,32 @@ import axios from "axios";
 import { apiUrl } from "../../js/config.js";
 import { UserContext } from "../UserContext.jsx";
 import { validateEmail, validatePasswordLenght } from "../../js/utils.js";
+import Eye from "../Eye.jsx";
 
 const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
 	const [emailError, setEmailError] = useState("");
 	const [passwordError, setPasswordError] = useState("");
 	const { setUser } = useContext(UserContext);
 
- // Проверка, можно ли активировать кнопку "Войти"
- const isFormValid = () => {
-    return validateEmail(email) && validatePasswordLenght(password);
-  };
+	//=======================================================
+	//ОБЩИЕ ФУНКЦИИ
 
+	// Проверка, для активации кнопки "Войти"
+	const isFormValid = () => {
+		return validateEmail(email) && validatePasswordLenght(password);
+	};
+
+	//================================================================
+	// РАБОТА С ЗАПРОСОМ
+
+	//запрос на вход пользователя
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setEmailError(""); // Сбрасываем ошибку email
-		setPasswordError(""); // Сбрасываем ошибку пароля
+		setEmailError("");
+		setPasswordError("");
 		try {
 			const response = await axios.post(`${apiUrl}/api/login`, {
 				email,
@@ -28,7 +37,7 @@ const Login = () => {
 			if (response.data.token) {
 				localStorage.setItem("token", response.data.token); // Сохраняем токен
 				setUser(response.data.user);
-				window.location.href = "/profile"; // Перенаправляем на страницу профиля
+				window.location.href = "/profile";
 			}
 		} catch (error) {
 			if (error.response && error.response.data) {
@@ -36,14 +45,14 @@ const Login = () => {
 
 				// Обрабатываем ошибки в зависимости от типа
 				if (type === "email") {
-					setEmailError(message); // Устанавливаем ошибку email
+					setEmailError(message);
 				} else if (type === "password") {
-					setPasswordError(message); // Устанавливаем ошибку пароля
+					setPasswordError(message);
 				} else {
-					alert(message); // Выводим остальные ошибки через alert
+					alert(message);
 				}
 			} else {
-				alert("Произошла ошибка при авторизации"); // Общая ошибка
+				alert("Произошла ошибка при авторизации");
 			}
 		}
 	};
@@ -76,23 +85,32 @@ const Login = () => {
 				<div className="auth__form__group">
 					<label className="auth__form__label">
 						<span>
-						{" "}
-							Пароль: {" "}
+							{" "}
+							Пароль:{" "}
 							{passwordError && (
 								<span className="auth__error">{passwordError}</span>
 							)}
 						</span>
-						<input
-							className="auth__form__input"
-							type="password"
-							name="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							required
-												/>
+						<div className="password-input-wrapper">
+							<input
+								className="auth__form__input"
+								type={showPassword ? "text" : "password"}
+								name="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								required
+							/>
+							<button
+								type="button"
+								className="password-toggle-btn"
+								onClick={() => setShowPassword(!showPassword)}
+							>
+								<Eye isClose={!showPassword} />
+							</button>
+						</div>
 					</label>
 				</div>
-				<button type="submit" className="link-btn" disabled={!isFormValid()} >
+				<button type="submit" className="link-btn" disabled={!isFormValid()}>
 					Войти
 				</button>
 			</form>

@@ -11,7 +11,7 @@
 	text-align: center;
 }
 
-.auth__error{
+.auth__error {
 	color: $color-warning;
 }
 
@@ -37,6 +37,12 @@
 
 .auth__form__group_avatar {
 	align-self: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+
+	font-size: 12px;
 }
 
 .auth__form__label {
@@ -47,12 +53,12 @@
 	font-size: 12px;
 	text-align: start;
 	color: $color-text1_2;
-
 }
 
 .auth__form__input {
 	justify-self: normal;
 	padding: 11px 26px;
+	width: 100%;
 
 	color: $color-text1;
 
@@ -69,25 +75,59 @@
 	}
 }
 
-.auth__remove-profile{
+.auth__remove-profile {
+	margin-top: 40px;
 	padding: 10px 26px;
 
 	border-radius: 80px;
 
-     font-family: "FS-Elliot-Pro-Bold", sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 20px;
+	font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 20px;
 
 	background-color: $color-warning;
 	color: $color-warning-inner;
 	border: 1px solid $color-warning;
 
-	&:hover{
+	&:hover {
 		background-color: $color-warning-inner;
 		color: $color-warning;
 	}
 }
+
+.password-input-wrapper {
+    position: relative;
+	display: flex;
+
+	.auth__form__input{
+		padding-right: 40px;
+		padding-left: 40px;
+	}
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+	display: flex;
+
+	&:hover {
+		.eye-svg{
+			fill: $color-accent;
+		}
+	}
+
+.eye-svg{
+	width: 20px;
+	height: 20px;
+	fill: $color-text1_2;
+
+	transition: .3s;
+}
+}
+
 
 /* ============================= */
 /* Media */

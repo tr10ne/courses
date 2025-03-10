@@ -25,22 +25,24 @@ class UserController extends Controller
         // Валидация данных запроса
         $validatedData = $request->validate([
             'name' => 'required|string', // Имя пользователя обязательно
-            'email' => 'required|string|email|unique:users,email', // Почта пользователя уникальна
+            'email' => 'required|string|email', // Почта пользователя уникальна
             'password' => 'required|string|min:8|confirmed', // Пароль должен быть не короче 8 символов и подтвержден
             'role_id' => 'sometimes|exists:roles,id', // Роль пользователя должна существовать в базе, если передана
-        ],
-        [
-            'email.unique' => 'Пользователь с таким email уже зарегистрирован.',
         ]);
 
 
+        $user = User::with('role')->where('email', $validatedData['email'])->first();
+
+        if ($user) {
+            return response()->json(['type' => 'email', 'message' => 'Пользователь с таким email уже зарегистрирован'], 401);
+        }
 
         // Хешируем пароль перед сохранением
         $validatedData['password'] = Hash::make($validatedData['password']);
 
         // Автоматическое заполнение role_id, если оно не передано
         if (!isset($validatedData['role_id'])) {
-            $validatedData['role_id'] = 3; 
+            $validatedData['role_id'] = 3;
         }
 
         // Создаем нового пользователя с валидированными данными
@@ -60,7 +62,6 @@ class UserController extends Controller
     public function update($id, Request $request)
     {
         $user = User::findOrFail($id);
-
         // Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
 
         if ($request->input('avatar') === 'null') {
@@ -69,11 +70,21 @@ class UserController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'sometimes|required|string',
-            'email' => 'sometimes|required|string|email|unique:users,email,' . $user->id,
+            'email' => 'sometimes|required|string|email',
             'password' => 'sometimes|required|string|min:8',
             'role_id' => 'sometimes|required|exists:roles,id',
             'avatar' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        // Ищем пользователя с таким же email, исключая текущего пользователя
+        $sameUser = User::with('role')
+            ->where('email', $validatedData['email'])
+            ->where('id', '!=', $user->id) // Исключаем текущего пользователя
+            ->first();
+
+        if ($sameUser) {
+            return response()->json(['type' => 'email', 'message' => 'Пользователь с таким email уже зарегистрирован'], 401);
+        }
 
         // Если пароль обновляется, хешируем новый пароль
         if (isset($validatedData['password'])) {
@@ -81,23 +92,16 @@ class UserController extends Controller
         }
 
         // Обработка удаления/загрузки аватара
-        if ($request->input('avatar') === null && !$request->hasFile('avatar')) {
-            // Удаляем старый аватар, если он существует
-            if ($user->avatar && Storage::exists(str_replace('/storage/', 'public/', $user->avatar))) {
-                Storage::delete(str_replace('/storage/', 'public/', $user->avatar));
-            }
-            $validatedData['avatar'] = null;
-        } else if ($request->hasFile('avatar')) {
-            // Удаляем старый аватар, если он существует
-            if ($user->avatar && Storage::exists(str_replace('/storage/', 'public/', $user->avatar))) {
-                Storage::delete(str_replace('/storage/', 'public/', $user->avatar));
-            }
+        if ($request->hasFile('avatar')) {
+            $this->removeAvatar($user);
 
             // Сохраняем новый аватар
             $avatarPath = $request->file('avatar')->store('public/images/users/avatars');
             $validatedData['avatar'] = str_replace('public/', '/storage/', $avatarPath);
+        } elseif ($request->input('avatar') === null) {
+            $this->removeAvatar($user);
+            $validatedData['avatar'] = null;
         }
-
         // Обновляем данные пользователя
         $user->update($validatedData);
 
@@ -105,11 +109,22 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    //удаление аватара из БД
+    public function removeAvatar(User $user)
+    {
+        if ($user && $user->avatar && Storage::exists(str_replace('/storage/', 'public/', $user->avatar))) {
+            Storage::delete(str_replace('/storage/', 'public/', $user->avatar));
+
+            $user->update(['avatar' => null]);
+        }
+    }
+
     // Метод для удаления пользователя
     public function destroy($id)
     {
         // Находим пользователя по ID и удаляем его
         $user = User::findOrFail($id);
+        $this->removeAvatar($user);
         $user->delete();
         // Возвращаем успешный ответ без контента
         return response()->noContent();
@@ -127,7 +142,7 @@ class UserController extends Controller
         $user = User::with('role')->where('email', $validatedData['email'])->first();
 
         if (!$user) {
-            return response()->json(['type' => 'email','message' => 'Пользователь с таким email не зарегистрирован'], 401);
+            return response()->json(['type' => 'email', 'message' => 'Пользователь с таким email не зарегистрирован'], 401);
         }
 
         // Проверка пароля

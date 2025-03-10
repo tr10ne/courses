@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
         //     'created_at' => $user->created_at,
         //     'updated_at' => $user->updated_at,
         // ];
-        return new UserResource($request->user());
+        return (new UserResource($request->user()))->toArray($request);
     });
     Route::prefix('users')->group(function () {
         Route::put('/{id}', [UserController::class, 'update']);
