@@ -15,7 +15,7 @@ class ReviewController extends Controller
         // Проверяем, передан ли параметр school_id
         $schoolId = $request->query('school_id');
         $courseId = $request->query('course_id');
-        $status = $request->query('status');
+        $status = $request->query('status', 'approved');
 
         // Если school_id передан, фильтруем отзывы по школе
         $query = Review::with(['user', 'schools', 'courses']);
@@ -25,14 +25,12 @@ class ReviewController extends Controller
             });
         }
 
-        if ($status) {
-            if ($status === 'pending') {
-                $query->pending();
-            } elseif ($status === 'approved') {
-                $query->approved();
-             } elseif ($status === 'rejected') {
-                $query->rejected();
-            }
+        if ($status === 'pending') {
+            $query->pending();
+        } elseif ($status === 'approved') {
+            $query->approved();
+        } elseif ($status === 'rejected') {
+            $query->rejected();
         }
 
         if ($courseId) {

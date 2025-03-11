@@ -7,6 +7,7 @@ import ReviewItem from "../Components/Reviews/ReviewItem";
 import { apiUrl } from "../js/config.js";
 import CustomSelect from "../Components/SchoolReviews/CustomSelect";
 import PageMetadata from "../Components/PageMetadata";
+import { ReviewStatus } from "../js/ReviewStatus.js";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -47,7 +48,6 @@ const Reviews = () => {
             page: queryParams.page,
             sort_by: sortBy.field, // Поле для сортировки
             sort_order: sortBy.order, // Порядок сортировки
-            status:'approved'
           },
         });
         if (reviews.data) {
