@@ -34,8 +34,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/register', [UserController::class, 'store']);
+
+// Добавьте маршрут для одобрения/отклонения отзыва
+Route::patch('/reviews/{id}/moderate', [ReviewController::class, 'moderate'])
+    ->name('reviews.moderate');
 
 // Получение данных по URL
 Route::prefix('courses')->group(function () {

@@ -176,19 +176,22 @@ else if (isset($validatedData['course_id'])) {
     // Метод для модерации отзыва (одобрение/отклонение).
 
     public function moderate(Request $request, $id)
-{
-    // Находим отзыв по ID
-    $review = Review::findOrFail($id);
+    {
+        // Находим отзыв по ID
+        $review = Review::findOrFail($id);
 
-    // Валидация данных запроса
-    $validatedData = $request->validate([
-        'is_approved' => 'required|boolean', // Новый статус отзыва
-    ]);
+        // Валидация данных запроса
+        $validatedData = $request->validate([
+            'action' => 'required|in:approve,reject', // Действие: approve или reject
+        ]);
 
-    // Обновляем статус is_approved
-    $review->update(['is_approved' => $validatedData['is_approved']]);
+        // Определяем новый статус в зависимости от действия
+        $newStatus = ($validatedData['action'] === 'approve') ? true : false;
 
-    // Возвращаем обновленный отзыв в виде ресурса
-    return new ReviewResource($review);
-}
+        // Обновляем статус is_approved
+        $review->update(['is_approved' => $newStatus]);
+
+        // Возвращаем обновленный отзыв в виде ресурса
+        return new ReviewResource($review);
+    }
 }

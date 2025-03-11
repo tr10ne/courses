@@ -9,6 +9,7 @@ import CustomSelect from "../Components/SchoolReviews/CustomSelect";
 import PageMetadata from "../Components/PageMetadata";
 import { ReviewStatus } from "../js/ReviewStatus.js";
 import { UserContext } from "../Components/UserContext.jsx";
+import ReviewItemUserWrapper from "../Components/Reviews/ReviewItemUserWrapper.jsx";
 
 const Reviews = () => {
 	const { user, setUser } = useContext(UserContext);
@@ -60,12 +61,12 @@ const Reviews = () => {
 				// Если пользователь — модератор, добавляем статус
 				if (user?.role === "moderator") {
 					params.status = activeTab;
-					console.log(activeTab);
 				}
 
 				// Если пользователь — обычный пользователь, добавляем user_id
 				if (user?.role === "user") {
-          params.user_id = user.id;
+					params.user_id = user.id;
+					params.status = activeTab;
 				}
 
 				const reviews = await axios.get(`${apiUrl}/api/reviews`, { params });
@@ -131,6 +132,21 @@ const Reviews = () => {
 	const ReviewsTitle = `Все ${title.toLowerCase()} | COURSES`;
 	const ReviewsDescription = `${description.split(".")[0].trim()}`;
 
+	 // Callback для удаления отзыва
+	 const handleDelete = (reviewId) => {
+		setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
+	  };
+
+	  // Callback для одобрения/отклонения отзыва
+	  const handleModerate = (reviewId, action) => {
+		setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
+	  };
+
+	  const handleUpdate = () => {
+		// Перезагрузить отзывы или обновить состояние
+		console.log("Отзыв обновлен");
+	  };
+
 	return (
 		<>
 			<PageMetadata title={ReviewsTitle} description={ReviewsDescription} />
@@ -142,20 +158,24 @@ const Reviews = () => {
 						<p className="reviews__desc" ref={descriptionRef}>
 							Отзывы об онлайн школах, курсах от учеников и выпускников.
 						</p>
-						{/* Вкладки для модератора */}
-						{user?.role === "moderator" && (
+						{user?.role && (
 							<div className="reviews__tabs">
-								{tabs.map((tab) => (
-									<button
-										key={tab.id}
-										className={`reviews__tab ${
-											activeTab === tab.id ? "active" : ""
-										}`}
-										onClick={() => setActiveTab(tab.id)}
-									>
-										{tab.label}
-									</button>
-								))}
+								{tabs.map((tab) => {
+									if (user.role === "user" && tab.id === "rejected")
+										return null;
+
+									return (
+										<button
+											key={tab.id}
+											className={`reviews__tab ${
+												activeTab === tab.id ? "active" : ""
+											}`}
+											onClick={() => setActiveTab(tab.id)}
+										>
+											{tab.label}
+										</button>
+									);
+								})}
 							</div>
 						)}
 						<div className="reviews__box" ref={RefTarget}>
@@ -189,10 +209,12 @@ const Reviews = () => {
 								<Loading />
 							) : reviews.length > 0 ? (
 								reviews.map((review) => (
-									<ReviewItem
+									<ReviewItemUserWrapper
 										key={review.id}
 										review={review}
-										isGeneralPage={true}
+										onDelete={handleDelete}
+										onUpdate={handleUpdate}
+										onModerate={handleModerate}
 									/>
 								))
 							) : (
