@@ -47,6 +47,7 @@ const Reviews = () => {
             page: queryParams.page,
             sort_by: sortBy.field, // Поле для сортировки
             sort_order: sortBy.order, // Порядок сортировки
+            status:'approved'
           },
         });
         if (reviews.data) {

@@ -97,37 +97,37 @@
 }
 
 .password-input-wrapper {
-    position: relative;
+	position: relative;
 	display: flex;
 
-	.auth__form__input{
+	.auth__form__input {
 		padding-right: 40px;
 		padding-left: 40px;
 	}
 }
 
 .password-toggle-btn {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
 	display: flex;
 
-	&:hover {
-		.eye-svg{
+	&:hover,
+	&:focus {
+		.eye-svg {
 			fill: $color-accent;
 		}
 	}
 
-.eye-svg{
-	width: 20px;
-	height: 20px;
-	fill: $color-text1_2;
+	.eye-svg {
+		width: 20px;
+		height: 20px;
+		fill: $color-text1_2;
 
-	transition: .3s;
+		transition: 0.3s;
+	}
 }
-}
-
 
 /* ============================= */
 /* Media */
