@@ -37,7 +37,7 @@ const Login = () => {
 			if (response.data.token) {
 				localStorage.setItem("token", response.data.token); // Сохраняем токен
 				setUser(response.data.user);
-				window.location.href = "/profile";
+				window.location.href = "/user/profile";
 			}
 		} catch (error) {
 			if (error.response && error.response.data) {

@@ -16,6 +16,7 @@ class ReviewController extends Controller
         $schoolId = $request->query('school_id');
         $courseId = $request->query('course_id');
         $status = $request->query('status', 'approved');
+        $userId = $request->query('user_id');
 
         // Если school_id передан, фильтруем отзывы по школе
         $query = Review::with(['user', 'schools', 'courses']);
@@ -31,6 +32,10 @@ class ReviewController extends Controller
             $query->approved();
         } elseif ($status === 'rejected') {
             $query->rejected();
+        }
+
+        if ($userId) {
+            $query->where('user_id', $userId);
         }
 
         if ($courseId) {

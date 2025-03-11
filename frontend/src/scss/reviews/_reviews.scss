@@ -59,6 +59,31 @@
 .lastmod-value {
   color: $color-bg3;
 }
+//new
+.reviews__tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.reviews__tab {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s;
+}
+
+.reviews__tab.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.reviews__tab:hover {
+  background-color: #e9e9e9;
+}
 
 @media (max-width: 540px) {
   .reviews__box {

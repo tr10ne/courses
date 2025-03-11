@@ -34,26 +34,26 @@ const Auth = ({
 				{user ? (
 					<>
 						<Link
-							to="/profile"
+							to="/user/profile"
 							className="auth-dropdown-item"
 							onClick={handleAuthIconClick}
 						>
-							Личный кабинет
+							Профиль
 						</Link>
 						<Link
-							to="/reviews"
+							to="/user/reviews"
 							className="auth-dropdown-item"
 							onClick={handleAuthIconClick}
 						>
 							Отзывы
 						</Link>
-						<Link
+						{/* <Link
 							to="/settings"
 							className="auth-dropdown-item"
 							onClick={handleAuthIconClick}
 						>
 							Настройки
-						</Link>
+						</Link> */}
 						<button
 							className="auth-dropdown-item"
 							onClick={() => {

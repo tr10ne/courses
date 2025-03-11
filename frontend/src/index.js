@@ -23,6 +23,8 @@ import ProfileEdit from "./Components/Auth/ProfileEdit";
 import PrivateRoute from "./Components/Auth/PrivateRoute";
 import NotFound from "./Components/NotFound/NotFound";
 
+import UserReviews from "./Pages/UserReviews";
+
 const container = document.getElementById("root");
 
 if (container) {
@@ -62,13 +64,21 @@ if (container) {
 
 					{/* Защищенные маршруты */}
 					<Route
-						path="/profile"
+						path="/user/profile"
 						element={
 							<PrivateRoute>
 								<ProfileEdit />
 							</PrivateRoute>
 						}
 					/>
+						<Route
+							path="/user/reviews"
+							element={
+								<PrivateRoute>
+									<UserReviews />
+								</PrivateRoute>
+							}
+						/>
 					<Route
 						path="/users"
 						element={
