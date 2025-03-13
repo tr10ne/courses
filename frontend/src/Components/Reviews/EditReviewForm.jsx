@@ -1,81 +1,75 @@
-// import React, { useState } from "react";
-// import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-
-// const EditReviewForm = ({ review, onSave, onCancel }) => {
-//   const [text, setText] = useState(review.text);
-//   console.log(review.text);
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     onSave(text); // Передаем обновленный текст отзыва
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <CKEditor
-//         editor={ClassicEditor}
-//         data={text}
-//                onChange={(event, editor) => {
-//           const data = editor.getData();
-//           setText(data);
-//         }}
-
-//       />
-//       <div>
-//         <button type="submit">Сохранить</button>
-//         <button type="button" onClick={onCancel}>
-//           Отмена
-//         </button>
-//       </div>
-//     </form>
-//   );
-
-// };
-
-// export default EditReviewForm;
-
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import JoditEditor from "jodit-react";
 
 const EditReviewForm = ({ review, onSave, onCancel }) => {
-  const [text, setText] = useState(review.text);
+	const [text, setText] = useState(review.text);
+  const [isTextChanged, setIsTextChanged] = useState(false); // Состояние для отслеживания изменений
+
+  // Отслеживаем изменения текста
+  useEffect(() => {
+    setIsTextChanged(text !== review.text);
+  }, [text, review.text]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(text); // Передаем обновленный текст отзыва
+    if (isTextChanged) {
+      const shouldSave = window.confirm("Сохранить изменения?");
+      if (shouldSave) {
+        onSave(text);
+      }
+    } else {
+      onCancel();
+    }
   };
 
-  const config = useMemo(
-    () => ({
-      readonly: false, // Все параметры конфигурации Jodit
-      toolbar: true,
-      spellcheck: true,
-      language: "ru",
-      toolbarButtonSize: "medium",
-      textIcons: false,
-      // Другие настройки...
-    }),
-    []
-  );
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <JoditEditor
-        value={text}
-        config={config}
-        tabIndex={1} // tabIndex of textarea
-        onBlur={(newContent) => setText(newContent)} // preferred to use only this option to update the content for performance reasons
-        onChange={(newContent) => {}}
-      />
-      <div>
-        <button type="submit">Сохранить</button>
-        <button type="button" onClick={onCancel}>
-          Отмена
-        </button>
-      </div>
-    </form>
-  );
+  const handleCancel = () => {
+    if (isTextChanged) {
+      const shouldCancel = window.confirm("Выйти без сохранения?");
+      if (shouldCancel) {
+        onCancel();
+      }
+    } else {
+      onCancel();
+    }
+  };
+
+
+	const config = useMemo(
+		() => ({
+			readonly: false, // Редактирование разрешено
+			// toolbar: false, // Отключаем панель инструментов
+			spellcheck: true, // Проверка орфографии
+			language: "ru", // Язык интерфейса
+			showCharsCounter: false, // Скрыть счетчик символов
+			showWordsCounter: false, // Скрыть счетчик слов
+			showXPathInStatusbar: false, // Скрыть XPath в статусбаре
+			height: "auto", // Высота редактора
+			// buttons: [], // Отключаем все кнопки
+			// toolbarButtonSize: "medium",
+			// textIcons: false,
+     
+		}),
+		[]
+	);
+
+	return (
+		<form className="review-edit-form" onSubmit={handleSubmit}>
+			<JoditEditor
+				value={text}
+				config={config}
+				tabIndex={1}
+				onBlur={(newContent) => setText(newContent)}
+				onChange={(newContent) => {}}
+			/>
+			<div className="review-actions">
+				<button type="submit">Сохранить</button>
+				<button type="button" onClick={handleCancel}>
+					Отмена
+				</button>
+			</div>
+		</form>
+	);
 };
 
 export default EditReviewForm;

@@ -3,11 +3,9 @@ import axios from "axios";
 import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import Loading from "../Components/Loading";
-import ReviewItem from "../Components/Reviews/ReviewItem";
 import { apiUrl } from "../js/config.js";
 import CustomSelect from "../Components/SchoolReviews/CustomSelect";
 import PageMetadata from "../Components/PageMetadata";
-import { ReviewStatus } from "../js/ReviewStatus.js";
 import { UserContext } from "../Components/UserContext.jsx";
 import ReviewItemUserWrapper from "../Components/Reviews/ReviewItemUserWrapper.jsx";
 
@@ -158,6 +156,8 @@ const Reviews = () => {
 						<p className="reviews__desc" ref={descriptionRef}>
 							Отзывы об онлайн школах, курсах от учеников и выпускников.
 						</p>
+
+						<div className="reviews__box" ref={RefTarget}>
 						{user?.role && (
 							<div className="reviews__tabs">
 								{tabs.map((tab) => {
@@ -178,7 +178,6 @@ const Reviews = () => {
 								})}
 							</div>
 						)}
-						<div className="reviews__box" ref={RefTarget}>
 							<div className="reviews__sort">
 								<p>Сортировка: </p>
 								<CustomSelect
@@ -195,13 +194,9 @@ const Reviews = () => {
 									}}
 								/>
 							</div>
-							<div className="reviews__lastmod">
-								<p>
-									Последнее обновление:{" "}
-									<span className="lastmod-value">{lastUpdateDate}</span>
-								</p>
-							</div>
+
 						</div>
+
 					</div>
 					<div className="reviews__body">
 						<div className="review-list">
@@ -218,7 +213,7 @@ const Reviews = () => {
 									/>
 								))
 							) : (
-								<p>Отзывов пока нет.</p>
+								<p>Отзывов пока нет</p>
 							)}
 						</div>
 						<div className="reviews__footer">

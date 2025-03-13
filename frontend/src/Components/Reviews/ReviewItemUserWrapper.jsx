@@ -123,6 +123,11 @@ const ReviewItemWrapper = ({ review, isGeneralPage = false, onDelete, onModerate
 
   // Функция для удаления отзыва
   const handleDelete = async () => {
+    const isConfirmed = window.confirm("Вы уверены, что хотите удалить этот отзыв?");
+    if (!isConfirmed) {
+      return;
+    }
+
     try {
       await axios.delete(`${apiUrl}/api/reviews/${review.id}`);
       if (onDelete) onDelete(review.id); // Вызов callback для удаления отзыва из списка
@@ -199,7 +204,7 @@ const ReviewItemWrapper = ({ review, isGeneralPage = false, onDelete, onModerate
                 <button onClick={() => handleModerate("approve")}>Одобрить</button>
               )}
               <button onClick={handleEdit}>Редактировать</button>
-              <button onClick={handleDelete}>Удалить</button>
+              <button className="warning" onClick={handleDelete}>Удалить</button>
             </div>
           )}
 
@@ -209,7 +214,7 @@ const ReviewItemWrapper = ({ review, isGeneralPage = false, onDelete, onModerate
               {currentReview.is_approved === null && (
                 <button onClick={handleEdit}>Редактировать</button>
               )}
-              <button onClick={handleDelete}>Удалить</button>
+              <button className="warning" onClick={handleDelete}>Удалить</button>
             </div>
           )}
         </>

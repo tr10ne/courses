@@ -72,9 +72,10 @@
 	font-weight: 700;
 	line-height: 24px;
 	outline: none;
-	
+
 	&:hover,
-	&:focus {
+	&:focus
+	&.active {
 		color: $color-accent;
 		background-color: $color-text3;
 		border: 1px solid $color-accent;
