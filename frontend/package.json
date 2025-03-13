@@ -21,6 +21,7 @@
     "draft-js": "^0.11.7",
     "easymde": "^2.20.0",
     "html-truncate": "^1.2.2",
+    "jodit-react": "^5.2.15",
     "moment": "^2.30.1",
     "quill": "^2.0.3",
     "rc-slider": "^11.1.8",

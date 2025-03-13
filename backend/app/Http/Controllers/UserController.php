@@ -62,7 +62,7 @@ class UserController extends Controller
     public function update($id, Request $request)
     {
         $user = User::findOrFail($id);
-        // Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
+      Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
 
         if ($request->input('avatar') === 'null') {
             $request->merge(['avatar' => null]);
