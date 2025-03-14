@@ -1,81 +1,84 @@
 @use "../index" as *;
 
 .reviews {
-  display: flex;
-  flex-direction: column;
-  row-gap: 12px;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  &__head {
-    & h1 {
-      font-size: 36px;
-      font-family: "Lisboa-Heavy-Regular", sans-serif;
-    }
-  }
-  &__desc {
-    font-family: "FS-Elliot-Pro-Regular", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
-    color: $color-text1;
-  }
-  &__box {
-    margin-top: 25px;
-    display: flex;
-    justify-content: space-between;
-  }
-  &__sort {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: "FS-Elliot-Pro-Regular", sans-serif;
-    font-size: 14px;
-    line-height: 17px;
-    color: $color-text1;
-    margin-right: 20px;
-    & p {
-      font-weight: 400;
-      color: $color-text_review;
-    }
-  }
-  &__footer {
-    grid-column: 2;
-    display: flex;
-  }
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-  &__lastmod {
-    font-family: "FS-Elliot-Pro-Regular", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
-    color: $color-text4_2;
-  }
+	display: flex;
+	flex-direction: column;
+	row-gap: 12px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	&__head {
+		& h1 {
+			font-size: 36px;
+			font-family: "Lisboa-Heavy-Regular", sans-serif;
+		}
+	}
+	&__desc {
+		font-family: "FS-Elliot-Pro-Regular", sans-serif;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 24px;
+		color: $color-text1;
+	}
+	&__box {
+		margin-top: 25px;
+		display: flex;
+		justify-content: space-between;
+	}
+	&__sort {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-family: "FS-Elliot-Pro-Regular", sans-serif;
+		font-size: 14px;
+		line-height: 17px;
+		color: $color-text1;
+		margin-right: 20px;
+		& p {
+			font-weight: 400;
+			color: $color-text_review;
+		}
+	}
+	&__footer {
+		grid-column: 2;
+		display: flex;
+	}
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+	}
+	&__lastmod {
+		font-family: "FS-Elliot-Pro-Regular", sans-serif;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 24px;
+		color: $color-text4_2;
+	}
 }
 
 .lastmod-value {
-  color: $color-bg3;
+	color: $color-bg3;
 }
-
 
 //========================
 //user-rewiews
 
-
+.reviews_user {
+	.reviews__body {
+		min-height: 200px;
+	}
+}
 .reviews__tabs {
-  display: flex;
-  gap: 10px;
+	display: flex;
+	gap: 10px;
 }
 
 .reviews__tab {
-  padding: 12px 34px;
+	padding: 12px 34px;
 
-  color: $color-accent;
-		background-color: $color-accent-inner;
-		border: $border-accent;
+	color: $color-accent;
+	background-color: $color-accent-inner;
+	border: $border-accent;
 	border-radius: 100px;
 	font-family: "FS-Elliot-Pro-Bold", sans-serif;
 	font-size: 12px;
@@ -86,77 +89,91 @@
 	&:hover,
 	&:focus,
 	&.active {
-    background-color: $color-accent;
-    color: $color-text3;
-
+		background-color: $color-accent;
+		color: $color-text3;
 	}
 }
 
-
 .review-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 10px;
 }
 
 .review-actions button {
-  padding: 10px 26px;
-  border-radius: 80px;
-  font-family: "FS-Elliot-Pro-Bold", sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 20px;
+	padding: 10px 26px;
+	border-radius: 80px;
+	font-family: "FS-Elliot-Pro-Bold", sans-serif;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 20px;
 
-  color: $color-accent;
-  background-color: $color-accent-inner;
-  border: $border-accent;
+	color: $color-accent;
+	background-color: $color-accent-inner;
+	border: $border-accent;
 
-  &:hover,
-  &:focus{
-    background-color: $color-accent;
-    color: $color-accent-inner;
-    border: $border-accent;
-  }
+	&:hover,
+	&:focus {
+		background-color: $color-accent;
+		color: $color-accent-inner;
+		border: $border-accent;
+	}
 
-&.warning{
-  background-color: $color-warning-inner;
-  color: $color-warning;
-  border: $border-warning;
+	&.warning {
+		background-color: $color-warning-inner;
+		color: $color-warning;
+		border: $border-warning;
 
-
-  &:hover,
-  &:focus{
-    background-color: $color-warning;
-    color: $color-warning-inner;
-    border: 1px solid $color-warning;
-  }
-
-}
+		&:hover,
+		&:focus {
+			background-color: $color-warning;
+			color: $color-warning-inner;
+			border: 1px solid $color-warning;
+		}
+	}
 }
 
-.review-edit-form{
-  font-family: 'FS-Elliot-Pro-Regular',sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 22px;
+.review-edit-form {
+	font-family: "FS-Elliot-Pro-Regular", sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 22px;
 
- .jodit-wysiwyg{
-    padding:20px 30px !important;
-  }
+	.jodit-wysiwyg {
+		padding: 20px 30px !important;
+	}
 }
 
-
+/* ============================= */
+/* Media */
+@media (max-width: 800px) {
+	.reviews_user {
+		.reviews__tabs {
+			display: none;
+		}
+	}
+}
 
 @media (max-width: 540px) {
-  .reviews__box {
-    margin-top: 10px;
-    flex-direction: column-reverse;
-    gap: 10px;
-  }
-  .review-text__detail {
-    white-space: nowrap;
-  }
-  .review-autor {
-    text-align: end;
-  }
+	.reviews_user {
+		gap: 20px;
+
+		.reviews__box {
+			flex-direction: column;
+			gap: 20px;
+		}
+	}
+
+	.reviews__box {
+		margin-top: 10px;
+		flex-direction: column-reverse;
+		gap: 10px;
+	}
+	.review-text__detail {
+		white-space: nowrap;
+	}
+	.review-autor {
+		text-align: end;
+	}
 }

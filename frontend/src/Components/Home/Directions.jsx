@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import SubcategoryList from "./SubcategoryList";
 import Loading from "../Loading";
 import CategoryListWithHorizontalScroll from "./PopularCourses/CategoryListHorizontalScroll.jsx";
-import CategoryDropdown from "./PopularCourses/CategoryDropdown.jsx";
+// import CategoryDropdown from "./PopularCourses/CategoryDropdown.jsx";
+import ItemsDropdown from "../ItemsDropdown.jsx";
 
 const Directions = ({ categories }) => {
 	const [activeCategory, setActiveCategory] = useState(null);
@@ -27,11 +28,19 @@ const Directions = ({ categories }) => {
 							setActiveCategory={setActiveCategory}
 							activeCategory={activeCategory}
 						/>
-						<CategoryDropdown
+						{/* <CategoryDropdown
 							categories={categories}
 							setActiveCategory={setActiveCategory}
 							activeCategory={activeCategory}
-						/>
+						/> */}
+						<ItemsDropdown
+						items={categories}
+						onSelect={setActiveCategory}
+						selectedItem={activeCategory}
+						placeholder="Выберите категорию"
+						displayKey="name"
+						idKey="id"
+					/>
 
 					<div className="directions__content container">
 						<ul

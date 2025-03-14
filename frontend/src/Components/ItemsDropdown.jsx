@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const CategoryDropdown = ({
-	categories,
-	setActiveCategory,
-	activeCategory,
+const ItemsDropdown = ({
+	items,
+	onSelect,
+	selectedItem,
+	placeholder = "Select an item",
+	displayKey = "name",
+	idKey = "id",
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isAnimating, setIsAnimating] = useState(false); // Состояние для анимации
@@ -32,14 +35,14 @@ const CategoryDropdown = ({
 		}
 	}, [isOpen]);
 
-	const handleCategoryClick = (category) => {
-		setActiveCategory(category);
+	const handleItemClick = (item) => {
+		onSelect(item);
 		setIsOpen(false);
 	};
 
-	// Фильтруем выбранную категорию из списка
-	const filteredCategories = categories.filter(
-		(category) => category.id !== activeCategory?.id
+	// Фильтруем выбранный элемент из списка
+	const filteredItems = items.filter(
+		(item) => item[idKey] !== selectedItem?.[idKey]
 	);
 
 	return (
@@ -48,7 +51,7 @@ const CategoryDropdown = ({
 				className="items-dropdown-item"
 				onClick={() => setIsOpen(!isOpen)}
 			>
-				{activeCategory?.name || "Select a category"}
+				{selectedItem?.[displayKey] || placeholder}
 				<svg
 					className={`dropdown-arrow ${isOpen ? "rotate" : ""}`}
 					viewBox="0 0 129 129"
@@ -58,14 +61,14 @@ const CategoryDropdown = ({
 			</div>
 			{isOpen && (
 				<ul className="dropdown-list">
-					{filteredCategories.map((category, index) => (
+					{filteredItems.map((item, index) => (
 						<li
-							key={category.id}
+							key={item[idKey]}
 							className={`dropdown-item ${isAnimating ? "animate" : ""}`}
 							style={{ animationDelay: `${index * 0.1}s` }} // Задержка для каждого элемента
-							onClick={() => handleCategoryClick(category)}
+							onClick={() => handleItemClick(item)}
 						>
-							{category.name}
+							{item[displayKey]}
 						</li>
 					))}
 				</ul>
@@ -74,4 +77,4 @@ const CategoryDropdown = ({
 	);
 };
 
-export default CategoryDropdown;
+export default ItemsDropdown;

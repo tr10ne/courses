@@ -3,38 +3,9 @@ import JoditEditor from "jodit-react";
 
 const EditReviewForm = ({ review, onSave, onCancel }) => {
 	const [text, setText] = useState(review.text);
-  const [isTextChanged, setIsTextChanged] = useState(false); // Состояние для отслеживания изменений
+	const [isTextChanged, setIsTextChanged] = useState(false); // Состояние для отслеживания изменений
 
-  // Отслеживаем изменения текста
-  useEffect(() => {
-    setIsTextChanged(text !== review.text);
-  }, [text, review.text]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isTextChanged) {
-      const shouldSave = window.confirm("Сохранить изменения?");
-      if (shouldSave) {
-        onSave(text);
-      }
-    } else {
-      onCancel();
-    }
-  };
-
-
-  const handleCancel = () => {
-    if (isTextChanged) {
-      const shouldCancel = window.confirm("Выйти без сохранения?");
-      if (shouldCancel) {
-        onCancel();
-      }
-    } else {
-      onCancel();
-    }
-  };
-
-
+	//настройка конфигурации jodit
 	const config = useMemo(
 		() => ({
 			readonly: false, // Редактирование разрешено
@@ -48,10 +19,39 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
 			// buttons: [], // Отключаем все кнопки
 			// toolbarButtonSize: "medium",
 			// textIcons: false,
-     
 		}),
 		[]
 	);
+
+	// Отслеживаем изменения текста
+	useEffect(() => {
+		setIsTextChanged(text !== review.text);
+	}, [text, review.text]);
+
+	// сохранение изменений
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (isTextChanged) {
+			const shouldSave = window.confirm("Сохранить изменения?");
+			if (shouldSave) {
+				onSave(text);
+			}
+		} else {
+			onCancel();
+		}
+	};
+
+	// отмена изменений
+	const handleCancel = () => {
+		if (isTextChanged) {
+			const shouldCancel = window.confirm("Выйти без сохранения?");
+			if (shouldCancel) {
+				onCancel();
+			}
+		} else {
+			onCancel();
+		}
+	};
 
 	return (
 		<form className="review-edit-form" onSubmit={handleSubmit}>

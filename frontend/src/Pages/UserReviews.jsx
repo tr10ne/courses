@@ -8,6 +8,7 @@ import CustomSelect from "../Components/SchoolReviews/CustomSelect";
 import PageMetadata from "../Components/PageMetadata";
 import { UserContext } from "../Components/UserContext.jsx";
 import ReviewItemUserWrapper from "../Components/Reviews/ReviewItemUserWrapper.jsx";
+import ItemsDropdown from "../Components/ItemsDropdown.jsx";
 
 const Reviews = () => {
 	const { user, setUser } = useContext(UserContext);
@@ -24,7 +25,6 @@ const Reviews = () => {
 		field: "date", // Поле для сортировки (date или rating)
 		order: "desc", // Порядок сортировки (asc или desc)
 	});
-	const [lastUpdateDate, setLastUpdateDate] = useState(null); // Состояние для хранения даты последнего обновления
 	const RefTarget = useRef(null);
 	const [activeTab, setActiveTab] = useState("pending"); // По умолчанию "pending"
 	const tabs = [
@@ -49,6 +49,7 @@ const Reviews = () => {
 
 	useEffect(() => {
 		const fetchReviews = async () => {
+			setLoading(true);
 			try {
 				const params = {
 					page: queryParams.page,
@@ -73,15 +74,6 @@ const Reviews = () => {
 					const data = reviews.data.data || [];
 					setReviews(data);
 
-					// Проверяем, что массив data не пустой
-					if (data.length > 0) {
-						setLastUpdateDate(
-							new Date(data[0].created_at).toLocaleDateString()
-						); // Устанавливаем дату последнего обновления
-					} else {
-						setLastUpdateDate("Нет данных"); // Или любое другое значение по умолчанию
-					}
-
 					setPagination({
 						current_page: reviews.data.meta.current_page || 1,
 						last_page: reviews.data.meta.last_page || 1,
@@ -93,18 +85,14 @@ const Reviews = () => {
 				setLoading(false);
 			}
 		};
-		fetchReviews();
+
+		if (user) fetchReviews();
 	}, [queryParams.page, sortBy, activeTab, user]);
 
 	const handlePageChange = (newPage) => {
 		setQueryParams((prev) => ({ ...prev, page: newPage }));
 		scrollTo(RefTarget);
 	};
-
-	const crumbs = [
-		{ path: "/", name: "Главная" },
-		{ path: "/reviews", name: "Отзывы" },
-	];
 
 	const handleSortChange = (field, order) => {
 		setSortBy({ field, order });
@@ -127,57 +115,72 @@ const Reviews = () => {
 		}
 	}, []);
 
-	const ReviewsTitle = `Все ${title.toLowerCase()} | COURSES`;
-	const ReviewsDescription = `${description.split(".")[0].trim()}`;
-
-	 // Callback для удаления отзыва
-	 const handleDelete = (reviewId) => {
+	// Callback для удаления отзыва
+	const handleDelete = (reviewId) => {
 		setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
-	  };
+	};
 
-	  // Callback для одобрения/отклонения отзыва
-	  const handleModerate = (reviewId, action) => {
+	// Callback для одобрения/отклонения отзыва
+	const handleModerate = (reviewId, action) => {
 		setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
-	  };
+	};
 
-	  const handleUpdate = () => {
+	const handleUpdate = () => {
 		// Перезагрузить отзывы или обновить состояние
 		console.log("Отзыв обновлен");
-	  };
+	};
+
+	// Обработчик выбора вкладки через Dropdown
+	const handleTabSelect = (tab) => {
+		setActiveTab(tab.id);
+	};
+
+	// Фильтруем вкладки для пользователя
+	const filteredTabs = tabs.filter((tab) => {
+		if (user?.role === "user" && tab.id === "rejected") return false;
+		return true;
+	});
 
 	return (
 		<>
-			<PageMetadata title={ReviewsTitle} description={ReviewsDescription} />
 			<div className="container">
-				<section className="reviews">
+				<section className="reviews reviews_user">
 					<div className="reviews__head block-head">
-						<Breadcrumbs crumbs={crumbs} />
-						<h1 ref={titleRef}>Отзывы о курсах и онлайн школах</h1>
-						<p className="reviews__desc" ref={descriptionRef}>
-							Отзывы об онлайн школах, курсах от учеников и выпускников.
-						</p>
-
+						{" "}
+						<h1 className="title " ref={titleRef}>
+							Отзывы о курсах и онлайн школах
+						</h1>
 						<div className="reviews__box" ref={RefTarget}>
-						{user?.role && (
-							<div className="reviews__tabs">
-								{tabs.map((tab) => {
-									if (user.role === "user" && tab.id === "rejected")
-										return null;
+							{user?.role && (
+								<>
+									<ItemsDropdown
+										items={filteredTabs}
+										onSelect={handleTabSelect}
+										selectedItem={tabs.find((tab) => tab.id === activeTab)}
+										placeholder="Выберите вкладку"
+										displayKey="label"
+										idKey="id"
+									/>
+									<div className="reviews__tabs">
+										{tabs.map((tab) => {
+											if (user.role === "user" && tab.id === "rejected")
+												return null;
 
-									return (
-										<button
-											key={tab.id}
-											className={`reviews__tab ${
-												activeTab === tab.id ? "active" : ""
-											}`}
-											onClick={() => setActiveTab(tab.id)}
-										>
-											{tab.label}
-										</button>
-									);
-								})}
-							</div>
-						)}
+											return (
+												<button
+													key={tab.id}
+													className={`reviews__tab ${
+														activeTab === tab.id ? "active" : ""
+													}`}
+													onClick={() => setActiveTab(tab.id)}
+												>
+													{tab.label}
+												</button>
+											);
+										})}
+									</div>
+								</>
+							)}
 							<div className="reviews__sort">
 								<p>Сортировка: </p>
 								<CustomSelect
@@ -194,36 +197,37 @@ const Reviews = () => {
 									}}
 								/>
 							</div>
-
-						</div>
-
-					</div>
-					<div className="reviews__body">
-						<div className="review-list">
-							{loading ? (
-								<Loading />
-							) : reviews.length > 0 ? (
-								reviews.map((review) => (
-									<ReviewItemUserWrapper
-										key={review.id}
-										review={review}
-										onDelete={handleDelete}
-										onUpdate={handleUpdate}
-										onModerate={handleModerate}
-									/>
-								))
-							) : (
-								<p>Отзывов пока нет</p>
-							)}
-						</div>
-						<div className="reviews__footer">
-							<Pagination
-								currentPage={pagination.current_page}
-								lastPage={pagination.last_page}
-								onPageChange={handlePageChange}
-							/>
 						</div>
 					</div>
+
+					{loading ? (
+						<Loading />
+					) : (
+						<div className="reviews__body">
+							<div className="review-list">
+								{reviews.length > 0 ? (
+									reviews.map((review) => (
+										<ReviewItemUserWrapper
+											key={review.id}
+											review={review}
+											onDelete={handleDelete}
+											onUpdate={handleUpdate}
+											onModerate={handleModerate}
+										/>
+									))
+								) : (
+									<p>Отзывов пока нет</p>
+								)}
+							</div>
+							<div className="reviews__footer">
+								<Pagination
+									currentPage={pagination.current_page}
+									lastPage={pagination.last_page}
+									onPageChange={handlePageChange}
+								/>
+							</div>
+						</div>
+					)}
 				</section>
 			</div>
 		</>
