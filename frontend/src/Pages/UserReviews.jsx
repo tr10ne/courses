@@ -1,17 +1,15 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import axios from "axios";
-import Breadcrumbs from "../Components/Breadcrumbs";
 import Pagination from "../Components/Pagination";
 import Loading from "../Components/Loading";
 import { apiUrl } from "../js/config.js";
 import CustomSelect from "../Components/SchoolReviews/CustomSelect";
-import PageMetadata from "../Components/PageMetadata";
 import { UserContext } from "../Components/UserContext.jsx";
 import ReviewItemUserWrapper from "../Components/Reviews/ReviewItemUserWrapper.jsx";
 import ItemsDropdown from "../Components/ItemsDropdown.jsx";
 
 const Reviews = () => {
-	const { user, setUser } = useContext(UserContext);
+	const { user } = useContext(UserContext);
 	const [reviews, setReviews] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [pagination, setPagination] = useState({
@@ -99,22 +97,6 @@ const Reviews = () => {
 		setQueryParams((prev) => ({ ...prev, page: 1 })); // Сбрасываем страницу на первую
 	};
 
-	const titleRef = useRef(null);
-	const descriptionRef = useRef(null);
-
-	const [title, setTitle] = useState("");
-	const [description, setDescription] = useState("");
-
-	useEffect(() => {
-		if (titleRef.current) {
-			setTitle(titleRef.current.textContent);
-		}
-
-		if (descriptionRef.current) {
-			setDescription(descriptionRef.current.textContent);
-		}
-	}, []);
-
 	// Callback для удаления отзыва
 	const handleDelete = (reviewId) => {
 		setReviews((prevReviews) => prevReviews.filter((r) => r.id !== reviewId));
@@ -147,7 +129,7 @@ const Reviews = () => {
 				<section className="reviews reviews_user">
 					<div className="reviews__head block-head">
 						{" "}
-						<h1 className="title " ref={titleRef}>
+						<h1 className="title ">
 							Отзывы о курсах и онлайн школах
 						</h1>
 						<div className="reviews__box" ref={RefTarget}>
