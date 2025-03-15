@@ -180,6 +180,11 @@ else if (isset($validatedData['course_id'])) {
         // Находим отзыв по ID
         $review = Review::findOrFail($id);
 
+        // Проверяем, что текущий пользователь является автором отзыва или администратором
+        if (!auth()->user()->isModerator()) {
+            return response()->json(['error' => 'У вас нет прав на редактирование этого отзыва'], 403);
+        }
+
         // Валидация данных запроса
         $validatedData = $request->validate([
             'action' => 'required|in:approve,reject', // Действие: approve или reject

@@ -79,6 +79,14 @@ if (container) {
 								</PrivateRoute>
 							}
 						/>
+						<Route
+							path="/user/schools"
+							element={
+								<PrivateRoute>
+									<UserReviews />
+								</PrivateRoute>
+							}
+						/>
 					<Route
 						path="/users"
 						element={

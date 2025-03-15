@@ -39,4 +39,23 @@ class User extends Authenticatable
         // Возвращаем роль, которая принадлежит данному пользователю
         return $this->belongsTo(Role::class);
     }
+
+    
+     // Проверка, является ли пользователь администратором
+     public function isAdmin()
+     {
+         return $this->role && $this->role->name === 'admin';
+     }
+
+     // Проверка, является ли пользователь модератором
+     public function isModerator()
+     {
+         return $this->role && $this->role->name === 'moderator';
+     }
+
+     // Проверка, является ли пользователь представителем школы
+     public function isSchoolRepresentative()
+     {
+         return $this->role && $this->role->name === 'school_representative';
+     }
 }
