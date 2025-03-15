@@ -32,15 +32,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [UserController::class, 'update']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
-});
 
+    Route::prefix('reviews')->group(function () {
+        Route::put('/{id}', [ReviewController::class, 'update']);
+        Route::delete('/{id}', [ReviewController::class, 'destroy']);
+        Route::patch('/{id}/moderate', [ReviewController::class, 'moderate'])
+            ->name('reviews.moderate');
+    });
+});
 
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/register', [UserController::class, 'store']);
 
 // Добавьте маршрут для одобрения/отклонения отзыва
-Route::patch('/reviews/{id}/moderate', [ReviewController::class, 'moderate'])
-    ->name('reviews.moderate');
 
 // Получение данных по URL
 Route::prefix('courses')->group(function () {
@@ -55,10 +59,11 @@ Route::prefix('courses')->group(function () {
 Route::get('/schools/url/{url}', [SchoolController::class, 'showByUrl'])->name('schools.showByUrl');
 Route::get('/categories/url/{url}', [CategoryController::class, 'showByUrl']);
 Route::get('/subcategories/url/{url}', [SubcategoryController::class, 'showByUrl']);
+Route::get('/reviews', [ReviewController::class, 'index']);
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('courses', CourseController::class);
-Route::apiResource('reviews', ReviewController::class);
+// Route::apiResource('reviews', ReviewController::class);
 Route::apiResource('subcategories', SubcategoryController::class);
 Route::apiResource('schools', SchoolController::class);
 Route::apiResource('roles', RoleController::class);
