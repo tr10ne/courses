@@ -78,25 +78,29 @@ const ReviewItemWrapper = ({
 	// Функция для сохранения изменений
 	const handleSave = async (newText) => {
 		setIsLoading(true); // Включаем состояние загрузки
-
+console.log('token')
 		const token = localStorage.getItem("token");
 
 		try {
-			await axios.put(`${apiUrl}/api/reviews/${review.id}`, {
-				text: newText,
-			}, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Передаём токен в заголовке
-        },
-      });
+			await axios.put(
+				`${apiUrl}/api/reviews/${review.id}`,
+				{
+					text: newText,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`, // Передаём токен в заголовке
+					},
+				}
+			);
 			// Обновляем локальное состояние отзыва
 			const updatedReview = { ...currentReview, text: newText };
 			setCurrentReview(updatedReview);
 			if (onUpdate) onUpdate(review.id, newText); // Вызов callback для обновления отзыва
 			setIsEditing(false); // Выключаем режим редактирования
+			setIsLoading(false); // Выключаем состояние загрузки
 		} catch (error) {
 			console.error("Ошибка при редактировании отзыва:", error);
-		} finally {
 			setIsLoading(false); // Выключаем состояние загрузки
 		}
 	};
@@ -136,7 +140,7 @@ const ReviewItemWrapper = ({
 						<ReviewItem review={currentReview} isGeneralPage={isGeneralPage} />
 					</div>
 					{/* Кнопки для модератора */}
-					{user?.role === "moderator"  && (
+					{user?.role === "moderator" && (
 						<div className="review-actions">
 							{currentReview.is_approved === null && (
 								<>

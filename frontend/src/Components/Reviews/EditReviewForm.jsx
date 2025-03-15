@@ -31,6 +31,7 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
 	// сохранение изменений
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		console.log(isTextChanged)
 		if (isTextChanged) {
 			const shouldSave = window.confirm("Сохранить изменения?");
 			if (shouldSave) {
@@ -59,8 +60,8 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
 				value={text}
 				config={config}
 				tabIndex={1}
-				onBlur={(newContent) => setText(newContent)}
-				onChange={(newContent) => {}}
+				// onBlur={(newContent) => setText(newContent)}
+				onChange={(newContent) => setText(newContent)}
 			/>
 			<div className="review-actions">
 				<button type="submit">Сохранить</button>
