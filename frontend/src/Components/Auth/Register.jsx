@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { apiUrl } from "../../js/config.js";
 import {
   validateEmail,
@@ -6,20 +6,20 @@ import {
   validatePasswordLenght,
   preventSpaceKeyInput,
 } from "../../js/utils.js";
-
+import { UserContext } from "../UserContext.jsx";
 import Eye from "../Eye.jsx";
 import Modal from "../Modal";
 
-const Register = ({ onAuthSuccess }) => {
+const Register = ({ onAuthSuccess, isModal = false }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState("");
-
+  const [showPasswordConfirmation, setShowPasswordConfirmation] =
+    useState(false);
   const [emailError, setEmailError] = useState("");
-
+  const { setUser } = useContext(UserContext);
   const [modalProps, setModalProps] = useState({
     isOpen: false,
     title: "",
@@ -27,10 +27,6 @@ const Register = ({ onAuthSuccess }) => {
     buttonText: "Закрыть",
   });
 
-  //=======================================================
-  //ОБЩИЕ ФУНКЦИИ
-
-  // Проверка, для активировации кнопки "Зарегистрироваться"
   const isFormValid = () => {
     return (
       validateNameLenght(name) &&
@@ -40,10 +36,6 @@ const Register = ({ onAuthSuccess }) => {
     );
   };
 
-  //================================================================
-  // РАБОТА С ЗАПРОСОМ
-
-  //запрос на регистрацию пользователя
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailError("");
@@ -57,26 +49,57 @@ const Register = ({ onAuthSuccess }) => {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/api/register`, {
+      // Регистрация пользователя
+      const registerResponse = await fetch(`${apiUrl}/api/register`, {
         method: "POST",
         body: formData,
       });
-      const data = await response.json();
-      if (response.ok) {
-        // Успешная регистрация
-        setModalProps({
-          isOpen: true,
-          title: "Успех!",
-          message:
-            "Успешная регистрация. Вы будете перенаправлены на страницу входа.",
-          buttonText: "Хорошо",
-        });
-        setTimeout(() => {
-          window.location.href = "/login";
-          if (onAuthSuccess) onAuthSuccess();
-        }, 1500); // Задержка для отображения модалки
+      const registerData = await registerResponse.json();
+
+      if (registerResponse.ok) {
+        // Автоматическая авторизация после регистрации
+        try {
+          const loginResponse = await fetch(`${apiUrl}/api/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
+          const loginData = await loginResponse.json();
+
+          if (loginResponse.ok && loginData.token && loginData.user) {
+            // Сохраняем токен и пользователя
+            localStorage.setItem("token", loginData.token);
+            setUser(loginData.user);
+
+            // Успешная регистрация и авторизация
+            // setModalProps({
+            //   isOpen: true,
+            //   title: "Успех!",
+            //   message: isModal
+            //     ? "Успешная регистрация. Теперь вы можете оставить отзыв."
+            //     : "Успешная регистрация. Вы будете перенаправлены на страницу входа.",
+            //   buttonText: "Хорошо",
+            // });
+
+            // Если это модальный вариант, вызываем onAuthSuccess для отправки отзыва
+            if (isModal && onAuthSuccess) {
+              onAuthSuccess(); // Вызываем сразу без задержки
+            } else {
+              window.location.href = "/user/profile"; // Перенаправление на профиль
+            }
+          } else {
+            console.error("Ошибка автоматического входа:", loginData);
+          }
+        } catch (loginError) {
+          console.error("Ошибка при автоматическом входе:", loginError);
+        }
       } else {
-        const { type, message } = data;
+        const { type, message } = registerData;
         if (type === "email") {
           setEmailError(message);
         } else {
@@ -98,12 +121,14 @@ const Register = ({ onAuthSuccess }) => {
     }
   };
 
-  //=======================================================
-  //ОТРИСОВКА ЭЛЕМЕНТОВ
-
   return (
-    <div className="container auth">
-      <h1 className="title auth__title">Регистрация</h1>
+    <div className={`container auth ${isModal ? "modal-register" : ""}`}>
+      <h1 className="title auth__title">
+        {isModal ? "Зарегистрируйтесь" : "Регистрация"}
+      </h1>
+      <p className="desc auth__desc">
+        {isModal ? "Чтобы оставить отзыв" : "Создание аккаунта"}
+      </p>
       <form className="auth__form" onSubmit={handleSubmit}>
         <div className="auth__form__group">
           <label className="auth__form__label">
@@ -174,7 +199,6 @@ const Register = ({ onAuthSuccess }) => {
                 onKeyDown={preventSpaceKeyInput}
                 minLength="8"
               />
-
               <button
                 type="button"
                 className="password-toggle-btn"

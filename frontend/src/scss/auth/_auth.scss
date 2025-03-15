@@ -178,7 +178,7 @@
 
 .tab-link.active {
   background: white;
-  border-bottom: 2px solid #4caf50;
+  border-bottom: 2px solid $color-accent;
 }
 
 .close-btn {
@@ -192,10 +192,11 @@
 }
 
 .auth-tabs-content {
-  max-height: 460px;
+  max-height: 600px;
   overflow-y: auto;
-  & .container {
-    padding: 10px;
+  & .tab-content .container {
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
 
@@ -205,16 +206,6 @@
 
 .tab-content.active {
   display: block;
-}
-
-.auth__form {
-  max-width: 100%;
-  width: 100%;
-}
-
-.auth__form__input {
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .auth__error {

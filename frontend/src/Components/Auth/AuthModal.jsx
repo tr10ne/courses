@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 
-const AuthModal = ({ onClose, onAuthSuccess }) => {
+const AuthModal = ({ onClose }) => {
+  const handleAuthSuccess = async () => {
+    // Логика после успешной авторизации
+    onClose(); // Закрываем модальное окно
+  };
   const [activeTab, setActiveTab] = useState("login");
 
   return (
@@ -28,12 +32,12 @@ const AuthModal = ({ onClose, onAuthSuccess }) => {
         <div className="auth-tabs-content">
           {activeTab === "login" && (
             <div className="tab-content active" id="login">
-              <Login onAuthSuccess={onAuthSuccess} />
+              <Login isModal={true} onAuthSuccess={handleAuthSuccess} />
             </div>
           )}
           {activeTab === "register" && (
             <div className="tab-content active" id="register">
-              <Register onAuthSuccess={onAuthSuccess} />
+              <Register isModal={true} onAuthSuccess={handleAuthSuccess} />
             </div>
           )}
         </div>

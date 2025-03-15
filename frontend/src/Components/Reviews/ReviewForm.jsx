@@ -1,4 +1,10 @@
-import React, { useState, useEffect, forwardRef, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useContext,
+  useCallback,
+} from "react";
 import { UserContext } from "../UserContext";
 import { apiUrl } from "../../js/config.js";
 import AuthModal from "../Auth/AuthModal";
@@ -14,7 +20,6 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [setIsSubmitted] = useState(false);
   const [modalProps, setModalProps] = useState({
     isOpen: false,
     title: "",
@@ -22,7 +27,6 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
     buttonText: "Закрыть",
   });
 
-  // Эффект для предзаполнения имени, если пользователь залогинен
   useEffect(() => {
     if (user && user.name) {
       setName(user.name);
@@ -44,14 +48,18 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
     }
 
     const reviewData = {
-      text: feedback,
-      rating,
-      school_id: schoolId,
+      text: feedback.trim(), // Убираем лишние пробелы
+      rating: Number(rating), // Преобразуем в число
+      school_id: Number(schoolId), // Преобразуем в число
     };
 
     if (user) {
-      // Залогиненный пользователь
       try {
+        console.log("Sending review data:", {
+          ...reviewData,
+          user_id: user.id,
+        });
+
         const response = await axios.post(
           `${apiUrl}/api/reviews`,
           { ...reviewData, user_id: user.id },
@@ -61,6 +69,7 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
             },
           }
         );
+
         if (response.status === 201) {
           setModalProps({
             ...modalProps,
@@ -70,23 +79,24 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
               "Он будет опубликован в ближайшее время после проверки модератором.",
             buttonText: "Хорошо",
           });
-          // Очистить форму
           setName("");
           setFeedback("");
           setRating(0);
         }
       } catch (error) {
-        console.error("Ошибка при отправке отзыва:", error);
+        if (error.response && error.response.data) {
+          console.error("Server validation errors:", error.response.data);
+        } else {
+          console.error("Network error:", error.message);
+        }
       }
     } else {
-      // Не залогиненный пользователь
       localStorage.setItem("pendingReview", JSON.stringify(reviewData));
       setShowAuthModal(true);
     }
   };
 
-  // Обработчик успешной авторизации/регистрации
-  const handleAuthSuccess = async () => {
+  const handleAuthSuccess = useCallback(async () => {
     const pendingReview = JSON.parse(localStorage.getItem("pendingReview"));
     if (pendingReview && user) {
       try {
@@ -103,8 +113,17 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
           }
         );
         if (response.status === 201) {
-          setIsSubmitted(true);
-          setTimeout(() => setIsSubmitted(false), 5000);
+          setModalProps({
+            ...modalProps,
+            isOpen: true,
+            title: "Спасибо за Ваш отзыв!",
+            message:
+              "Он будет опубликован в ближайшее время после проверки модератором.",
+            buttonText: "Хорошо",
+          });
+          setName("");
+          setFeedback("");
+          setRating(0);
           localStorage.removeItem("pendingReview");
         }
       } catch (error) {
@@ -112,7 +131,13 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
       }
     }
     setShowAuthModal(false);
-  };
+  }, [user, setModalProps, modalProps, setName, setFeedback, setRating]);
+
+  useEffect(() => {
+    if (user && JSON.parse(localStorage.getItem("pendingReview"))) {
+      handleAuthSuccess();
+    }
+  }, [user, handleAuthSuccess]);
 
   return (
     <div ref={ref} className="feedback-form">
@@ -176,25 +201,23 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
         <button className="form-button" type="submit">
           Оставить отзыв
         </button>
-        {modalProps.isOpen && (
-          <Modal
-            isOpen={modalProps.isOpen}
-            onClose={() => setModalProps({ ...modalProps, isOpen: false })}
-            title={modalProps.title}
-            message={modalProps.message}
-            buttonText={modalProps.buttonText}
-            onButtonClick={() =>
-              setModalProps({ ...modalProps, isOpen: false })
-            }
-          />
-        )}
-        {showAuthModal && (
-          <AuthModal
-            onClose={() => setShowAuthModal(false)}
-            onAuthSuccess={handleAuthSuccess}
-          />
-        )}
       </form>
+      {modalProps.isOpen && (
+        <Modal
+          isOpen={modalProps.isOpen}
+          onClose={() => setModalProps({ ...modalProps, isOpen: false })}
+          title={modalProps.title}
+          message={modalProps.message}
+          buttonText={modalProps.buttonText}
+          onButtonClick={() => setModalProps({ ...modalProps, isOpen: false })}
+        />
+      )}
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      )}
     </div>
   );
 });

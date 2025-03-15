@@ -73,7 +73,6 @@ const ReviewItemWrapper = ({
       setIsEditing(false);
       setModalProps({
         isOpen: true,
-        title: "Успех",
         message: "Изменения сохранены",
         buttonText: "Хорошо",
         action: null,
@@ -81,7 +80,6 @@ const ReviewItemWrapper = ({
     } catch (error) {
       setModalProps({
         isOpen: true,
-        title: "Ошибка",
         message: "Не удалось сохранить изменения",
         buttonText: "ОК",
         action: null,

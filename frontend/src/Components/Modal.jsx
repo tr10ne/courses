@@ -6,7 +6,9 @@ const Modal = ({
   title,
   message,
   buttonText,
+  secondaryButtonText,
   onButtonClick = onClose,
+  onSecondaryClick = onClose,
 }) => {
   return (
     <div className={`modal-overlay ${isOpen ? "active" : ""}`}>
@@ -18,11 +20,22 @@ const Modal = ({
         {title && <h2 className="modal-title">{title}</h2>}
         {message && <p className="modal-message">{message}</p>}
 
-        {buttonText && (
-          <button className="modal-button" onClick={onButtonClick}>
-            {buttonText}
-          </button>
-        )}
+        <div className="buttons-block">
+          {buttonText && (
+            <button className="modal-button" onClick={onButtonClick}>
+              {buttonText}
+            </button>
+          )}
+
+          {secondaryButtonText && (
+            <button
+              className="modal-button modal-button_secondary"
+              onClick={onSecondaryClick}
+            >
+              {secondaryButtonText}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
