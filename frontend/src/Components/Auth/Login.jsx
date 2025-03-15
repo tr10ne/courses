@@ -4,6 +4,7 @@ import { apiUrl } from "../../js/config.js";
 import { UserContext } from "../UserContext.jsx";
 import { validateEmail, validatePasswordLenght } from "../../js/utils.js";
 import Eye from "../Eye.jsx";
+import Modal from "../Modal";
 
 const Login = ({ onAuthSuccess }) => {
   const [email, setEmail] = useState("");
@@ -12,6 +13,12 @@ const Login = ({ onAuthSuccess }) => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { setUser } = useContext(UserContext);
+  const [modalProps, setModalProps] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    buttonText: "Закрыть",
+  });
 
   //=======================================================
   //ОБЩИЕ ФУНКЦИИ
@@ -52,10 +59,20 @@ const Login = ({ onAuthSuccess }) => {
         } else if (type === "password") {
           setPasswordError(message);
         } else {
-          alert(message);
+          setModalProps({
+            isOpen: true,
+            title: "Ошибка",
+            message: message,
+            buttonText: "Понял",
+          });
         }
       } else {
-        alert("Произошла ошибка при авторизации");
+        setModalProps({
+          isOpen: true,
+          title: "Ошибка",
+          message: "Произошла ошибка при авторизации",
+          buttonText: "Хорошо",
+        });
       }
     }
   };
@@ -117,6 +134,16 @@ const Login = ({ onAuthSuccess }) => {
           Войти
         </button>
       </form>
+      {modalProps.isOpen && (
+        <Modal
+          isOpen={modalProps.isOpen}
+          onClose={() => setModalProps({ ...modalProps, isOpen: false })}
+          title={modalProps.title}
+          message={modalProps.message}
+          buttonText={modalProps.buttonText}
+          onButtonClick={() => setModalProps({ ...modalProps, isOpen: false })}
+        />
+      )}
     </div>
   );
 };

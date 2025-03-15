@@ -8,6 +8,7 @@ import {
 } from "../../js/utils.js";
 
 import Eye from "../Eye.jsx";
+import Modal from "../Modal";
 
 const Register = ({ onAuthSuccess }) => {
   const [name, setName] = useState("");
@@ -18,6 +19,13 @@ const Register = ({ onAuthSuccess }) => {
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState("");
 
   const [emailError, setEmailError] = useState("");
+
+  const [modalProps, setModalProps] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    buttonText: "Закрыть",
+  });
 
   //=======================================================
   //ОБЩИЕ ФУНКЦИИ
@@ -55,22 +63,38 @@ const Register = ({ onAuthSuccess }) => {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Успешная регистрация");
-        window.location.href = "/login";
-        if (onAuthSuccess) {
-          onAuthSuccess();
-        }
+        // Успешная регистрация
+        setModalProps({
+          isOpen: true,
+          title: "Успех!",
+          message:
+            "Успешная регистрация. Вы будете перенаправлены на страницу входа.",
+          buttonText: "Хорошо",
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+          if (onAuthSuccess) onAuthSuccess();
+        }, 1500); // Задержка для отображения модалки
       } else {
         const { type, message } = data;
-        // Обрабатываем ошибки в зависимости от типа
         if (type === "email") {
-          setEmailError(message); // Устанавливаем ошибку email
+          setEmailError(message);
         } else {
-          alert(message); // Выводим остальные ошибки через alert
+          setModalProps({
+            isOpen: true,
+            title: "Ошибка",
+            message: message,
+            buttonText: "Понял",
+          });
         }
       }
     } catch (error) {
-      alert("Произошла ошибка при регистрации");
+      setModalProps({
+        isOpen: true,
+        title: "Ошибка",
+        message: "Произошла ошибка при регистрации",
+        buttonText: "Хорошо",
+      });
     }
   };
 
@@ -167,6 +191,16 @@ const Register = ({ onAuthSuccess }) => {
           Зарегистрироваться
         </button>
       </form>
+      {modalProps.isOpen && (
+        <Modal
+          isOpen={modalProps.isOpen}
+          onClose={() => setModalProps({ ...modalProps, isOpen: false })}
+          title={modalProps.title}
+          message={modalProps.message}
+          buttonText={modalProps.buttonText}
+          onButtonClick={() => setModalProps({ ...modalProps, isOpen: false })}
+        />
+      )}
     </div>
   );
 };

@@ -15,8 +15,12 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
   const [hoverRating, setHoverRating] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [setIsSubmitted] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalProps, setModalProps] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    buttonText: "Закрыть",
+  });
 
   // Эффект для предзаполнения имени, если пользователь залогинен
   useEffect(() => {
@@ -29,8 +33,13 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
     e.preventDefault();
 
     if (!rating) {
-      setModalMessage("Пожалуйста, поставьте оценку");
-      setIsModalOpen(true);
+      setModalProps({
+        ...modalProps,
+        isOpen: true,
+        title: "Внимательнее",
+        message: "Пожалуйста, поставьте оценку",
+        buttonText: "Понял",
+      });
       return;
     }
 
@@ -53,11 +62,14 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
           }
         );
         if (response.status === 201) {
-          setModalMessage(
-            "Спасибо за Ваш отзыв! Он будет опубликован в ближайшее время после проверки модератором."
-          );
-          setIsModalOpen(true);
-          setTimeout(() => setIsModalOpen(false), 5000);
+          setModalProps({
+            ...modalProps,
+            isOpen: true,
+            title: "Спасибо за Ваш отзыв!",
+            message:
+              "Он будет опубликован в ближайшее время после проверки модератором.",
+            buttonText: "Хорошо",
+          });
           // Очистить форму
           setName("");
           setFeedback("");
@@ -164,14 +176,16 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
         <button className="form-button" type="submit">
           Оставить отзыв
         </button>
-        {isModalOpen && (
+        {modalProps.isOpen && (
           <Modal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title={modalMessage.includes("Спасибо")}
-            message={modalMessage}
-            buttonText="Закрыть"
-            onButtonClick={() => setIsModalOpen(false)}
+            isOpen={modalProps.isOpen}
+            onClose={() => setModalProps({ ...modalProps, isOpen: false })}
+            title={modalProps.title}
+            message={modalProps.message}
+            buttonText={modalProps.buttonText}
+            onButtonClick={() =>
+              setModalProps({ ...modalProps, isOpen: false })
+            }
           />
         )}
         {showAuthModal && (

@@ -1,6 +1,5 @@
 @use "./index" as *;
 
-/* Блокировка скролла при открытии модалки */
 .modal-overlay.active {
   position: fixed;
   top: 0;
@@ -11,35 +10,45 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* Блокируем скролл */
+  overflow: hidden;
   z-index: 1000;
 }
 
 .modal {
+  position: relative;
   background: white;
   padding: 20px;
   border-radius: 8px;
   max-width: 400px;
-  width: 90%;
+  width: 50%;
+  height: auto;
   text-align: center;
 }
 
 .modal-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: -35px;
+  right: -25px;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 42px;
   cursor: pointer;
 }
 
 .modal-title {
   margin-bottom: 15px;
+  font-family: "Lisboa-Heavy-Regular", sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 39px;
 }
 
 .modal-message {
   margin-bottom: 25px;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
 }
 
 .modal-button {
