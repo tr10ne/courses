@@ -3,7 +3,6 @@
 @use "./scss/animation";
 // @use "./scss/mixins";
 
-
 @use "./scss/reset";
 @use "./scss/common";
 @use "./scss/not-found";
@@ -50,6 +49,9 @@
 //Reviews
 @use "./scss/reviews/review-item.scss";
 @use "./scss/reviews/reviews";
+
+//Modal
+@use "./scss/modal";
 
 @use "./scss/mobile-filter-button";
 
