@@ -31,17 +31,6 @@
       font-weight: 400;
       line-height: 15px;
     }
-    & textarea {
-      width: 100%;
-      padding: 17px 24px;
-      border-radius: 5px;
-      border: $border;
-      min-height: 230px;
-      font-family: "FS-Elliot-Pro-Regular", sans-serif;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 15px;
-    }
   }
 }
 
@@ -62,4 +51,26 @@
     background-color: transparent;
     color: $color-accent;
   }
+}
+
+.jodit-container {
+  width: 100%;
+  min-height: 250px !important;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: "FS-Elliot-Pro-Regular", sans-serif !important;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15px;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.jodit-wysiwyg {
+  width: 100%;
+  padding: 17px 24px !important;
+  min-height: 250px !important;
+  background-color: #fff;
+  color: #000;
 }

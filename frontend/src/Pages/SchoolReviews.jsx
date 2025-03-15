@@ -462,7 +462,11 @@ const SchoolReviews = () => {
                 </div>
               </>
             )}
-            <ReviewForm about={school.name} ref={reviewFormRef} />
+            <ReviewForm
+              about={school.name}
+              schoolId={school.id}
+              ref={reviewFormRef}
+            />
           </div>
           {isMobile && <ReviewsOtherSchools schools={nearbySchools} />}
         </section>
