@@ -13,7 +13,7 @@ import axios from "axios";
 import Stars from "../Stars";
 import JoditEditor from "jodit-react";
 
-const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
+const ReviewForm = forwardRef(({ about, schoolId, courseId }, ref) => {
   const { user } = useContext(UserContext);
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -48,9 +48,10 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
     }
 
     const reviewData = {
-      text: feedback.trim(), // Убираем лишние пробелы
-      rating: Number(rating), // Преобразуем в число
-      school_id: Number(schoolId), // Преобразуем в число
+      text: feedback.trim(),
+      rating: Number(rating),
+      school_id: schoolId ? Number(schoolId) : undefined, // Для школ
+      course_id: courseId ? Number(courseId) : undefined, // Для курсов
     };
 
     if (user) {
@@ -143,7 +144,9 @@ const ReviewForm = forwardRef(({ about, schoolId }, ref) => {
     <div ref={ref} className="feedback-form">
       <p className="feedback-form__title">Оставить отзыв</p>
       <p className="feedback-form__desc">
-        В данном разделе вы можете оставить ваш отзыв о {about}.
+        {courseId
+          ? `Здесь Вы можете оставить отзыв о курсе ${about}.`
+          : `Здесь Вы можете оставить отзыв о школе ${about}.`}
       </p>
       <form onSubmit={handleSubmit}>
         <div className="form-group">

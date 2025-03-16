@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiUrl } from "../js/config.js";
@@ -11,6 +11,8 @@ import CourseInfo from "../Components/CourseDetail/CourseInfo.jsx";
 import SchoolInfo from "../Components/CourseDetail/SchoolInfo.jsx";
 import { formatPrice } from "../js/formatPrice.js";
 import PageMetadata from "../Components/PageMetadata.jsx";
+import ReviewForm from "../Components/Reviews/ReviewForm.jsx";
+import { UserContext } from "../Components/UserContext.jsx";
 
 const CourseDetail = () => {
   const navigate = useNavigate();
@@ -20,9 +22,11 @@ const CourseDetail = () => {
   const [error, setError] = useState(null);
   const headerRef = useRef(null);
   const [crumbs, setCrumbs] = useState([]);
-  const [visibleReviews, setVisibleReviews] = useState(1);
+  const [visibleReviews, setVisibleReviews] = useState(3);
   const [schoolInfoOnTon, setSchoolInfoOnTon] = useState(null);
   const sidebarRef = useRef();
+  const { user } = useContext(UserContext);
+  const [userReview, setUserReview] = useState(null);
 
   //================================================================
   // РАБОТА С ЗАПРОСОМ
@@ -121,6 +125,25 @@ const CourseDetail = () => {
     };
   }, [course]);
 
+  const reviewFormRef = useRef(null);
+
+  useEffect(() => {
+    if (user && course) {
+      axios
+        .get(`${apiUrl}/api/reviews`, {
+          params: {
+            course_id: course.id,
+            user_id: user.id,
+            limit: 1,
+          },
+        })
+        .then((response) => {
+          setUserReview(response.data.data[0] || null);
+        })
+        .catch((error) => console.error("Ошибка проверки отзыва:", error));
+    }
+  }, [user, course]);
+
   //=======================================================
   //SEO
 
@@ -143,7 +166,12 @@ const CourseDetail = () => {
 
   //отрисовываем отзывы
   const renderReview = () => {
-    if (course.reviews.length === 0)
+    const approvedReviews = course.reviews.filter(
+      (review) => review.is_approved
+    );
+    const reviewsToShow = approvedReviews.slice(0, visibleReviews);
+
+    if (approvedReviews.length === 0)
       return (
         <p className="no-reviews-message">
           Пока здесь нет отзывов. Будьте первым - оставьте свой отзыв о{" "}
@@ -151,14 +179,12 @@ const CourseDetail = () => {
         </p>
       );
 
-    const reviewsToShow = course.reviews.slice(0, visibleReviews);
-
     return (
       <>
         {reviewsToShow.map((review, index) => (
           <ReviewItem key={index} review={review} />
         ))}
-        {visibleReviews < course.reviews.length && (
+        {visibleReviews < approvedReviews.length && (
           <button
             className="course__reviews-link"
             onClick={() => setVisibleReviews(visibleReviews + 3)}
@@ -221,8 +247,65 @@ const CourseDetail = () => {
                 </article>
               )}
               <article className="course__block">
-                <h2 className="course__title">Отзывы о курсе</h2>
+                <h2 className="course__title">
+                  Отзывы о курсе{" "}
+                  {userReview ? (
+                    <span
+                      className="school-reviews__toform"
+                      onClick={() => {
+                        const offset = 90; // Отступ сверху в пикселях (например, 50px)
+                        const targetElement = reviewFormRef.current;
+
+                        if (targetElement) {
+                          const elementPosition =
+                            targetElement.getBoundingClientRect().top +
+                            window.pageYOffset;
+                          window.scrollTo({
+                            top: elementPosition - offset, // Вычитаем отступ
+                            behavior: "smooth", // Плавная прокрутка
+                          });
+                        }
+                      }}
+                    >
+                      Вы уже оставляли отзыв
+                    </span>
+                  ) : (
+                    <span
+                      className="school-reviews__toform"
+                      onClick={() => {
+                        const offset = 90; // Отступ сверху в пикселях (например, 50px)
+                        const targetElement = reviewFormRef.current;
+
+                        if (targetElement) {
+                          const elementPosition =
+                            targetElement.getBoundingClientRect().top +
+                            window.pageYOffset;
+                          window.scrollTo({
+                            top: elementPosition - offset, // Вычитаем отступ
+                            behavior: "smooth", // Плавная прокрутка
+                          });
+                        }
+                      }}
+                    >
+                      Оставить отзыв
+                    </span>
+                  )}
+                </h2>
                 {renderReview()}
+                {userReview ? (
+                  <div className="current-user-review" ref={reviewFormRef}>
+                    <h3 className="current-user-review__title">
+                      Это Ваш отзыв о курсе {course.name}:
+                    </h3>
+                    <ReviewItem review={userReview} />
+                  </div>
+                ) : (
+                  <ReviewForm
+                    about={course.name}
+                    courseId={course.id}
+                    ref={reviewFormRef}
+                  />
+                )}
               </article>
               {renderRelatedCourses()}
             </div>

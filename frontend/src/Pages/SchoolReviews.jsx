@@ -366,25 +366,47 @@ const SchoolReviews = () => {
                 </div>
 
                 <div className="school-reviews__leave">
-                  <span
-                    className="school-reviews__toform"
-                    onClick={() => {
-                      const offset = 100; // Отступ сверху в пикселях (например, 50px)
-                      const targetElement = reviewFormRef.current;
+                  {userReview ? (
+                    <span
+                      className="school-reviews__toform"
+                      onClick={() => {
+                        const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                        const targetElement = reviewFormRef.current;
 
-                      if (targetElement) {
-                        const elementPosition =
-                          targetElement.getBoundingClientRect().top +
-                          window.pageYOffset;
-                        window.scrollTo({
-                          top: elementPosition - offset, // Вычитаем отступ
-                          behavior: "smooth", // Плавная прокрутка
-                        });
-                      }
-                    }}
-                  >
-                    Оставить отзыв
-                  </span>
+                        if (targetElement) {
+                          const elementPosition =
+                            targetElement.getBoundingClientRect().top +
+                            window.pageYOffset;
+                          window.scrollTo({
+                            top: elementPosition - offset, // Вычитаем отступ
+                            behavior: "smooth", // Плавная прокрутка
+                          });
+                        }
+                      }}
+                    >
+                      Вы уже оставляли отзыв
+                    </span>
+                  ) : (
+                    <span
+                      className="school-reviews__toform"
+                      onClick={() => {
+                        const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                        const targetElement = reviewFormRef.current;
+
+                        if (targetElement) {
+                          const elementPosition =
+                            targetElement.getBoundingClientRect().top +
+                            window.pageYOffset;
+                          window.scrollTo({
+                            top: elementPosition - offset, // Вычитаем отступ
+                            behavior: "smooth", // Плавная прокрутка
+                          });
+                        }
+                      }}
+                    >
+                      Оставить отзыв
+                    </span>
+                  )}
                 </div>
               </div>
             )}
@@ -437,25 +459,47 @@ const SchoolReviews = () => {
               </div>
 
               <div className="school-reviews__leave">
-                <span
-                  className="school-reviews__toform"
-                  onClick={() => {
-                    const offset = 100; // Отступ сверху в пикселях (например, 50px)
-                    const targetElement = reviewFormRef.current;
+                {userReview ? (
+                  <span
+                    className="school-reviews__toform"
+                    onClick={() => {
+                      const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                      const targetElement = reviewFormRef.current;
 
-                    if (targetElement) {
-                      const elementPosition =
-                        targetElement.getBoundingClientRect().top +
-                        window.pageYOffset;
-                      window.scrollTo({
-                        top: elementPosition - offset, // Вычитаем отступ
-                        behavior: "smooth", // Плавная прокрутка
-                      });
-                    }
-                  }}
-                >
-                  Оставить отзыв
-                </span>
+                      if (targetElement) {
+                        const elementPosition =
+                          targetElement.getBoundingClientRect().top +
+                          window.pageYOffset;
+                        window.scrollTo({
+                          top: elementPosition - offset, // Вычитаем отступ
+                          behavior: "smooth", // Плавная прокрутка
+                        });
+                      }
+                    }}
+                  >
+                    Вы уже оставляли отзыв
+                  </span>
+                ) : (
+                  <span
+                    className="school-reviews__toform"
+                    onClick={() => {
+                      const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                      const targetElement = reviewFormRef.current;
+
+                      if (targetElement) {
+                        const elementPosition =
+                          targetElement.getBoundingClientRect().top +
+                          window.pageYOffset;
+                        window.scrollTo({
+                          top: elementPosition - offset, // Вычитаем отступ
+                          behavior: "smooth", // Плавная прокрутка
+                        });
+                      }
+                    }}
+                  >
+                    Оставить отзыв
+                  </span>
+                )}
               </div>
             </div>
           )}
@@ -483,8 +527,10 @@ const SchoolReviews = () => {
               </>
             )}
             {userReview ? (
-              <div className="current-user-review">
-                <h3 className="current-user-review__title">Это Ваш отзыв о {school.name}:</h3>
+              <div className="current-user-review" ref={reviewFormRef}>
+                <h3 className="current-user-review__title">
+                  Это Ваш отзыв о школе {school.name}:
+                </h3>
                 <ReviewItem review={userReview} />
               </div>
             ) : (
