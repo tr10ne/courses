@@ -20,9 +20,19 @@ const Login = ({ onAuthSuccess, isModal = false }) => {
     buttonText: "Закрыть",
   });
 
+  //=======================================================
+  //ОБЩИЕ ФУНКЦИИ
+
+  // Проверка, для активации кнопки "Войти"
+
   const isFormValid = () => {
     return validateEmail(email) && validatePasswordLenght(password);
   };
+
+  //================================================================
+  // РАБОТА С ЗАПРОСОМ
+
+  //запрос на вход пользователя
 
   const handleSubmit = async (e) => {
     e.preventDefault();
