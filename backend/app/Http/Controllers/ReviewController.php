@@ -59,6 +59,14 @@ class ReviewController extends Controller
 
                     }
 
+        // Добавьте фильтрацию по пользователю и школе
+        if ($request->has('user_id') && $request->has('school_id')) {
+            $query->where('user_id', $request->user_id)
+                ->whereHas('schools', function($q) use ($request) {
+                    $q->where('schools.id', $request->school_id);
+                });
+        }
+
         // Проверяем, передан ли параметр limit
         $limit = $request->query('limit', 10); // По умолчанию 10 на страницу
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import Breadcrumbs from "../Components/Breadcrumbs";
@@ -12,8 +12,11 @@ import ReviewsOtherSchools from "../Components/SchoolReviews/ReviewsOtherSchools
 import CustomSelect from "../Components/SchoolReviews/CustomSelect";
 import ReviewForm from "../Components/Reviews/ReviewForm";
 import PageMetadata from "../Components/PageMetadata";
+import { UserContext } from "../Components/UserContext";
 
 const SchoolReviews = () => {
+  const { user } = useContext(UserContext);
+  const [userReview, setUserReview] = useState(null);
   const { url } = useParams();
   const [school, setSchool] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -229,6 +232,23 @@ const SchoolReviews = () => {
       fetchAllSchools();
     }
   }, [school]);
+
+  useEffect(() => {
+    if (user && school) {
+      axios
+        .get(`${apiUrl}/api/reviews`, {
+          params: {
+            school_id: school.id,
+            user_id: user.id,
+            limit: 1,
+          },
+        })
+        .then((response) => {
+          setUserReview(response.data.data[0] || null);
+        })
+        .catch((error) => console.error("Ошибка проверки отзыва:", error));
+    }
+  }, [user, school]);
 
   // Подсчет количества отзывов с каждой оценкой
   const countReviewsByRating = (reviews) => {
@@ -462,11 +482,18 @@ const SchoolReviews = () => {
                 </div>
               </>
             )}
-            <ReviewForm
-              about={school.name}
-              schoolId={school.id}
-              ref={reviewFormRef}
-            />
+            {userReview ? (
+              <div className="current-user-review">
+                <h3 className="current-user-review__title">Это Ваш отзыв о {school.name}:</h3>
+                <ReviewItem review={userReview} />
+              </div>
+            ) : (
+              <ReviewForm
+                about={school.name}
+                schoolId={school.id}
+                ref={reviewFormRef}
+              />
+            )}
           </div>
           {isMobile && <ReviewsOtherSchools schools={nearbySchools} />}
         </section>
