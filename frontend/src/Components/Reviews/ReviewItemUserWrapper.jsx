@@ -23,7 +23,9 @@ const ReviewItemWrapper = ({
     title: "",
     message: "",
     buttonText: "Закрыть",
-    action: null,
+    buttonTextSecondary: "",
+    onPrimaryClick: () => {},
+    onSecondaryClick: () => {},
   });
 
   // Удаление
@@ -33,7 +35,21 @@ const ReviewItemWrapper = ({
       title: "Подтверждение удаления",
       message: "Вы уверены, что хотите удалить этот отзыв?",
       buttonText: "Удалить",
-      action: "delete",
+      buttonTextSecondary: "Отмена",
+      onPrimaryClick: async () => {
+        try {
+          await axios.delete(`${apiUrl}/api/reviews/${review.id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          if (onDelete) onDelete(review.id);
+        } catch (error) {
+          console.error("Ошибка при удалении отзыва:", error);
+        }
+        setModalProps({ ...modalProps, isOpen: false });
+      },
+      onSecondaryClick: () => setModalProps({ ...modalProps, isOpen: false }),
     });
   };
 
@@ -46,7 +62,25 @@ const ReviewItemWrapper = ({
         action === "approve" ? "одобрить" : "отклонить"
       } этот отзыв?`,
       buttonText: action === "approve" ? "Одобрить" : "Отклонить",
-      action: action,
+      buttonTextSecondary: "Отмена",
+      onPrimaryClick: async () => {
+        try {
+          await axios.patch(
+            `${apiUrl}/api/reviews/${review.id}/moderate`,
+            { action },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          if (onModerate) onModerate(review.id, action);
+        } catch (error) {
+          console.error("Ошибка при модерации отзыва:", error);
+        }
+        setModalProps({ ...modalProps, isOpen: false });
+      },
+      onSecondaryClick: () => setModalProps({ ...modalProps, isOpen: false }),
     });
   };
 
@@ -73,16 +107,22 @@ const ReviewItemWrapper = ({
       setIsEditing(false);
       setModalProps({
         isOpen: true,
+        title: "Успешно",
         message: "Изменения сохранены",
         buttonText: "Хорошо",
-        action: null,
+        buttonTextSecondary: "",
+        onPrimaryClick: () => setModalProps({ ...modalProps, isOpen: false }),
+        onSecondaryClick: () => {},
       });
     } catch (error) {
       setModalProps({
         isOpen: true,
+        title: "Ошибка",
         message: "Не удалось сохранить изменения",
         buttonText: "ОК",
-        action: null,
+        buttonTextSecondary: "",
+        onPrimaryClick: () => setModalProps({ ...modalProps, isOpen: false }),
+        onSecondaryClick: () => {},
       });
     }
   };
@@ -90,40 +130,6 @@ const ReviewItemWrapper = ({
   // Отмена редактирования
   const handleCancel = () => {
     setIsEditing(false);
-  };
-
-  // Обработчик кнопки модального окна
-  const handleModalAction = async () => {
-    try {
-      if (modalProps.action === "delete") {
-        await axios.delete(`${apiUrl}/api/reviews/${review.id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (onDelete) onDelete(review.id);
-      } else if (["approve", "reject"].includes(modalProps.action)) {
-        await axios.patch(
-          `${apiUrl}/api/reviews/${review.id}/moderate`,
-          { action: modalProps.action },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        if (onModerate) onModerate(review.id, modalProps.action);
-      }
-      setModalProps({ ...modalProps, isOpen: false });
-    } catch (error) {
-      setModalProps({
-        isOpen: true,
-        title: "Ошибка",
-        message: error.message || "Произошла ошибка",
-        buttonText: "ОК",
-        action: null,
-      });
-    }
   };
 
   return (
@@ -227,7 +233,9 @@ const ReviewItemWrapper = ({
           title={modalProps.title}
           message={modalProps.message}
           buttonText={modalProps.buttonText}
-          onButtonClick={handleModalAction}
+          secondaryButtonText={modalProps.buttonTextSecondary}
+          onButtonClick={modalProps.onPrimaryClick}
+          onSecondaryClick={modalProps.onSecondaryClick}
         />
       )}
     </>
