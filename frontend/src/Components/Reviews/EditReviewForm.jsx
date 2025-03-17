@@ -1,10 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
 import JoditEditor from "jodit-react";
 import Modal from "../Modal";
+import Stars from "../Stars";
 
 const EditReviewForm = ({ review, onSave, onCancel }) => {
   const [text, setText] = useState(review.text);
+  const [rating, setRating] = useState(review.rating); // Добавляем состояние для оценки
   const [isTextChanged, setIsTextChanged] = useState(false);
+  const [isRatingChanged, setIsRatingChanged] = useState(false); // Отслеживаем изменения в оценке
   const [modalProps, setModalProps] = useState({
     isOpen: false,
     title: "",
@@ -25,7 +28,7 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
       showWordsCounter: false,
       showXPathInStatusbar: false,
       height: "auto",
-      toolbar: false,
+      toolbar: true,
     }),
     []
   );
@@ -35,11 +38,16 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
     setIsTextChanged(text !== review.text);
   }, [text, review.text]);
 
+  // Отслеживаем изменения оценки
+  useEffect(() => {
+    setIsRatingChanged(rating !== review.rating);
+  }, [rating, review.rating]);
+
   // Обработчик сохранения
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (isTextChanged) {
+    if (isTextChanged || isRatingChanged) {
       setModalProps({
         isOpen: true,
         title: "Сохранение изменений",
@@ -47,19 +55,19 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
         buttonText: "Да",
         buttonTextSecondary: "Нет",
         onPrimaryClick: () => {
-          onSave(text);
+          onSave({ text, rating }); // Передаем обновленный текст и оценку
           setModalProps({ isOpen: false });
         },
         onSecondaryClick: () => setModalProps({ isOpen: false }),
       });
     } else {
-      onSave(text); // Если нет изменений, сразу сохраняем
+      onSave({ text, rating }); // Если нет изменений, сразу сохраняем
     }
   };
 
   // Обработчик отмены
   const handleCancel = () => {
-    if (isTextChanged) {
+    if (isTextChanged || isRatingChanged) {
       setModalProps({
         isOpen: true,
         title: "Отмена изменений",
@@ -85,6 +93,20 @@ const EditReviewForm = ({ review, onSave, onCancel }) => {
         tabIndex={1}
         onChange={(newContent) => setText(newContent)}
       />
+      <div className="rating-edit">
+        <p className="rating-edit__desc">Редактирование оценки:</p>
+        <div className="star-rating" onMouseLeave={() => {}}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => setRating(star)} // Устанавливаем новую оценку
+              style={{ cursor: "pointer" }}
+            >
+              <Stars filled={star <= rating} />
+            </span>
+          ))}
+        </div>
+      </div>
       <div className="review-actions">
         <button type="submit">Сохранить</button>
         <button type="button" onClick={handleCancel}>

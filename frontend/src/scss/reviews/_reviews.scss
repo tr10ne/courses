@@ -143,6 +143,18 @@
   .jodit-wysiwyg {
     padding: 20px 30px !important;
   }
+  & .star-rating .rating-stars {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.rating-edit {
+  margin-top: 10px;
+  gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .current-user-review__title {

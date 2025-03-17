@@ -33,6 +33,22 @@ const ReviewForm = forwardRef(({ about, schoolId, courseId }, ref) => {
     }
   }, [user]);
 
+  // Добавляем обработчик события beforeunload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const pendingReview = localStorage.getItem("pendingReview");
+      if (pendingReview && !user) {
+        localStorage.removeItem("pendingReview");
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

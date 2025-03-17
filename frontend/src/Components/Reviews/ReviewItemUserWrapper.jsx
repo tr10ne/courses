@@ -90,20 +90,20 @@ const ReviewItemWrapper = ({
   };
 
   // Сохранение изменений
-  const handleSave = async (newText) => {
+  const handleSave = async (updatedData) => {
     try {
       await axios.put(
         `${apiUrl}/api/reviews/${review.id}`,
-        { text: newText },
+        { text: updatedData.text, rating: updatedData.rating }, // Передаем текст и оценку
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      const updatedReview = { ...currentReview, text: newText };
+      const updatedReview = { ...currentReview, ...updatedData }; // Обновляем текущий отзыв
       setCurrentReview(updatedReview);
-      if (onUpdate) onUpdate(review.id, newText);
+      if (onUpdate) onUpdate(review.id, updatedData); // Передаем обновленные данные через коллбэк
       setIsEditing(false);
       setModalProps({
         isOpen: true,
