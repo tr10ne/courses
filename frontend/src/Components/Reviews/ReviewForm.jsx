@@ -14,6 +14,7 @@ import Stars from "../Stars";
 import JoditEditor from "jodit-react";
 
 const ReviewForm = forwardRef(({ about, schoolId, courseId }, ref) => {
+  const isTouchDevice = 'ontouchstart' in window;
   const { user } = useContext(UserContext);
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -156,6 +157,22 @@ const ReviewForm = forwardRef(({ about, schoolId, courseId }, ref) => {
     }
   }, [user, handleAuthSuccess]);
 
+  const handleStarClick = (star) => {
+    setRating(star);
+  };
+
+  const handleStarHover = (star) => {
+    if (!isTouchDevice) {
+      setHoverRating(star);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isTouchDevice) {
+      setHoverRating(0);
+    }
+  };
+
   return (
     <div ref={ref} className="feedback-form">
       <p className="feedback-form__title">Оставить отзыв</p>
@@ -166,12 +183,13 @@ const ReviewForm = forwardRef(({ about, schoolId, courseId }, ref) => {
       </p>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <div className="star-rating" onMouseLeave={() => setHoverRating(0)}>
+          <div className="star-rating" onMouseLeave={handleMouseLeave}>
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
-                onClick={() => setRating(star)}
-                onMouseEnter={() => setHoverRating(star)}
+                onClick={() => handleStarClick(star)}
+                onMouseEnter={() => handleStarHover(star)}
+                onTouchStart={() => handleStarClick(star)}
                 style={{ cursor: "pointer" }}
               >
                 <Stars
