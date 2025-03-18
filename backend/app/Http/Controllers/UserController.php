@@ -9,6 +9,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -62,10 +63,16 @@ class UserController extends Controller
     public function update($id, Request $request)
     {
         $user = User::findOrFail($id);
-      Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
+        Log::info('Update user', ['user_id' => $id, 'request_data' => $request->all()]);
 
-        if ($request->input('avatar') === 'null') {
-            $request->merge(['avatar' => null]);
+        // if ($request->input('avatar') === 'null') {
+        //     $request->merge(['avatar' => null]);
+        // }
+        // Если аватар не передан или равен 'keep', не удаляем текущий аватар
+        if ($request->input('avatar') === 'keep') {
+            $request->merge(['avatar' => $user->avatar]); // Сохраняем текущий аватар
+        } elseif ($request->input('avatar') === 'null') {
+            $request->merge(['avatar' => null]); // Удаляем аватар
         }
 
         $validatedData = $request->validate([
@@ -73,8 +80,17 @@ class UserController extends Controller
             'email' => 'sometimes|required|string|email',
             'password' => 'sometimes|required|string|min:8',
             'role_id' => 'sometimes|required|exists:roles,id',
-            'avatar' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'avatar' => 'sometimes|nullable', // Базовая валидация
         ]);
+
+        // Условная валидация для аватара (только если файл передан)
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $validator->sometimes('avatar', 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', function ($input) {
+            return $input->hasFile('avatar'); // Применяем правило только если файл передан
+        });
 
         // Ищем пользователя с таким же email, исключая текущего пользователя
         $sameUser = User::with('role')

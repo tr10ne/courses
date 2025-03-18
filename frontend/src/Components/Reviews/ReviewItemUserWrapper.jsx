@@ -7,9 +7,9 @@ import EditReviewForm from "./EditReviewForm";
 import Loading from "../Loading.jsx";
 import Modal from "../Modal"; // Добавьте импорт Modal
 
-const ReviewItemWrapper = ({
+const ReviewItemUserWrapper = ({
   review,
-  isGeneralPage = false,
+  isGeneralPage = true,
   onDelete,
   onModerate,
   onUpdate,
@@ -242,4 +242,4 @@ const ReviewItemWrapper = ({
   );
 };
 
-export default ReviewItemWrapper;
+export default ReviewItemUserWrapper;
