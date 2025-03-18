@@ -52,7 +52,7 @@ const Login = ({ onAuthSuccess, isModal = false }) => {
         if (isModal && onAuthSuccess && typeof onAuthSuccess === "function") {
           await onAuthSuccess();
         } else {
-          window.location.href = "/user/profile";
+          window.location.href = "/user";
         }
       }
     } catch (error) {

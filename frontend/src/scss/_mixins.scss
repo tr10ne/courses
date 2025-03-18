@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 @mixin narrow-courses-item-styles {
 	.courses-item_frame {
 		grid-template-columns: 1fr 1fr;
@@ -47,7 +49,6 @@
 		display: flex;
 		align-items: flex-start;
 		grid-column: auto;
-
 	}
 
 	.courses-item__title {
@@ -69,10 +70,46 @@
 		align-self: auto;
 	}
 
-    @media (max-width: 1024px) {
-       
-        .courses-item_frame {
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-        }
-    }
+	@media (max-width: 1024px) {
+		.courses-item_frame {
+			grid-template-columns: 2fr 1fr 1fr 1fr;
+		}
+	}
+}
+
+// Стили для кнопок
+@mixin button-style(
+	$padding: 12px 34px,
+	$color: $color-accent,
+	$background: $color-accent-inner,
+	$border: $border-accent,
+	$border-radius: 100px,
+	$font-family: '"FS-Elliot-Pro-Bold", sans-serif',
+	$font-size: 12px,
+	$font-weight: 700,
+	$line-height: 24px,
+	$min-width: 140px,
+	$hover-background: $color-accent,
+	$hover-color: $color-text3,
+	$text-align: center
+) {
+	padding: $padding;
+	color: $color;
+	background-color: $background;
+	border: $border;
+	border-radius: $border-radius;
+	font-family: unquote($font-family);
+	font-size: $font-size;
+	font-weight: $font-weight;
+	line-height: $line-height;
+	outline: none;
+	min-width: $min-width;
+	text-align: $text-align;
+
+	&:hover,
+	&:focus,
+	&.active {
+		background-color: $hover-background;
+		color: $hover-color;
+	}
 }

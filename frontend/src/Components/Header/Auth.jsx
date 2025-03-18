@@ -36,11 +36,11 @@ const Auth = ({
         {user ? (
           <>
             <Link
-              to="/user/profile"
+              to="/user"
               className="auth-dropdown-item"
               onClick={handleAuthIconClick}
             >
-              Профиль
+              Главная
             </Link>
             <Link
               to="/user/reviews"
@@ -49,6 +49,14 @@ const Auth = ({
             >
               Отзывы
             </Link>
+            <Link
+              to="/user/profile"
+              className="auth-dropdown-item"
+              onClick={handleAuthIconClick}
+            >
+              Профиль
+            </Link>
+
             {/* <Link
 							to="/settings"
 							className="auth-dropdown-item"

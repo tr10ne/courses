@@ -24,6 +24,7 @@ import PrivateRoute from "./Components/Auth/PrivateRoute";
 import NotFound from "./Components/NotFound/NotFound";
 
 import UserReviews from "./Pages/UserReviews";
+import Dashboard from "./Pages/Dashboard";
 
 const container = document.getElementById("root");
 
@@ -64,6 +65,14 @@ if (container) {
 
 					{/* Защищенные маршруты */}
 					<Route
+						path="/user"
+						element={
+							<PrivateRoute>
+								<Dashboard />
+							</PrivateRoute>
+						}
+					/>
+					<Route
 						path="/user/profile"
 						element={
 							<PrivateRoute>
@@ -83,7 +92,15 @@ if (container) {
 							path="/user/schools"
 							element={
 								<PrivateRoute>
-									<UserReviews />
+									{/* <UserReviews /> */}
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path="/user/school"
+							element={
+								<PrivateRoute>
+									{/* <UserReviews /> */}
 								</PrivateRoute>
 							}
 						/>
