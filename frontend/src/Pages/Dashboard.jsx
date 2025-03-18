@@ -1,12 +1,9 @@
 import React, { useContext } from "react";
-import { Link,  useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserContext } from "../Components/UserContext.jsx";
 
 const Dashboard = () => {
 	const { user } = useContext(UserContext);
-	const location = useLocation();
-
-	const isActive = (path) => location.pathname === path;
 
 	return (
 		<div className="dashboard container">
@@ -20,7 +17,6 @@ const Dashboard = () => {
                     <li>
 							<Link
 								to="/user/reviews"
-								// className={isActive("/user/reviews") ? "active" : ""}
 							>
 								Отзывы
 							</Link>
@@ -28,7 +24,6 @@ const Dashboard = () => {
 						<li>
 							<Link
 								to="/user/profile"
-								// className={isActive("/user/profile") ? "active" : ""}
 							>
 								Профиль
 							</Link>
@@ -39,7 +34,6 @@ const Dashboard = () => {
 								<li>
 									<Link
 										to="/user/schools"
-										// className={isActive("/user/schools") ? "active" : ""}
 									>
 										Школы
 									</Link>
@@ -47,7 +41,6 @@ const Dashboard = () => {
 								<li>
 									<Link
 										to="/user/users"
-										// className={isActive("/user/users") ? "active" : ""}
 									>
 										Пользователи
 									</Link>
@@ -58,7 +51,6 @@ const Dashboard = () => {
 							<li>
 								<Link
 									to="/user/school"
-									// className={isActive("/user/school") ? "active" : ""}
 								>
 									Школа
 								</Link>
