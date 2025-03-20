@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('reviews')->group(function () {
         Route::post('/', [ReviewController::class, 'store']);
+        Route::get('/{id}', [ReviewController::class, 'show']);
         Route::put('/{id}', [ReviewController::class, 'update']);
         Route::delete('/{id}', [ReviewController::class, 'destroy']);
         Route::patch('/{id}/moderate', [ReviewController::class, 'moderate'])

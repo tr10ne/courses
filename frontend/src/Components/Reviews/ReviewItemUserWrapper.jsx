@@ -3,9 +3,9 @@ import { UserContext } from "../UserContext";
 import ReviewItem from "./ReviewItem";
 import axios from "axios";
 import { apiUrl } from "../../js/config.js";
-import EditReviewForm from "./EditReviewForm";
 import Loading from "../Loading.jsx";
-import Modal from "../Modal"; // Добавьте импорт Modal
+import Modal from "../Modal";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ReviewItemUserWrapper = ({
   review,
@@ -15,8 +15,9 @@ const ReviewItemUserWrapper = ({
   onUpdate,
 }) => {
   const { user } = useContext(UserContext);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentReview, setCurrentReview] = useState(review);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentReview] = useState(review);
   const [isLoading] = useState(false);
   const [modalProps, setModalProps] = useState({
     isOpen: false,
@@ -86,144 +87,94 @@ const ReviewItemUserWrapper = ({
 
   // Редактирование
   const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  // Сохранение изменений
-  const handleSave = async (updatedData) => {
-    try {
-      await axios.put(
-        `${apiUrl}/api/reviews/${review.id}`,
-        { text: updatedData.text, rating: updatedData.rating }, // Передаем текст и оценку
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const updatedReview = { ...currentReview, ...updatedData }; // Обновляем текущий отзыв
-      setCurrentReview(updatedReview);
-      if (onUpdate) onUpdate(review.id, updatedData); // Передаем обновленные данные через коллбэк
-      setIsEditing(false);
-      setModalProps({
-        isOpen: true,
-        title: "Успешно",
-        message: "Изменения сохранены",
-        buttonText: "Хорошо",
-        buttonTextSecondary: "",
-        onPrimaryClick: () => setModalProps({ ...modalProps, isOpen: false }),
-        onSecondaryClick: () => {},
-      });
-    } catch (error) {
-      setModalProps({
-        isOpen: true,
-        title: "Ошибка",
-        message: "Не удалось сохранить изменения",
-        buttonText: "ОК",
-        buttonTextSecondary: "",
-        onPrimaryClick: () => setModalProps({ ...modalProps, isOpen: false }),
-        onSecondaryClick: () => {},
-      });
-    }
-  };
-
-  // Отмена редактирования
-  const handleCancel = () => {
-    setIsEditing(false);
+    navigate(`/user/reviews/${review.id}`, {
+      state: { review, previousPath: location.pathname },
+    });
   };
 
   return (
     <>
-      {isEditing ? (
-        <EditReviewForm
-          review={currentReview}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
-      ) : (
-        <>
-          <div style={{ position: "relative", opacity: isLoading ? 0.5 : 1 }}>
-            {isLoading && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 10,
-                }}
-              >
-                <Loading />
-              </div>
-            )}
-            <ReviewItem review={currentReview} isGeneralPage={isGeneralPage} />
+      <div style={{ position: "relative", opacity: isLoading ? 0.5 : 1 }}>
+        {isLoading && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 10,
+            }}
+          >
+            <Loading />
           </div>
-          {/* Кнопки для модератора */}
-          {user?.role === "moderator" && (
-            <div className="review-actions">
-              {currentReview.is_approved === null && (
-                <>
-                  <button
-                    onClick={() => handleModerate("approve")}
-                    disabled={isLoading}
-                  >
-                    Одобрить
-                  </button>
-                  <button
-                    onClick={() => handleModerate("reject")}
-                    disabled={isLoading}
-                  >
-                    Отклонить
-                  </button>
-                </>
-              )}
-              {currentReview.is_approved === true && (
-                <button
-                  onClick={() => handleModerate("reject")}
-                  disabled={isLoading}
-                >
-                  Отклонить
-                </button>
-              )}
-              {currentReview.is_approved === false && (
-                <button
-                  onClick={() => handleModerate("approve")}
-                  disabled={isLoading}
-                >
-                  Одобрить
-                </button>
-              )}
-              <button onClick={handleEdit} disabled={isLoading}>
-                Редактировать
-              </button>
-              <button
-                className="warning"
-                onClick={handleDelete}
-                disabled={isLoading}
-              >
-                Удалить
-              </button>
-            </div>
-          )}
+        )}
+        <ReviewItem review={currentReview} isGeneralPage={isGeneralPage} />
+      </div>
 
-          {/* Кнопки для пользователя */}
-          {user?.role === "user" && currentReview.user_id === user.id && (
-            <div className="review-actions">
-              {currentReview.is_approved === null && (
-                <button onClick={handleEdit} disabled={isLoading}>
-                  Редактировать
-                </button>
-              )}
+      {/* Кнопки для модератора */}
+      {user?.role === "moderator" && (
+        <div className="review-actions">
+          {currentReview.is_approved === null && (
+            <>
               <button
-                className="warning"
-                onClick={handleDelete}
+                onClick={() => handleModerate("approve")}
                 disabled={isLoading}
               >
-                Удалить
+                Одобрить
               </button>
-            </div>
+              <button
+                onClick={() => handleModerate("reject")}
+                disabled={isLoading}
+              >
+                Отклонить
+              </button>
+            </>
           )}
-        </>
+          {currentReview.is_approved === true && (
+            <button
+              onClick={() => handleModerate("reject")}
+              disabled={isLoading}
+            >
+              Отклонить
+            </button>
+          )}
+          {currentReview.is_approved === false && (
+            <button
+              onClick={() => handleModerate("approve")}
+              disabled={isLoading}
+            >
+              Одобрить
+            </button>
+          )}
+          <button onClick={handleEdit} disabled={isLoading}>
+            Редактировать
+          </button>
+          <button
+            className="warning"
+            onClick={handleDelete}
+            disabled={isLoading}
+          >
+            Удалить
+          </button>
+        </div>
+      )}
+
+      {/* Кнопки для пользователя */}
+      {user?.role === "user" && currentReview.user_id === user.id && (
+        <div className="review-actions">
+          {currentReview.is_approved === null && (
+            <button onClick={handleEdit} disabled={isLoading}>
+              Редактировать
+            </button>
+          )}
+          <button
+            className="warning"
+            onClick={handleDelete}
+            disabled={isLoading}
+          >
+            Удалить
+          </button>
+        </div>
       )}
 
       {modalProps.isOpen && (

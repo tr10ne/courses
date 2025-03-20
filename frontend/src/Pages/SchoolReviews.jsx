@@ -531,7 +531,7 @@ const SchoolReviews = () => {
                 <h3 className="current-user-review__title">
                   Это Ваш отзыв о школе {school.name}:
                 </h3>
-                <ReviewItem review={userReview} />
+                <ReviewItem review={userReview} isEditable={true} />
               </div>
             ) : (
               <ReviewForm

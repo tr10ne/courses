@@ -147,6 +147,24 @@
   margin-bottom: 10px;
 }
 
+.review-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  & h1 {
+    font-family: "Lisboa-Heavy-Regular", sans-serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 47px;
+  }
+  &-link {
+    cursor: pointer;
+    color: $color-accent;
+  }
+}
+
 /* ============================= */
 /* Media */
 @media (max-width: 800px) {

@@ -1,13 +1,10 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import RatingStars from "../RatingStars";
-import { UserContext } from "../UserContext"; // Импортируем UserContext
 
-const ReviewItem = ({ review, isGeneralPage = false, isEditable = false }) => {
+const ReviewItem = ({ review, isGeneralPage = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { user } = useContext(UserContext); // Получаем данные пользователя из контекста
-  const navigate = useNavigate();
-  const location = useLocation();
+
   const getFirstTwoSentences = (text) => {
     const sentences = text.match(/[^.!?]+[.!?]+/g);
     if (sentences && sentences.length > 5) {
@@ -18,10 +15,6 @@ const ReviewItem = ({ review, isGeneralPage = false, isEditable = false }) => {
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
-  };
-
-  const handleEdit = () => {
-    navigate(`/user/reviews/${review.id}`, { state: { review, previousPath: location.pathname } });
   };
 
   const truncatedDescription = getFirstTwoSentences(review.text);
@@ -115,13 +108,6 @@ const ReviewItem = ({ review, isGeneralPage = false, isEditable = false }) => {
           )}
         </div>
         <div className="review-autor">
-          {isEditable &&
-            user &&
-            user.id === review.user.id && ( // Проверяем, является ли текущий пользователь автором отзыва и разрешено ли редактирование
-              <span onClick={handleEdit} className="review-edit-link">
-                Редактировать
-              </span>
-            )}
           {review.user.name}
           {isGeneralPage && (
             <span className="review-date">
