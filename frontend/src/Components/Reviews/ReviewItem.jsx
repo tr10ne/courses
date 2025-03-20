@@ -21,7 +21,9 @@ const ReviewItem = ({ review, isGeneralPage = false, isEditable = false }) => {
   };
 
   const handleEdit = () => {
-    navigate(`/user/reviews/${review.id}`, { state: { review, previousPath: location.pathname } });
+    navigate(`/user/reviews/${review.id}`, {
+      state: { review, previousPath: location.pathname },
+    });
   };
 
   const truncatedDescription = getFirstTwoSentences(review.text);
@@ -118,9 +120,12 @@ const ReviewItem = ({ review, isGeneralPage = false, isEditable = false }) => {
           {isEditable &&
             user &&
             user.id === review.user.id && ( // Проверяем, является ли текущий пользователь автором отзыва и разрешено ли редактирование
-              <span onClick={handleEdit} className="review-edit-link">
-                Редактировать
-              </span>
+              <>
+                <span onClick={handleEdit} className="review-edit-link">
+                  Редактировать
+                </span>
+                <span>{" - "}</span>
+              </>
             )}
           {review.user.name}
           {isGeneralPage && (
