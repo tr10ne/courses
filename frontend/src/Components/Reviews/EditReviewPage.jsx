@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { UserContext } from "../UserContext.jsx";
 import axios from "axios";
 import { apiUrl } from "../../js/config.js";
 import EditReviewForm from "./EditReviewForm";
@@ -8,7 +7,6 @@ import Loading from "../Loading.jsx";
 
 const EditReviewPage = () => {
   const { review_id } = useParams();
-  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation(); // Используйте только один раз
   const [reviewData, setReviewData] = useState(null); // Переименовано для избежания путаницы
