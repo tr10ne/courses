@@ -1,13 +1,15 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../Components/UserContext.jsx";
+import IntroImage from "../Components/Home/IntroImage.jsx";
 
 const Dashboard = () => {
 	const { user } = useContext(UserContext);
 
 	return (
 		<div className="dashboard container">
-            <div>
+<div className="dashboard__inner">
+			<div>
 
             <h1 className="title" >Личный кабинет</h1>
            {user&& <p className="auth__desc">Добро пожаловать, {user.name}</p>}
@@ -58,6 +60,8 @@ const Dashboard = () => {
 						)}
 					</ul>
 				</nav>
+				</div>
+				<IntroImage />
 		</div>
 	);
 };

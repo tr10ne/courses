@@ -3,13 +3,23 @@
 
 
 .dashboard{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 40px;
-padding-top: 50px;
-padding-bottom: 50px;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+display: flex;
+
+    &__inner{
+        position: relative;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 40px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    z-index: 1;
+    }
 
     nav ul{
         list-style: none;
@@ -30,6 +40,10 @@ padding-bottom: 50px;
 
     .auth__desc{
         text-align: center;
+    }
+
+    .intro__svg{
+        opacity: .35;
     }
 }
 
