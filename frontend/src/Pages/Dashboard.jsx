@@ -8,60 +8,39 @@ const Dashboard = () => {
 
 	return (
 		<div className="dashboard container">
-<div className="dashboard__inner">
-			<div>
-
-            <h1 className="title" >Личный кабинет</h1>
-           {user&& <p className="auth__desc">Добро пожаловать, {user.name}</p>}
-            </div>
-		<nav>
+			<div className="dashboard__inner">
+				<div>
+					<h1 className="title">Личный кабинет</h1>
+					{user && <p className="auth__desc">Добро пожаловать, {user.name}</p>}
+				</div>
+				<nav>
 					<ul>
-                    <li>
-							<Link
-								to="/user/reviews"
-							>
-								Отзывы
-							</Link>
+						<li>
+							<Link to="/user/reviews">Отзывы</Link>
 						</li>
 						<li>
-							<Link
-								to="/user/profile"
-							>
-								Профиль
-							</Link>
+							<Link to="/user/profile">Профиль</Link>
 						</li>
 
 						{user?.role === "admin" && (
 							<>
 								<li>
-									<Link
-										to="/user/schools"
-									>
-										Школы
-									</Link>
+									<Link to="/user/schools">Школы</Link>
 								</li>
 								<li>
-									<Link
-										to="/user/users"
-									>
-										Пользователи
-									</Link>
+									<Link to="/user/users">Пользователи</Link>
 								</li>
 							</>
 						)}
 						{user?.role === "school_representative" && (
 							<li>
-								<Link
-									to="/user/school"
-								>
-									Школа
-								</Link>
+								<Link to="/user/school">Школа</Link>
 							</li>
 						)}
 					</ul>
 				</nav>
-				</div>
-				<IntroImage />
+			</div>
+			<IntroImage />
 		</div>
 	);
 };

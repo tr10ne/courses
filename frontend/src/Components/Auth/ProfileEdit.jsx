@@ -142,9 +142,9 @@ const ProfileEdit = () => {
 				const { type, message } = data;
 				// Обрабатываем ошибки в зависимости от типа
 				if (type === "email") {
-					setEmailError(message); // Устанавливаем ошибку email
+					setEmailError(message);
 				} else if (type === "avatar") {
-					setAvatarError(message); // Устанавливаем ошибку email
+					setAvatarError(message);
 				} else {
 					setModalProps({
 						...modalProps,
@@ -259,7 +259,7 @@ const ProfileEdit = () => {
      // Сбрасываем значение поля input
      const fileInput = document.getElementById('avatar');
      if (fileInput) {
-         fileInput.value = ''; // Сбрасываем значение
+         fileInput.value = ''; 
      }
 
 		setAvatar(null);

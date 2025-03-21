@@ -107,7 +107,7 @@ const SchoolReviews = () => {
       }
     };
     fetchSchoolAndReviews();
-  }, [url, queryParams.page, sortBy]); // Добавляем sortBy в зависимости
+  }, [url, queryParams.page, sortBy]);
 
   // Загрузка всех отзывов без пагинации
   useEffect(() => {
@@ -370,7 +370,7 @@ const SchoolReviews = () => {
                     <span
                       className="school-reviews__toform"
                       onClick={() => {
-                        const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                        const offset = 100;
                         const targetElement = reviewFormRef.current;
 
                         if (targetElement) {
@@ -378,8 +378,8 @@ const SchoolReviews = () => {
                             targetElement.getBoundingClientRect().top +
                             window.pageYOffset;
                           window.scrollTo({
-                            top: elementPosition - offset, // Вычитаем отступ
-                            behavior: "smooth", // Плавная прокрутка
+                            top: elementPosition - offset,
+                            behavior: "smooth",
                           });
                         }
                       }}
@@ -390,7 +390,7 @@ const SchoolReviews = () => {
                     <span
                       className="school-reviews__toform"
                       onClick={() => {
-                        const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                        const offset = 100;
                         const targetElement = reviewFormRef.current;
 
                         if (targetElement) {
@@ -398,8 +398,8 @@ const SchoolReviews = () => {
                             targetElement.getBoundingClientRect().top +
                             window.pageYOffset;
                           window.scrollTo({
-                            top: elementPosition - offset, // Вычитаем отступ
-                            behavior: "smooth", // Плавная прокрутка
+                            top: elementPosition - offset,
+                            behavior: "smooth",
                           });
                         }
                       }}
@@ -463,7 +463,7 @@ const SchoolReviews = () => {
                   <span
                     className="school-reviews__toform"
                     onClick={() => {
-                      const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                      const offset = 100;
                       const targetElement = reviewFormRef.current;
 
                       if (targetElement) {
@@ -471,8 +471,8 @@ const SchoolReviews = () => {
                           targetElement.getBoundingClientRect().top +
                           window.pageYOffset;
                         window.scrollTo({
-                          top: elementPosition - offset, // Вычитаем отступ
-                          behavior: "smooth", // Плавная прокрутка
+                          top: elementPosition - offset,
+                          behavior: "smooth",
                         });
                       }
                     }}
@@ -483,7 +483,7 @@ const SchoolReviews = () => {
                   <span
                     className="school-reviews__toform"
                     onClick={() => {
-                      const offset = 100; // Отступ сверху в пикселях (например, 50px)
+                      const offset = 100;
                       const targetElement = reviewFormRef.current;
 
                       if (targetElement) {
@@ -491,8 +491,8 @@ const SchoolReviews = () => {
                           targetElement.getBoundingClientRect().top +
                           window.pageYOffset;
                         window.scrollTo({
-                          top: elementPosition - offset, // Вычитаем отступ
-                          behavior: "smooth", // Плавная прокрутка
+                          top: elementPosition - offset,
+                          behavior: "smooth", 
                         });
                       }
                     }}

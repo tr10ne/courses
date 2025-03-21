@@ -253,7 +253,7 @@ const CourseDetail = () => {
                     <span
                       className="school-reviews__toform"
                       onClick={() => {
-                        const offset = 90; // Отступ сверху в пикселях (например, 50px)
+                        const offset = 90; // Отступ сверху в пикселях
                         const targetElement = reviewFormRef.current;
 
                         if (targetElement) {
@@ -261,8 +261,8 @@ const CourseDetail = () => {
                             targetElement.getBoundingClientRect().top +
                             window.pageYOffset;
                           window.scrollTo({
-                            top: elementPosition - offset, // Вычитаем отступ
-                            behavior: "smooth", // Плавная прокрутка
+                            top: elementPosition - offset,
+                            behavior: "smooth",
                           });
                         }
                       }}
@@ -273,7 +273,7 @@ const CourseDetail = () => {
                     <span
                       className="school-reviews__toform"
                       onClick={() => {
-                        const offset = 90; // Отступ сверху в пикселях (например, 50px)
+                        const offset = 90;
                         const targetElement = reviewFormRef.current;
 
                         if (targetElement) {
@@ -281,8 +281,8 @@ const CourseDetail = () => {
                             targetElement.getBoundingClientRect().top +
                             window.pageYOffset;
                           window.scrollTo({
-                            top: elementPosition - offset, // Вычитаем отступ
-                            behavior: "smooth", // Плавная прокрутка
+                            top: elementPosition - offset,
+                            behavior: "smooth", 
                           });
                         }
                       }}

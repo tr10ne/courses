@@ -9,16 +9,14 @@ const Users = () => {
     axios
       .get(`${apiUrl}/api/users`)
       .then((response) => {
-        console.log("Ответ от API:", response.data); // Проверьте структуру данных
+        console.log("Ответ от API:", response.data);
 
-        // Проверяем, если данные находятся в объекте с ключом 'data'
         const result = Array.isArray(response.data)
           ? response.data
           : Array.isArray(response.data.data)
           ? response.data.data
           : null;
 
-        // Если это массив, сохраняем в состояние
         if (Array.isArray(result)) {
           setUsers(result);
         } else {

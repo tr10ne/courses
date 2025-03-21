@@ -5,10 +5,8 @@ const useLogout = () => {
   const { setUser } = useContext(UserContext);
 
   const handleLogout = () => {
-    // Удаляем токен из localStorage
     localStorage.removeItem("token");
 
-    // Очищаем данные пользователя в контексте
     setUser(null);
 
     // Проверяем, находится ли пользователь внутри ЛК

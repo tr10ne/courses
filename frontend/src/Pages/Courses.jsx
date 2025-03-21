@@ -20,7 +20,7 @@ import { isDesktop } from "../js/utils.js";
 
 const Courses = () => {
 	const recordsPerPage = 10; // Количество записей на странице
-	const location = useLocation(); //// Хук для отслеживания изменений в URL
+	const location = useLocation(); // Хук для отслеживания изменений в URL
 	const [error, setError] = useState(null);
 	const abortControllerRef = useRef(null);
 	const [crumbs, setCrumbs] = useState([]); //хлебные крошки
