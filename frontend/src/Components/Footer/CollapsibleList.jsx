@@ -3,20 +3,20 @@ import { Link } from "react-router-dom";
 
 const CollapsibleList = ({ title, items, isOpen, onToggle }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 375);
-  const [height, setHeight] = useState(isMobile ? 0 : "auto"); // Высота списка
-  const listRef = useRef(null); // Ссылка на DOM-элемент списка
+  const [height, setHeight] = useState(isMobile ? 0 : "auto");
+  const listRef = useRef(null);
 
-  // Эффект для отслеживания изменения ширины экрана
+  // Отслеживаю изменение ширины экрана
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 480;
       setIsMobile(mobile);
 
-      // Если устройство стало НЕ мобильным, открываем список
+      // ОТкрываю список если устройство не мобильное
       if (!mobile) {
         setHeight("auto");
       } else {
-        // Если устройство стало мобильным, закрываем список
+        // Закрываю список если устройство мобильное
         setHeight(isOpen ? listRef.current.scrollHeight : 0);
       }
     };
@@ -25,14 +25,14 @@ const CollapsibleList = ({ title, items, isOpen, onToggle }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, [isOpen]);
 
-  // Эффект для обновления высоты списка при изменении состояния isOpen
+  // Изменение состояния isOpen
   useEffect(() => {
     if (isMobile) {
       setHeight(isOpen ? listRef.current.scrollHeight : 0);
     }
   }, [isOpen, isMobile]);
 
-  // Обработчик клика для переключения состояния
+  // Переключение состояний
   const handleClick = () => {
     if (isMobile) {
       onToggle();
